@@ -25,6 +25,7 @@
 
 /* Private includes ----------------------------------------------------------*/
 /* USER CODE BEGIN Includes */
+#include "app_ipc.h"
 
 /* USER CODE END Includes */
 
@@ -67,6 +68,21 @@ const osThreadAttr_t A_Cyclic100msTask_attributes = {
   .name = "A_Cyclic100msTask",
   .stack_size = 256 * 4,
   .priority = (osPriority_t) osPriorityLow,
+};
+/* Definitions for qA_CanRx */
+osMessageQueueId_t qA_CanRxHandle;
+const osMessageQueueAttr_t qA_CanRx_attributes = {
+  .name = "qA_CanRx"
+};
+/* Definitions for mbA_CommandState */
+osMessageQueueId_t mbA_CommandStateHandle;
+const osMessageQueueAttr_t mbA_CommandState_attributes = {
+  .name = "mbA_CommandState"
+};
+/* Definitions for mbA_StatusSnapshot */
+osMessageQueueId_t mbA_StatusSnapshotHandle;
+const osMessageQueueAttr_t mbA_StatusSnapshot_attributes = {
+  .name = "mbA_StatusSnapshot"
 };
 
 /* Private function prototypes -----------------------------------------------*/
@@ -130,6 +146,16 @@ void MX_FREERTOS_Init(void) {
   /* USER CODE BEGIN RTOS_TIMERS */
   /* start timers, add new ones, ... */
   /* USER CODE END RTOS_TIMERS */
+
+  /* Create the queue(s) */
+  /* creation of qA_CanRx */
+  qA_CanRxHandle = osMessageQueueNew (4, sizeof(AppCanRxFrame_t), &qA_CanRx_attributes);
+
+  /* creation of mbA_CommandState */
+  mbA_CommandStateHandle = osMessageQueueNew (1, sizeof(ACommandState_t), &mbA_CommandState_attributes);
+
+  /* creation of mbA_StatusSnapshot */
+  mbA_StatusSnapshotHandle = osMessageQueueNew (1, sizeof(AStatusSnapshot_t), &mbA_StatusSnapshot_attributes);
 
   /* USER CODE BEGIN RTOS_QUEUES */
   /* add queues, ... */

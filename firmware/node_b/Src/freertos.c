@@ -25,6 +25,7 @@
 
 /* Private includes ----------------------------------------------------------*/
 /* USER CODE BEGIN Includes */
+#include "app_ipc.h"
 
 /* USER CODE END Includes */
 
@@ -60,6 +61,16 @@ const osThreadAttr_t B_Cyclic100msSupervisorTask_attributes = {
   .name = "B_Cyclic100msSupervisorTask",
   .stack_size = 256 * 4,
   .priority = (osPriority_t) osPriorityNormal,
+};
+/* Definitions for qB_CanRx */
+osMessageQueueId_t qB_CanRxHandle;
+const osMessageQueueAttr_t qB_CanRx_attributes = {
+  .name = "qB_CanRx"
+};
+/* Definitions for mbB_NodeAStatus */
+osMessageQueueId_t mbB_NodeAStatusHandle;
+const osMessageQueueAttr_t mbB_NodeAStatus_attributes = {
+  .name = "mbB_NodeAStatus"
 };
 
 /* Private function prototypes -----------------------------------------------*/
@@ -122,6 +133,13 @@ void MX_FREERTOS_Init(void) {
   /* USER CODE BEGIN RTOS_TIMERS */
   /* start timers, add new ones, ... */
   /* USER CODE END RTOS_TIMERS */
+
+  /* Create the queue(s) */
+  /* creation of qB_CanRx */
+  qB_CanRxHandle = osMessageQueueNew (4, sizeof(AppCanRxFrame_t), &qB_CanRx_attributes);
+
+  /* creation of mbB_NodeAStatus */
+  mbB_NodeAStatusHandle = osMessageQueueNew (1, sizeof(BNodeAStatus_t), &mbB_NodeAStatus_attributes);
 
   /* USER CODE BEGIN RTOS_QUEUES */
   /* add queues, ... */
