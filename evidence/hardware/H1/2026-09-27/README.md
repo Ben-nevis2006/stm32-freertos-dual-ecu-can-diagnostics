@@ -31,7 +31,7 @@
 - 执行人报告：`LD2` 约每秒闪烁一次；`LD1` 刚上电时闪烁一段时间，随后常亮；
 - Windows 枚举结果：`ST-Link Debug` 与 `STMicroelectronics STLink Virtual COM Port (COM7)`；
 - 工程边界：LD2 周期闪烁只说明某段既有程序可能在驱动 LED，不能证明其来源是本项目，也不能替代 FreeRTOS、CAN、Fault 或其他冻结功能的验证；
-- 尚待执行人明确确认：30 s 内无异味、异常发热、火花或 Windows 反复断连；
+- 执行人于 2026-09-27 明确确认：30 s 内无异味、无异常发热、无火花、无 Windows 反复断连；该项判定为 PASS；
 - 尚待 CubeProgrammer 只读取证：ST-LINK 序列号、固件版本、目标电压、目标 MCU / Device ID 与 Flash 容量。
 
 ## 5. 识别更正留痕
@@ -42,8 +42,7 @@
 
 H1-01 需要继续归档：
 
-1. 至少 30 s 无反复掉线的明确现场确认；
-2. STM32CubeProgrammer 的探针序列号、固件版本、目标电压、目标 MCU / Device ID 和 Flash 容量只读截图；
-3. 明确记录无异味、异常发热、火花或插头松动。
+1. STM32CubeProgrammer 的探针序列号、固件版本、目标电压、目标 MCU / Device ID 和 Flash 容量只读截图；
+2. 若软件要求升级 ST-LINK 固件，保留提示截图并停止，不在 H1 内执行升级。
 
 在上述证据形成前，不得把 H1-01 或 `NUCLEO-01` 写成 PASS。

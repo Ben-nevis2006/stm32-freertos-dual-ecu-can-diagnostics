@@ -6,9 +6,9 @@
 |---|---|
 | 项目 | 基于 STM32 + FreeRTOS 的双 ECU CAN 实时通信与故障检测系统 |
 | Gate | H1：两块 NUCLEO-F103RB 的独立 USB Bring-up |
-| 版本 | v0.3 |
+| 版本 | v0.4 |
 | 日期 | 2026-09-27 |
-| 状态 | **IN PROGRESS；NUCLEO-01 的 Windows ST-LINK/VCP 枚举已通过，CubeProgrammer 只读识别待执行** |
+| 状态 | **IN PROGRESS；NUCLEO-01 的 Windows 枚举与 30 s 安全观察已通过，CubeProgrammer 只读识别待执行** |
 | 准入依据 | [Gate H0 v1.3：CONDITIONAL PASS](Gate_H0_Hardware_Acceptance_Baseline_2026-09-22.md) |
 | 软件/IPC 功能基线 | `4377c5e feat: add dual-node FreeRTOS IPC baseline` |
 | H1 现场执行开始前 Git HEAD | `646bb6c`；现场记录不改变固件内容 |
@@ -118,7 +118,8 @@ H1_NUCLEO-02_cubeprogrammer-target_YYYYMMDD_01.png
 - Windows 已枚举 `STMicroelectronics STLink Virtual COM Port (COM7)`；
 - 因调试接口与 VCP 两个 USB 功能均已枚举，`USBCABLE-01` 的数据能力判定为 PASS；
 - LED 行为只作为现场现象记录。`LD2` 周期闪烁可能来自板内既有程序，但在未读取目标、未核验固件来源前，不得据此声称本项目固件、FreeRTOS、CAN 或 Fault 功能已经运行；
-- 30 s 内无异常发热/异味/反复断连仍需执行人明确确认；CubeProgrammer 的探针和目标 MCU 只读识别尚未执行。
+- 执行人于 2026-09-27 明确确认：30 s 内无异味、无异常发热、无火花、无 Windows 反复断连；该安全与稳定性检查判定为 PASS；
+- CubeProgrammer 的探针和目标 MCU 只读识别尚未执行。
 
 ### H1-02 NUCLEO-02 独立 USB Bring-up
 
@@ -144,8 +145,8 @@ H1_NUCLEO-02_cubeprogrammer-target_YYYYMMDD_01.png
 | CubeProgrammer 目标电压 | 待填 | 待填 | 数值稳定、无明显异常；不在本 Gate 发明精密验收带宽 |
 | 目标 MCU / Device ID | 待填 | 待填 | 应与 NUCLEO-F103RB 身份一致；不一致则 HOLD |
 | Flash 容量 | 待填 | 待填 | 与目标器件信息一致 |
-| 30 s 枚举稳定性 | PENDING OPERATOR CONFIRMATION | NOT EXECUTED | 无反复断连 |
-| 异味/异常发热 | PENDING OPERATOR CONFIRMATION | NOT EXECUTED | 无异常 |
+| 30 s 枚举稳定性 | PASS：执行人确认无反复断连 | NOT EXECUTED | 无反复断连 |
+| 异味/异常发热 | PASS：执行人确认无异味、异常发热或火花 | NOT EXECUTED | 无异常 |
 | 单板结论 | IN PROGRESS：Windows 枚举 PASS，目标识别待执行 | NOT EXECUTED | PASS / HOLD / FAIL |
 
 ## 9. Gate H1 判定
@@ -159,13 +160,13 @@ H1 只有在以下条件全部满足时才能 PASS：
 5. 未更改跳线、未接外设/12 V、未擦除或下载固件；
 6. 所有截图和读数均已归档，失败项没有被另一块板的成功结果覆盖。
 
-当前 Gate H1 结论：**IN PROGRESS**。`NUCLEO-01` 的 H1-00、Windows ST-LINK 枚举和 VCP 枚举已 PASS；30 s 稳定性/无异常状态仍待执行人明确确认，CubeProgrammer 目标只读识别尚未执行；`NUCLEO-02` 尚未执行。Gate H1 仍未关闭。
+当前 Gate H1 结论：**IN PROGRESS**。`NUCLEO-01` 的 H1-00、Windows ST-LINK/VCP 枚举、30 s 稳定性和无异常状态已 PASS；CubeProgrammer 目标只读识别尚未执行；`NUCLEO-02` 尚未执行。Gate H1 仍未关闭。
 
 H1 PASS 仍不自动授权 CAN、双节点、12 V、Fan、Heater、INA260、NTC 或故障注入。下一 Gate 的具体准入必须依据项目交接报告和冻结架构另行确认。
 
 ## 10. 第一现场动作
 
-进入 CubeProgrammer 前，先由执行人明确确认 30 s 内没有异味、异常发热、火花或 Windows 反复断连。确认无异常后，保持 `NUCLEO-01` 单独连接，打开 STM32CubeProgrammer，只执行 ST-LINK 探针刷新、连接和目标信息读取；不得 Erase、Download、写 Option Bytes 或升级 ST-LINK 固件。
+保持 `NUCLEO-01` 单独连接，打开 STM32CubeProgrammer，选择 `ST-LINK` 并刷新探针列表。第一步只确认软件能发现唯一探针及其序列号，尚不连接目标 MCU；若出现 ST-LINK 固件升级提示，取消并留图，不执行升级。核对探针后才进入目标只读连接；不得 Erase、Download、写 Option Bytes 或升级 ST-LINK 固件。
 
 ## 11. 修订记录
 
@@ -174,3 +175,4 @@ H1 PASS 仍不自动授权 CAN、双节点、12 V、Fan、Heater、INA260、NTC 
 | v0.1 | 2026-09-24 | 建立 H1 单板 USB Bring-up 范围、安全边界、逐板步骤、证据与判定表 | Gate H0 已有条件关闭，D-02/D-04 可通过隔离与纯 USB H1 解耦 | Codex 整理；执行人待补签 |
 | v0.2 | 2026-09-27 | 归档 NUCLEO-01 上电前照片与线缆补拍；更正初始角度导致的插头误判；放行 H1-00 并开启 H1-01 | 补拍已确认 USB-A 至 Mini-B 插头形态，板卡仍保持未连接、无外设状态 | Codex 整理；现场执行人：用户 |
 | v0.3 | 2026-09-27 | 归档 NUCLEO-01 通电照、ST-Link Debug 与 VCP/COM7 枚举截图；记录 LD1/LD2 现场现象 | Windows 已同时识别调试接口和虚拟串口，USB 数据通路获得证据；目标 MCU 尚未只读识别 | Codex 整理；现场执行人：用户 |
+| v0.4 | 2026-09-27 | 记录 30 s 稳定性及无异味、异常发热、火花的操作员确认；放行 CubeProgrammer 探针发现步骤 | 负向安全条件不能由静态照片推断，需现场执行人明确声明 | Codex 整理；现场执行人：用户 |
