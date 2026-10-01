@@ -6,9 +6,9 @@
 |---|---|
 | 项目 | 基于 STM32 + FreeRTOS 的双 ECU CAN 实时通信与故障检测系统 |
 | Gate | H1：两块 NUCLEO-F103RB 的独立 USB Bring-up |
-| 版本 | v0.9 |
-| 日期 | 2026-09-29 |
-| 状态 | **IN PROGRESS；NUCLEO-01 单板 PASS；NUCLEO-02 的 Windows 枚举、30 s 稳定性与安全观察 PASS，CubeProgrammer 只读识别待执行** |
+| 版本 | v0.10 |
+| 日期 | 2026-10-01 |
+| 状态 | **IN PROGRESS；NUCLEO-01 单板 PASS；NUCLEO-02 的 Windows 枚举、稳定性与 CubeProgrammer 探针发现 PASS，目标只读连接待执行** |
 | 准入依据 | [Gate H0 v1.3：CONDITIONAL PASS](Gate_H0_Hardware_Acceptance_Baseline_2026-09-22.md) |
 | 软件/IPC 功能基线 | `4377c5e feat: add dual-node FreeRTOS IPC baseline` |
 | H1 现场执行开始前 Git HEAD | `646bb6c`；现场记录不改变固件内容 |
@@ -16,6 +16,7 @@
 | 输出 | 每块板的照片、Windows 枚举、ST-LINK/VCP、CubeProgrammer 只读识别记录和 H1 结论 |
 | 首批现场证据 | [2026-09-27：NUCLEO-01 上电前与线缆接口确认原图](../evidence/hardware/H1/2026-09-27/README.md) |
 | 探针发现证据 | [2026-09-29：CubeProgrammer ST-LINK 探针面板](../evidence/hardware/H1/2026-09-29/README.md) |
+| NUCLEO-02 探针证据 | [2026-10-01：NUCLEO-02 CubeProgrammer 探针面板](../evidence/hardware/H1/2026-10-01/README.md) |
 
 本记录启动 H1，但不把“文档已创建”误写成“硬件已验证”。只有两块板分别完成本文件的步骤并留下证据后，H1 才能关闭。
 
@@ -64,7 +65,7 @@ H1 开始前必须同时满足：
 | ST-LINK 驱动版本 | 待填；若无法直接读取，记录为“未读取” |
 | USB 数据线标识 | `USBCABLE-01`；USB-A 至 USB Mini-B；已通过 ST-LINK/VCP 枚举确认具备数据能力 |
 | 使用的电脑 USB 端口 | 待填 |
-| 照片/截图时间 | 2026-09-27：NUCLEO-01 H1-00、通电及 Windows 枚举；2026-09-29：NUCLEO-01 CubeProgrammer 闭环、NUCLEO-02 H1-00 与 Windows 枚举；NUCLEO-02 CubeProgrammer 截图待填 |
+| 照片/截图时间 | 2026-09-27：NUCLEO-01 H1-00、通电及 Windows 枚举；2026-09-29：NUCLEO-01 CubeProgrammer 闭环、NUCLEO-02 H1-00 与 Windows 枚举；2026-10-01：NUCLEO-02 CubeProgrammer 探针面板，目标连接截图待填 |
 
 不应把“设备管理器里出现一个 COM 口”当成充分证据。必须把设备名称、COM 号、ST-LINK 连接结果和目标识别结果关联到同一块实体板。
 
@@ -170,6 +171,15 @@ H1_NUCLEO-02_cubeprogrammer-target_YYYYMMDD_01.png
 - 两个 Windows 功能同时枚举且 30 s 内稳定，支持 `NUCLEO-02` 的 USB 数据通路可用；当前证据仍不能证明目标 MCU 身份、Flash 容量或目标 Flash 可读；
 - 下一步只允许在默认参数下执行 CubeProgrammer 探针刷新、目标连接和只读取证；不得升级 ST-LINK、擦除、下载或写 Option Bytes。
 
+#### 2026-10-01 NUCLEO-02 CubeProgrammer 探针发现结果
+
+- CubeProgrammer 已发现 `NUCLEO-02` 的 ST-LINK，界面显示序列号前缀 `066DFF515…`；该前缀与 `NUCLEO-01` 的 `066BFF575…` 明显不同，支持两块独立探针的初步区分，完整序列号仍需连接日志取证；
+- 连接参数保持为 `SWD / 4000 kHz / Normal / Access Port 0 / Software reset / Reliable / Shared Disabled`；
+- 目标电压为 `3.24 V`；
+- ST-LINK 固件版本为 `V2J46M32`；
+- 截图可见 `Firmware upgrade` 按钮，但没有证据表明已点击或执行升级；
+- 探针发现与目标供电读数判定为 PASS，允许在默认参数下执行一次目标只读连接；目标 MCU、Device ID、Flash 容量和只读访问仍为 PENDING。
+
 ### H1-02 NUCLEO-02 独立 USB Bring-up
 
 确认 `NUCLEO-01` 已完全断开并移出操作区后，对 `NUCLEO-02` 独立重复 H1-00 和 H1-01。不得保留上一块板的 COM 号、序列号或截图作为本板证据。
@@ -189,15 +199,15 @@ H1_NUCLEO-02_cubeprogrammer-target_YYYYMMDD_01.png
 | USB 插头机械规格 | PASS：USB-A 至 Mini-B | PASS：沿用 `USBCABLE-01`，Mini-B/CN1 形态匹配 | 插头与 CN1 形态匹配；不等于本板枚举通过 |
 | Windows ST-LINK 枚举 | PASS：`ST-Link Debug` | PASS：`ST-Link Debug` | 设备稳定存在，无反复掉线 |
 | 虚拟串口 | PASS：`STMicroelectronics STLink Virtual COM Port (COM7)` | PASS：`STMicroelectronics STLink Virtual COM Port (COM8)` | 记录设备名和 COM 号；COM 号不作为最终实体身份 |
-| ST-LINK 序列号 | `066BFF575151676667043206` | 待填 | 两块板分别记录 |
-| ST-LINK 固件版本 | `V2J46M32` | 待填 | 只读记录 |
-| CubeProgrammer 目标电压 | `3.24 V` | 待填 | 数值稳定、无明显异常；不在本 Gate 发明精密验收带宽 |
+| ST-LINK 序列号 | `066BFF575151676667043206` | `066DFF515…`（界面前缀；完整值待连接日志） | 两块板分别记录；已确认前缀不同 |
+| ST-LINK 固件版本 | `V2J46M32` | `V2J46M32` | 只读记录；均未升级 |
+| CubeProgrammer 目标电压 | `3.24 V` | `3.24 V` | 数值稳定、无明显异常；不在本 Gate 发明精密验收带宽 |
 | 目标 MCU / Device ID | PASS：Medium-density STM32F101/102/103；`0x410`；`Rev X`；Cortex-M3 | 待填 | 与 NUCLEO-F103RB 基线一致；不一致则 HOLD |
 | Flash 容量 | PASS：`128 KB` | 待填 | 与目标器件信息一致 |
 | 目标 Flash 只读访问 | PASS：`0x08000000` 起始 `1024 Bytes` 读取成功 | NOT EXECUTED | 只读证据；不代表项目固件身份已验证 |
 | 30 s 枚举稳定性 | PASS：执行人确认无反复断连 | PASS：执行人确认无反复断连 | 无反复断连 |
 | 异味/异常发热 | PASS：执行人确认无异味、异常发热或火花 | PASS：执行人确认无异味、异常发热或火花 | 无异常 |
-| 单板结论 | **PASS** | **IN PROGRESS：Windows 枚举与稳定性 PASS；CubeProgrammer 待执行** | PASS / HOLD / FAIL |
+| 单板结论 | **PASS** | **IN PROGRESS：Windows 枚举、稳定性与探针发现 PASS；目标只读连接待执行** | PASS / HOLD / FAIL |
 
 ## 9. Gate H1 判定
 
@@ -210,13 +220,13 @@ H1 只有在以下条件全部满足时才能 PASS：
 5. 未更改跳线、未接外设/12 V、未擦除或下载固件；
 6. 所有截图和读数均已归档，失败项没有被另一块板的成功结果覆盖。
 
-当前 Gate H1 结论：**IN PROGRESS**。`NUCLEO-01` 已完成全部单板 H1 项并判定 PASS；`NUCLEO-02` 已完成 H1-00、独立 USB 上电、Windows ST-LINK/VCP 枚举以及 30 s 稳定性和负向安全观察，相关项目均为 PASS。`NUCLEO-02` 尚缺 CubeProgrammer 探针完整序列号、固件版本、目标电压、目标 MCU / Device ID、Flash 容量和只读访问证据，因此 Gate H1 仍未关闭。
+当前 Gate H1 结论：**IN PROGRESS**。`NUCLEO-01` 已完成全部单板 H1 项并判定 PASS；`NUCLEO-02` 已完成 H1-00、独立 USB 上电、Windows ST-LINK/VCP 枚举、30 s 稳定性和负向安全观察，以及 CubeProgrammer 探针发现，相关项目均为 PASS。`NUCLEO-02` 尚缺完整 ST-LINK 序列号、目标 MCU / Device ID、Flash 容量和目标 Flash 只读访问证据，因此 Gate H1 仍未关闭。
 
 H1 PASS 仍不自动授权 CAN、双节点、12 V、Fan、Heater、INA260、NTC 或故障注入。下一 Gate 的具体准入必须依据项目交接报告和冻结架构另行确认。
 
 ## 10. 第一现场动作
 
-保持 `NUCLEO-01` 移出操作区，`NUCLEO-02` 继续作为唯一连接的 NUCLEO，所有 12 V 和外设保持断开。打开 STM32CubeProgrammer，选择 `ST-LINK` 后只刷新探针列表，先不要点击 `Connect`；截取右侧面板中可见的序列号、`SWD` 参数、目标电压和 ST-LINK 固件版本。若出现固件升级提示，取消并停止，不执行升级。
+保持 `NUCLEO-01` 移出操作区，`NUCLEO-02` 继续作为唯一连接的 NUCLEO，所有 12 V 和外设保持断开。在当前默认参数下点击一次 `Connect`；连接成功后只读取并截图 Target information、`0x08000000` 起始内存视图和下方日志。不得点击 Download、Erase、Option Bytes 写入或 Firmware upgrade；截图完成后点击 `Disconnect`。
 
 ## 11. 修订记录
 
@@ -231,3 +241,4 @@ H1 PASS 仍不自动授权 CAN、双节点、12 V、Fan、Heater、INA260、NTC 
 | v0.7 | 2026-09-29 | 归档完整连接日志与 CubeProgrammer About 截图；记录完整 ST-LINK SN、软件版本、只读 Option Bytes 行为和正常断开 | NUCLEO-01 的身份、枚举、稳定性、探针、目标和只读取证已闭环，形成单板 PASS | Codex 整理；现场执行人：用户 |
 | v0.8 | 2026-09-29 | 归档 NUCLEO-02 上电前正面照，核对实体 ID、无外接线、接口与跳线可见状态 | 在不借用 NUCLEO-01 结果的前提下放行 NUCLEO-02 独立 USB 上电 | Codex 整理；现场执行人：用户 |
 | v0.9 | 2026-09-29 | 归档 NUCLEO-02 的 ST-Link Debug、VCP/COM8 枚举截图与 30 s 稳定性、安全观察声明 | 第二块板的 Windows USB 功能和稳定性已独立取证，可进入 CubeProgrammer 只读识别 | Codex 整理；现场执行人：用户 |
+| v0.10 | 2026-10-01 | 归档 NUCLEO-02 的 CubeProgrammer 探针面板；记录不同的序列号前缀、默认 SWD 参数、3.24 V 目标电压与 V2J46M32 固件版本 | 探针发现和目标供电读数通过，允许执行一次目标只读连接 | Codex 整理；现场执行人：用户 |
