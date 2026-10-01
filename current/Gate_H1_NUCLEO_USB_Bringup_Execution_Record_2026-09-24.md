@@ -6,9 +6,9 @@
 |---|---|
 | 项目 | 基于 STM32 + FreeRTOS 的双 ECU CAN 实时通信与故障检测系统 |
 | Gate | H1：两块 NUCLEO-F103RB 的独立 USB Bring-up |
-| 版本 | v0.10 |
+| 版本 | v0.11 |
 | 日期 | 2026-10-01 |
-| 状态 | **IN PROGRESS；NUCLEO-01 单板 PASS；NUCLEO-02 的 Windows 枚举、稳定性与 CubeProgrammer 探针发现 PASS，目标只读连接待执行** |
+| 状态 | **PASS；两块 NUCLEO 均完成独立 USB 枚举、稳定性、ST-LINK/VCP、目标识别、Flash 只读访问与正常断开** |
 | 准入依据 | [Gate H0 v1.3：CONDITIONAL PASS](Gate_H0_Hardware_Acceptance_Baseline_2026-09-22.md) |
 | 软件/IPC 功能基线 | `4377c5e feat: add dual-node FreeRTOS IPC baseline` |
 | H1 现场执行开始前 Git HEAD | `646bb6c`；现场记录不改变固件内容 |
@@ -180,6 +180,18 @@ H1_NUCLEO-02_cubeprogrammer-target_YYYYMMDD_01.png
 - 截图可见 `Firmware upgrade` 按钮，但没有证据表明已点击或执行升级；
 - 探针发现与目标供电读数判定为 PASS，允许在默认参数下执行一次目标只读连接；目标 MCU、Device ID、Flash 容量和只读访问仍为 PENDING。
 
+#### 2026-10-01 NUCLEO-02 CubeProgrammer 目标只读连接与断开结果
+
+- CubeProgrammer 显示 `Connected`，连接日志记录完整 ST-LINK SN：`066DFF515149856767254421`；
+- 日志记录 STM32CubeProgrammer API `v2.19.0 / Windows-64Bits`、ST-LINK FW `V2J46M32`、SWD `4000 KHz`、Connect mode `Normal`、Reset mode `Software reset`；
+- 日志连接瞬间目标电压为 `3.25 V`，右侧面板随后显示 `3.24 V`，两者无需要解释的异常偏差；
+- Target information 显示 Device 为 `STM32F101/F102/F103 Medium-density`、Type 为 `MCU`、Device ID 为 `0x410`、Revision ID 为 `Rev X`、Flash size 为 `128 KB`、CPU 为 `Cortex-M3`；
+- 软件从地址 `0x08000000` 成功读取 `1024 Bytes`，日志显示 `Data read successfully`；
+- `UPLOADING OPTION BYTES DATA` 和 `UPLOADING` 表示从目标读取到主机；截图未显示 Erase、Download 或 Option Bytes 写操作；
+- `Debug in Low Power mode is not supported for this device.` 只涉及本 Gate 范围外的低功耗调试，不影响已成功的常规 SWD 连接和读取；
+- 执行人点击 `Disconnect` 后，日志记录 `18:40:51 : Disconnected from device.`，界面显示 `Not connected`；
+- `NUCLEO-02` 单板 H1 结论：**PASS**。范围仅限独立 USB 枚举、稳定性、ST-LINK/VCP、目标识别、只读访问和正常断开。
+
 ### H1-02 NUCLEO-02 独立 USB Bring-up
 
 确认 `NUCLEO-01` 已完全断开并移出操作区后，对 `NUCLEO-02` 独立重复 H1-00 和 H1-01。不得保留上一块板的 COM 号、序列号或截图作为本板证据。
@@ -191,6 +203,15 @@ H1_NUCLEO-02_cubeprogrammer-target_YYYYMMDD_01.png
 3. 任一板失败时，仅该板先标记 HOLD；另一块板的 PASS 不得覆盖失败；
 4. H1 关闭前，不把 NUCLEO-01/02 永久映射为 Node A/Node B；映射应在两块板均通过并有独立序列号后形成受控记录。
 
+#### 2026-10-01 双板核对与受控映射
+
+| 实体 | 完整 ST-LINK SN | VCP | 目标电压 | Device / Flash | 后续角色 |
+|---|---|---|---|---|---|
+| `NUCLEO-01` | `066BFF575151676667043206` | COM7（本次主机分配） | `3.24 V` | `0x410 / Rev X / 128 KB / Cortex-M3` | `Node A`：Thermal Actuator ECU |
+| `NUCLEO-02` | `066DFF515149856767254421` | COM8（本次主机分配） | `3.24–3.25 V` | `0x410 / Rev X / 128 KB / Cortex-M3` | `Node B`：Temperature Supervisor ECU |
+
+两块板的完整 ST-LINK 序列号不同，均独立完成只读连接与断开；目标器件族、Device ID、Revision、Flash 和 CPU 信息一致，未发现需要隔离的板级差异。自本记录 v0.11 起采用上表受控映射。COM 号可能被 Windows 重新分配，后续身份判断以实体手写 ID 和完整 ST-LINK SN 为准。
+
 ## 8. 结果记录表
 
 | 检查项 | NUCLEO-01 | NUCLEO-02 | 判定依据 |
@@ -199,15 +220,15 @@ H1_NUCLEO-02_cubeprogrammer-target_YYYYMMDD_01.png
 | USB 插头机械规格 | PASS：USB-A 至 Mini-B | PASS：沿用 `USBCABLE-01`，Mini-B/CN1 形态匹配 | 插头与 CN1 形态匹配；不等于本板枚举通过 |
 | Windows ST-LINK 枚举 | PASS：`ST-Link Debug` | PASS：`ST-Link Debug` | 设备稳定存在，无反复掉线 |
 | 虚拟串口 | PASS：`STMicroelectronics STLink Virtual COM Port (COM7)` | PASS：`STMicroelectronics STLink Virtual COM Port (COM8)` | 记录设备名和 COM 号；COM 号不作为最终实体身份 |
-| ST-LINK 序列号 | `066BFF575151676667043206` | `066DFF515…`（界面前缀；完整值待连接日志） | 两块板分别记录；已确认前缀不同 |
+| ST-LINK 序列号 | `066BFF575151676667043206` | `066DFF515149856767254421` | 两块板分别记录；完整值不同 |
 | ST-LINK 固件版本 | `V2J46M32` | `V2J46M32` | 只读记录；均未升级 |
 | CubeProgrammer 目标电压 | `3.24 V` | `3.24 V` | 数值稳定、无明显异常；不在本 Gate 发明精密验收带宽 |
-| 目标 MCU / Device ID | PASS：Medium-density STM32F101/102/103；`0x410`；`Rev X`；Cortex-M3 | 待填 | 与 NUCLEO-F103RB 基线一致；不一致则 HOLD |
-| Flash 容量 | PASS：`128 KB` | 待填 | 与目标器件信息一致 |
-| 目标 Flash 只读访问 | PASS：`0x08000000` 起始 `1024 Bytes` 读取成功 | NOT EXECUTED | 只读证据；不代表项目固件身份已验证 |
+| 目标 MCU / Device ID | PASS：Medium-density STM32F101/102/103；`0x410`；`Rev X`；Cortex-M3 | PASS：Medium-density STM32F101/102/103；`0x410`；`Rev X`；Cortex-M3 | 与 NUCLEO-F103RB 基线一致；不一致则 HOLD |
+| Flash 容量 | PASS：`128 KB` | PASS：`128 KB` | 与目标器件信息一致 |
+| 目标 Flash 只读访问 | PASS：`0x08000000` 起始 `1024 Bytes` 读取成功 | PASS：`0x08000000` 起始 `1024 Bytes` 读取成功 | 只读证据；不代表项目固件身份已验证 |
 | 30 s 枚举稳定性 | PASS：执行人确认无反复断连 | PASS：执行人确认无反复断连 | 无反复断连 |
 | 异味/异常发热 | PASS：执行人确认无异味、异常发热或火花 | PASS：执行人确认无异味、异常发热或火花 | 无异常 |
-| 单板结论 | **PASS** | **IN PROGRESS：Windows 枚举、稳定性与探针发现 PASS；目标只读连接待执行** | PASS / HOLD / FAIL |
+| 单板结论 | **PASS** | **PASS** | PASS / HOLD / FAIL |
 
 ## 9. Gate H1 判定
 
@@ -220,13 +241,13 @@ H1 只有在以下条件全部满足时才能 PASS：
 5. 未更改跳线、未接外设/12 V、未擦除或下载固件；
 6. 所有截图和读数均已归档，失败项没有被另一块板的成功结果覆盖。
 
-当前 Gate H1 结论：**IN PROGRESS**。`NUCLEO-01` 已完成全部单板 H1 项并判定 PASS；`NUCLEO-02` 已完成 H1-00、独立 USB 上电、Windows ST-LINK/VCP 枚举、30 s 稳定性和负向安全观察，以及 CubeProgrammer 探针发现，相关项目均为 PASS。`NUCLEO-02` 尚缺完整 ST-LINK 序列号、目标 MCU / Device ID、Flash 容量和目标 Flash 只读访问证据，因此 Gate H1 仍未关闭。
+当前 Gate H1 结论：**PASS**。`NUCLEO-01` 与 `NUCLEO-02` 均按独立顺序完成上电前核对、USB 上电、Windows ST-LINK/VCP 枚举、30 s 稳定性和负向安全观察、CubeProgrammer 探针发现、目标身份识别、`0x08000000` 起始 1024-Byte 只读访问和正常断开。两块板具有不同的完整 ST-LINK 序列号，失败项没有被另一块板的结果覆盖。
 
 H1 PASS 仍不自动授权 CAN、双节点、12 V、Fan、Heater、INA260、NTC 或故障注入。下一 Gate 的具体准入必须依据项目交接报告和冻结架构另行确认。
 
 ## 10. 第一现场动作
 
-保持 `NUCLEO-01` 移出操作区，`NUCLEO-02` 继续作为唯一连接的 NUCLEO，所有 12 V 和外设保持断开。在当前默认参数下点击一次 `Connect`；连接成功后只读取并截图 Target information、`0x08000000` 起始内存视图和下方日志。不得点击 Download、Erase、Option Bytes 写入或 Firmware upgrade；截图完成后点击 `Disconnect`。
+关闭 STM32CubeProgrammer，并从电脑侧拔除 `NUCLEO-02` 的 USB；两块 NUCLEO 暂时均保持断电、无外设。进入 H2 接外部信号前，先关闭 H0 带入的 D-02 身份证据缺口：补拍两块 NUCLEO 背面、两块 CAN Pal 背面及 CAN 收发器顶标。照片复核通过前，不连接 CAN Pal 或任何板间线。
 
 ## 11. 修订记录
 
@@ -242,3 +263,4 @@ H1 PASS 仍不自动授权 CAN、双节点、12 V、Fan、Heater、INA260、NTC 
 | v0.8 | 2026-09-29 | 归档 NUCLEO-02 上电前正面照，核对实体 ID、无外接线、接口与跳线可见状态 | 在不借用 NUCLEO-01 结果的前提下放行 NUCLEO-02 独立 USB 上电 | Codex 整理；现场执行人：用户 |
 | v0.9 | 2026-09-29 | 归档 NUCLEO-02 的 ST-Link Debug、VCP/COM8 枚举截图与 30 s 稳定性、安全观察声明 | 第二块板的 Windows USB 功能和稳定性已独立取证，可进入 CubeProgrammer 只读识别 | Codex 整理；现场执行人：用户 |
 | v0.10 | 2026-10-01 | 归档 NUCLEO-02 的 CubeProgrammer 探针面板；记录不同的序列号前缀、默认 SWD 参数、3.24 V 目标电压与 V2J46M32 固件版本 | 探针发现和目标供电读数通过，允许执行一次目标只读连接 | Codex 整理；现场执行人：用户 |
+| v0.11 | 2026-10-01 | 归档 NUCLEO-02 目标连接与正常断开证据；记录完整 SN、目标身份、128 KB Flash 和 1024-Byte 只读结果；完成双板核对及 Node A/B 受控映射；关闭 Gate H1 | 两块板均独立完成全部 H1 项，结果可追溯且无失败项 | Codex 整理；现场执行人：用户 |
