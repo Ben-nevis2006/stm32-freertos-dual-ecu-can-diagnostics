@@ -2,7 +2,7 @@
 
 ## 1. 本批证据目的
 
-本目录保存 `NUCLEO-01` 在 STM32CubeProgrammer 中完成 ST-LINK 探针发现、但尚未点击 `Connect` 时的只读界面截图。此前的上电前、Windows 枚举和 30 s 稳定性证据见 [2026-09-27 证据索引](../2026-09-27/README.md)。
+本目录保存 `NUCLEO-01` 的 STM32CubeProgrammer 只读识别闭环，以及 `NUCLEO-02` 的上电前检查、Windows 枚举和 30 s 稳定性证据。`NUCLEO-01` 此前的上电前与 Windows 枚举证据见 [2026-09-27 证据索引](../2026-09-27/README.md)。
 
 ## 2. 证据清单与 SHA-256
 
@@ -12,6 +12,9 @@
 | `H1_NUCLEO-01_cubeprogrammer-target-connected_20260929_01.png` | `codex-clipboard-5a0f4e84-e986-4779-9c62-60d752e3e66a.png` | 400446 | `95C209A83D78FB0A33637F88ADFD9B56337E7B0D6D45A1ED778A9E7DD8439D28` |
 | `H1_NUCLEO-01_cubeprogrammer-connection-log_20260929_01.png` | `codex-clipboard-65f53f73-e0bd-41ae-9276-948b0ab3b0ef.png` | 156846 | `24EE3EADB821EEE21FC1B055F75EFFC607D1452A0801CCA693618DC5F73AE137` |
 | `H1_tool_cubeprogrammer-about_20260929_01.png` | `codex-clipboard-0948fa2e-1d84-4648-8d95-d89f0023275e.png` | 19165 | `BB2EBE73866402E2CE0821D1BABA06920E35A059AF5CDFCBE9A8778327BA30B7` |
+| `H1_NUCLEO-02_front-before-usb_20260929_01.jpg` | `c1025fa18f5b7393f51ff705848dc534.jpg` | 189172 | `4C59717FF482BA03818305C3D3458E4C9D56A559540414B8C1AE4992932E3C16` |
+| `H1_NUCLEO-02_windows-stlink-debug_20260929_01.png` | `32ea56fe9e1e2755881014643ceeaaa4.png` | 7757 | `A2DD561C905BAD3D7B6B685EB072D2D208D9F6223DEB0DE323EF5A948BE6B072` |
+| `H1_NUCLEO-02_windows-vcp-COM8_20260929_01.png` | `bfc4950658de2cecbe3fd74df18c56b3.png` | 12917 | `A0A9DE57ADD2E30DD3A2AF30C4F68A2983A59C805D96457BBF84A61230A4BFAB` |
 
 原图按字节原样归档，仅规范化文件名；未裁剪、未修图、未覆盖原文件。
 
@@ -79,4 +82,31 @@ Device ID `0x410` 不能单独区分 STM32F101/F102/F103 的所有具体型号�
 
 `NUCLEO-01` 单板 H1 结论：**PASS**。范围仅限 USB 枚举、ST-LINK/VCP、30 s 稳定性、无异常状态、目标识别和只读访问。
 
-下一证据从 `NUCLEO-02` 的上电前正面照开始。必须先关闭 CubeProgrammer、拔除并移走 `NUCLEO-01`；不得复制 `NUCLEO-01` 的 COM 号、序列号或截图作为 `NUCLEO-02` 证据。
+`NUCLEO-02` 的上电前正面照、Windows ST-LINK/VCP 枚举与 30 s 稳定性证据已在本目录继续归档。不得复制 `NUCLEO-01` 的 COM 号、序列号或 CubeProgrammer 截图作为 `NUCLEO-02` 证据。
+
+## 8. NUCLEO-02 上电前预检
+
+| 检查项 | 判定 | 证据边界 |
+|---|---|---|
+| 实体身份 | PASS | 手写 ID `02` 与 `NUCLEO-F103RB / NUF103RBSAU1` 丝印可见 |
+| CN1 与排针隔离 | PASS（照片可见范围） | CN1 未连接，Arduino/Morpho 排针为空 |
+| 外观与跳线 | PASS（照片可见范围） | 未见明显机械损伤或相对 H0 的跳线变化 |
+| 线缆 | PASS（复用已验证线缆） | `USBCABLE-01` 的 USB-A、Mini-B 插头可见；数据能力已由 NUCLEO-01 的双功能枚举证明 |
+| NUCLEO-02 USB/ST-LINK/MCU 功能 | NOT EXECUTED | 上电前照片不能证明第二块板的任何电气功能 |
+
+`NUCLEO-02` 的 H1-00 判定为 **PASS**，可在一次只接一块板、无外设和无 12 V 的边界内进入独立 USB 上电。下一证据必须来自 `NUCLEO-02` 自身的通电照、Windows ST-LINK/VCP 枚举和 30 s 稳定性观察。
+
+## 9. NUCLEO-02 Windows 枚举与稳定性结果
+
+| 检查项 | 证据值 | 判定 |
+|---|---|---|
+| Windows 调试接口 | `ST-Link Debug` | PASS |
+| Windows 虚拟串口 | `STMicroelectronics STLink Virtual COM Port (COM8)` | PASS |
+| 30 s 枚举稳定性 | 执行人确认无 Windows 反复断连 | PASS |
+| 负向安全观察 | 执行人确认无异味、无异常发热、无火花 | PASS |
+| USB 数据通路 | ST-LINK 调试接口和 VCP 均由 `NUCLEO-02` 独立枚举 | PASS |
+| CubeProgrammer 探针与目标 | 尚无 `NUCLEO-02` 截图 | PENDING |
+
+`COM8` 与 `NUCLEO-01` 的 `COM7` 不同，可辅助区分两次 Windows 枚举，但 COM 号会随主机端口和驱动分配变化，不能代替完整 ST-LINK 序列号作为实体身份。当前证据证明 `NUCLEO-02` 的 Windows USB 枚举和 30 s 稳定性通过；不能据此推导目标 MCU、Device ID、Flash 容量、项目固件或任何 CAN/FreeRTOS/外设功能已经验证。
+
+下一步保持一次只接 `NUCLEO-02`、无 12 V、无外设，使用 CubeProgrammer 先刷新探针并记录完整 ST-LINK 身份、固件版本和目标电压，再执行一次只读目标连接。不得升级 ST-LINK、擦除、下载或写 Option Bytes。
