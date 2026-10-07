@@ -6,7 +6,7 @@
 
 Node A 与 Node B 的 H2 最小双向 CAN 测试固件均完成本地静默全量构建，退出码为 `0`，构建输出未出现警告或错误。2026-10-05 随后按 ST-LINK 序列号分别完成写入、校验与复位；但首次约 `15 s` 双串口运行预检**未通过 CAN 收发条件**：两端 MCU/RTOS/UART 均运行，两端 CAN 均仅成功排入最初 3 帧，此后硬件发送邮箱不释放且接收计数保持 0。正式 `60 s` 测试因此未启动。
 
-测试协议见 [`current/H2_CAN_Minimal_Test_Protocol_2026-10-05.md`](../../../../current/H2_CAN_Minimal_Test_Protocol_2026-10-05.md)。
+测试协议见 [H2 CAN Minimal Test Protocol / H2 CAN 最小测试协议](../../../../current/05_verification_gates_验证与门禁/H2_CAN_Minimal_Test_Protocol_H2_CAN最小测试协议_2026-10-05.md)。
 
 ## 源码与工具基线
 

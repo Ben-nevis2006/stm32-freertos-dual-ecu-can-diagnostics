@@ -92,7 +92,7 @@
 - 断线恢复最终窗口：`80 s`，A/B max TEC/REC 均 `6/0`，无 Warning/Passive/Bus-off 样本。
 - 两份最终日志 SHA-256：Node A `9B06682C…BB313`；Node B `5B908CAF…B493E`。
 
-完整原始日志和哈希见 [`evidence/software/H2/2026-10-07/README.md`](../evidence/software/H2/2026-10-07/README.md)。
+完整原始日志和哈希见 [`evidence/software/H2/2026-10-07/README.md`](../../evidence/software/H2/2026-10-07/README.md)。
 
 ## 7. 个人边界
 

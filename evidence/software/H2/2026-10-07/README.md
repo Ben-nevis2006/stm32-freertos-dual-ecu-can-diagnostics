@@ -84,4 +84,4 @@ Gate H2 的低压双节点 CAN 验收结论为 **PASS**。
 
 这些日志可以证明：固定帧与正式帧双向收发、AliveCounter 连续性、断开 H/L 的错误可观察性、以及恢复后的重复稳定窗口。
 
-这些日志不能证明：完整 `300 ms` 应用超时状态机、两次异常确认/三次有效恢复、12 V 功率链、负载、长时间耐久、EMC 或生产级可靠性。完整排障因果链见 [`Gate H2 CAN Bring-up 排障证据复盘`](../../../../current/H2_CAN_Bringup_Troubleshooting_Evidence_Recap_2026-10-07.md)。
+这些日志不能证明：完整 `300 ms` 应用超时状态机、两次异常确认/三次有效恢复、12 V 功率链、负载、长时间耐久、EMC 或生产级可靠性。完整排障因果链见 [`Gate H2 CAN Bring-up 排障证据复盘`](../../../../current/06_engineering_recaps_工程复盘/H2_CAN_Bringup_Troubleshooting_Evidence_Recap_H2_CAN联调排障证据复盘_2026-10-07.md)。

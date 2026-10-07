@@ -12,7 +12,7 @@
 | 处理方式 | 对原文件逐字节复制并规范重命名；未裁剪、未调色、未压缩、未覆盖原图 |
 | 完整性校验 | SHA-256；归档副本必须与本清单一致 |
 | 初始证据 | [2026-09-23 原始测量与总览证据](../2026-09-23/README.md) |
-| 关联记录 | [`../../../../current/Gate_H0_Hardware_Acceptance_Baseline_2026-09-22.md`](../../../../current/Gate_H0_Hardware_Acceptance_Baseline_2026-09-22.md) |
+| 关联记录 | [Gate H0 Hardware Acceptance Baseline / H0 硬件验收基线](../../../../current/05_verification_gates_验证与门禁/Gate_H0_Hardware_Acceptance_Baseline_H0硬件验收基线_2026-09-22.md) |
 | 当前结论 | D-01、D-03 已在 H0 筛查范围关闭；D-02、D-04 带入后续 Gate；Gate H0 为 CONDITIONAL PASS，允许受限 H1 |
 
 ## 2. 补充照片索引

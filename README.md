@@ -2,6 +2,17 @@
 
 本仓库记录双 NUCLEO-F103RB + TJA1051T/3 CAN Pal 的分阶段硬件验收、低压 CAN bring-up、固件实现和可复核证据。项目采用 Gate 制：每个阶段先定义安全边界和通过条件，再保留原始证据、失败路径与关闭结论。
 
+## 仓库目录地图
+
+| 目录 | 中文含义 | 内容边界 |
+|---|---|---|
+| [`current/`](current/README.md) | 当前有效文档 | 只放仍有效的设计、基线、协议、Gate 记录和工程复盘，并按六个板块分类 |
+| [`archive/`](archive/README.md) | 历史版本归档 | 保存已被替代的旧版本，仅用于追溯，不作为当前执行依据 |
+| [`evidence/`](evidence/) | 原始证据 | 保存照片、枚举记录、UART 日志、哈希与按日期组织的现场证据 |
+| [`firmware/`](firmware/) | 固件源码 | 保存 Node A、Node B 的可构建 STM32CubeIDE 工程 |
+
+`current/` 内采用 `序号_English_中文` 分类目录和 `English_中文_[版本]_[状态]_[日期]` 文件名；根级技术目录保留稳定英文路径，中文释义由本表和各级索引提供，避免破坏工程脚本与历史引用。
+
 ## 当前状态
 
 | Gate | 状态 | 结果 |
@@ -27,9 +38,9 @@ H2 仅覆盖 USB/3.3 V 低压双节点链路。`12 V`、Fan、Heater、INA260、
 ## 关键入口
 
 - [当前阶段文档索引](current/README.md)
-- [Gate H2 执行记录](current/Gate_H2_CAN_Physical_Layer_Execution_Record_2026-10-02.md)
-- [H2 测试协议与验收结果](current/H2_CAN_Minimal_Test_Protocol_2026-10-05.md)
-- [H2 排障证据复盘](current/H2_CAN_Bringup_Troubleshooting_Evidence_Recap_2026-10-07.md)
+- [Gate H2 执行记录](current/05_verification_gates_验证与门禁/Gate_H2_CAN_Physical_Layer_Execution_Record_H2_CAN物理层执行记录_2026-10-02.md)
+- [H2 测试协议与验收结果](current/05_verification_gates_验证与门禁/H2_CAN_Minimal_Test_Protocol_H2_CAN最小测试协议_2026-10-05.md)
+- [H2 排障证据复盘](current/06_engineering_recaps_工程复盘/H2_CAN_Bringup_Troubleshooting_Evidence_Recap_H2_CAN联调排障证据复盘_2026-10-07.md)
 - [H2 2026-10-07 原始运行日志与 SHA-256](evidence/software/H2/2026-10-07/README.md)
 - [Node A 固件工程](firmware/node_a)
 - [Node B 固件工程](firmware/node_b)

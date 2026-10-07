@@ -94,7 +94,7 @@ H2,B,BOOT,profile=formal_baseline,bitrate=500000,tx_id=0x100,tx_dlc=2,rx_id=0x18
 | 接线复核后恢复预检（30 s） | `197/198`；四项错误为 0 | `190/189`；四项错误为 0 | PASS |
 | 最终恢复（80 s） | `687/688`；max TEC/REC=`6/0`；末态 ESR=0 | `690/689`；max TEC/REC=`6/0`；末态 ESR=0 | **PASS** |
 
-原始日志、逐文件 SHA-256 和失败/恢复过程见 [`2026-10-07 软件证据索引`](../evidence/software/H2/2026-10-07/README.md)。
+原始日志、逐文件 SHA-256 和失败/恢复过程见 [`2026-10-07 软件证据索引`](../../evidence/software/H2/2026-10-07/README.md)。
 
 ## 8. 结论边界
 

@@ -23,15 +23,15 @@
 
 当前实现继续服从以下文档，优先级从上到下排列：
 
-1. [System Architecture Definition v0.1](System_Architecture_Definition_v0.1_Synced_2026-09-02.docx)
-2. [Fault List v0.1](Fault_List_v0.1_Synced_2026-09-02.docx)
-3. [CAN Matrix v0.1](CAN_Matrix_v0.1_Synced_2026-09-02.xlsx)
-4. [FreeRTOS Task Architecture v0.1](FreeRTOS_Task_Architecture_v0.1_Synced_2026-09-02.docx)
-5. [Hardware Selection v0.1](Hardware_Selection_v0.1_Working_Baseline_2026-09-08.docx)
-6. [Architecture Synchronization Record](Architecture_Synchronization_Record_2026-09-03.docx)
-7. [Peripheral Pin Clock Interrupt Allocation](Peripheral_Pin_Clock_Interrupt_Allocation_v0.1_Working_Draft_2026-09-13.md)
+1. [System Architecture Definition / 系统架构定义 v0.1](../02_architecture_系统架构/System_Architecture_Definition_系统架构定义_v0.1_Synced_已同步_2026-09-02.docx)
+2. [Fault List / 故障清单 v0.1](../02_architecture_系统架构/Fault_List_故障清单_v0.1_Synced_已同步_2026-09-02.docx)
+3. [CAN Matrix / CAN 矩阵 v0.1](../04_can_communication_CAN通信设计/CAN_Matrix_CAN矩阵_v0.1_Synced_已同步_2026-09-02.xlsx)
+4. [FreeRTOS Task Architecture / FreeRTOS 任务架构 v0.1](../02_architecture_系统架构/FreeRTOS_Task_Architecture_FreeRTOS任务架构_v0.1_Synced_已同步_2026-09-02.docx)
+5. [Hardware Selection / 硬件选型 v0.1](Hardware_Selection_硬件选型_v0.1_Working_Baseline_工作基线_2026-09-08.docx)
+6. [Architecture Synchronization Record / 架构同步记录](../01_governance_项目治理/Architecture_Synchronization_Record_架构同步记录_2026-09-03.docx)
+7. [Peripheral, Pin, Clock & Interrupt Allocation / 外设、引脚、时钟与中断分配](Peripheral_Pin_Clock_Interrupt_Allocation_外设引脚时钟中断分配_v0.1_Working_Draft_工作草案_2026-09-13.md)
 
-旧版 `project charter.docx` 只保留立项背景作用。其中独立 Heartbeat、多条 10 ms 周期报文、每个功能单独建立 Task 等早期构想，已被上述同步文档替代。
+旧版 [`Project Charter / 项目章程（历史）`](../../archive/project%20charter.docx) 只保留立项背景作用。其中独立 Heartbeat、多条 10 ms 周期报文、每个功能单独建立 Task 等早期构想，已被上述同步文档替代。
 
 项目内容已经冻结。降低对示波器、CAN 分析仪、电子负载和可调电源的依赖，不等于删减 Fault List、Fallback、Recovery、Mode 或多故障依赖关系。后续如需修改 CAN ID、DLC、Signal semantics、Fault scope、Task architecture 或监督边界，必须单独记录理由和影响，不能在 Bring-up 中临时改写基线。
 
@@ -405,8 +405,7 @@ STM32F103RB 资源基准为 128 KiB Flash 和 20 KiB SRAM。Flash 按 `text + da
 
 ## 18. 参考记录
 
-- [开发环境搭建与最小编译验证记录](Development_Environment_Verification_Record_2026-09-12.md)
-- [双节点外设基线配置与编译验证记录](Dual_Node_Peripheral_Baseline_Verification_Record_2026-09-16.md)
-- [双 ECU 外设资源与低仪器依赖验证草案](Peripheral_Pin_Clock_Interrupt_Allocation_v0.1_Working_Draft_2026-09-13.md)
-- [CAN Matrix v0.1 Design Decision Record](CAN_Matrix_v0.1_Design_Decision_Record_Synced_2026-09-02.docx)
-
+- [开发环境搭建与最小编译验证记录](../05_verification_gates_验证与门禁/Development_Environment_Verification_Record_开发环境验证记录_2026-09-12.md)
+- [双节点外设基线配置与编译验证记录](Dual_Node_Peripheral_Baseline_Verification_Record_双节点外设基线验证记录_2026-09-16.md)
+- [双 ECU 外设资源与低仪器依赖验证草案](Peripheral_Pin_Clock_Interrupt_Allocation_外设引脚时钟中断分配_v0.1_Working_Draft_工作草案_2026-09-13.md)
+- [CAN Matrix Design Decision Record / CAN 矩阵设计决策记录 v0.1](../04_can_communication_CAN通信设计/CAN_Matrix_Design_Decision_Record_CAN矩阵设计决策记录_v0.1_Synced_已同步_2026-09-02.docx)

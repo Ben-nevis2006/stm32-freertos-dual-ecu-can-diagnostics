@@ -13,7 +13,7 @@
 | Gate H0 开始时 Git HEAD | `9a73210` |
 | 软件/IPC 功能基线 | `4377c5e feat: add dual-node FreeRTOS IPC baseline` |
 | 输出 | Gate H0 验收记录、照片索引、测量记录、偏差清单和 H1 准入结论 |
-| 证据归档 | [2026-09-23 初始证据](../evidence/hardware/H0/2026-09-23/README.md)；[2026-09-24 补充证据](../evidence/hardware/H0/2026-09-24/README.md)；[2026-10-01 D-02 背面补充证据](../evidence/hardware/H0/2026-10-01/README.md)；[2026-10-02 CAN 收发器顶标补拍与关闭证据](../evidence/hardware/H0/2026-10-02/README.md) |
+| 证据归档 | [2026-09-23 初始证据](../../evidence/hardware/H0/2026-09-23/README.md)；[2026-09-24 补充证据](../../evidence/hardware/H0/2026-09-24/README.md)；[2026-10-01 D-02 背面补充证据](../../evidence/hardware/H0/2026-10-01/README.md)；[2026-10-02 CAN 收发器顶标补拍与关闭证据](../../evidence/hardware/H0/2026-10-02/README.md) |
 
 本文件是硬件到货验收的执行基准，不取代或修改冻结的 System Architecture Definition、Fault List、CAN Matrix 和 FreeRTOS Task Architecture。若本文件与上游冻结文档冲突，以上游冻结文档和后续正式变更记录为准。
 
@@ -21,13 +21,13 @@
 
 本文件由以下受控输入派生，优先级从上到下排列：
 
-1. `System_Architecture_Definition_v0.1_Synced_2026-09-02.docx`
-2. `Fault_List_v0.1_Synced_2026-09-02.docx`
-3. `CAN_Matrix_v0.1_Synced_2026-09-02.xlsx`
-4. `FreeRTOS_Task_Architecture_v0.1_Synced_2026-09-02.docx`
-5. `Hardware_Selection_v0.1_Working_Baseline_2026-09-08.docx`
-6. `Peripheral_Pin_Clock_Interrupt_Allocation_v0.1_Working_Draft_2026-09-13.md`
-7. `Hardware_Arrival_Transition_Report_2026-09-17.md`
+1. `System_Architecture_Definition_系统架构定义_v0.1_Synced_已同步_2026-09-02.docx`
+2. `Fault_List_故障清单_v0.1_Synced_已同步_2026-09-02.docx`
+3. `CAN_Matrix_CAN矩阵_v0.1_Synced_已同步_2026-09-02.xlsx`
+4. `FreeRTOS_Task_Architecture_FreeRTOS任务架构_v0.1_Synced_已同步_2026-09-02.docx`
+5. `Hardware_Selection_硬件选型_v0.1_Working_Baseline_工作基线_2026-09-08.docx`
+6. `Peripheral_Pin_Clock_Interrupt_Allocation_外设引脚时钟中断分配_v0.1_Working_Draft_工作草案_2026-09-13.md`
+7. `Hardware_Arrival_Transition_Report_硬件到货交接报告_2026-09-17.md`
 
 ### 2.1 不允许在 Gate H0 修改的内容
 
@@ -516,7 +516,7 @@ Gate H0 PASS 或 CONDITIONAL PASS 只授权进入 H1 的最小动作：
 |---|---|
 | 执行日期 | 2026-09-23；补证与关闭评审 2026-09-24 |
 | 执行人 | 项目执行人；姓名/签名待补 |
-| 总览照片 | [`H0_ALL_overview_20260923_01.jpg`](../evidence/hardware/H0/2026-09-23/H0_ALL_overview_20260923_01.jpg) |
+| 总览照片 | [`H0_ALL_overview_20260923_01.jpg`](../../evidence/hardware/H0/2026-09-23/H0_ALL_overview_20260923_01.jpg) |
 | PASS 项数量 | 6 个测量项：M-01～M-06；其中 M-02、M-04 仅为 H0 到货筛查通过 |
 | HOLD 项数量 | 1 个测量项：M-07；另有整体证据偏差 D-02 |
 | FAIL 项数量 | 0；注意 CONDITIONAL PASS 不等于后续功能已经验证 |
@@ -528,10 +528,10 @@ Gate H0 PASS 或 CONDITIONAL PASS 只授权进入 H1 的最小动作：
 
 ### 13.2 证据归档
 
-- 原始照片按字节复制、规范重命名并集中归档于 [`../evidence/hardware/H0/2026-09-23/`](../evidence/hardware/H0/2026-09-23/README.md)；
-- 2026-09-24 收到的 8 张身份、铭牌和关闭补充原图归档于 [`../evidence/hardware/H0/2026-09-24/`](../evidence/hardware/H0/2026-09-24/README.md)；
-- 2026-10-01 收到的两块 NUCLEO 与两块 CAN Pal 背面原图归档于 [`../evidence/hardware/H0/2026-10-01/`](../evidence/hardware/H0/2026-10-01/README.md)；
-- 2026-10-02 收到的两轮共四张 CAN Pal 芯片顶标补拍原图归档于 [`../evidence/hardware/H0/2026-10-02/`](../evidence/hardware/H0/2026-10-02/README.md)；首轮两张保留为未读清尝试，第二轮两张作为顶标关闭证据；
+- 原始照片按字节复制、规范重命名并集中归档于 [`../../evidence/hardware/H0/2026-09-23/`](../../evidence/hardware/H0/2026-09-23/README.md)；
+- 2026-09-24 收到的 8 张身份、铭牌和关闭补充原图归档于 [`../../evidence/hardware/H0/2026-09-24/`](../../evidence/hardware/H0/2026-09-24/README.md)；
+- 2026-10-01 收到的两块 NUCLEO 与两块 CAN Pal 背面原图归档于 [`../../evidence/hardware/H0/2026-10-01/`](../../evidence/hardware/H0/2026-10-01/README.md)；
+- 2026-10-02 收到的两轮共四张 CAN Pal 芯片顶标补拍原图归档于 [`../../evidence/hardware/H0/2026-10-02/`](../../evidence/hardware/H0/2026-10-02/README.md)；首轮两张保留为未读清尝试，第二轮两张作为顶标关闭证据；
 - 归档清单记录原文件名、规范文件名、可见读数、证据边界、文件大小和 SHA-256；
 - 当前共归档 25 张用户提交的 H0 原图；没有把分析用放大/裁剪图作为原始证据，也没有修改照片内容；
 - 图片文件与记录文件进入 Git 工作区，随本次 H0 关闭记录提交。

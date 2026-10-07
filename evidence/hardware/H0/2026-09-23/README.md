@@ -12,7 +12,7 @@
 | 来源 | 项目执行人通过当前任务提交的现场照片 |
 | 处理方式 | 对原文件进行逐字节复制，仅按 H0 命名规则重命名；未裁剪、未调色、未压缩、未覆盖原图 |
 | 完整性校验 | SHA-256；归档后应与本清单逐项一致 |
-| 关联记录 | [`../../../../current/Gate_H0_Hardware_Acceptance_Baseline_2026-09-22.md`](../../../../current/Gate_H0_Hardware_Acceptance_Baseline_2026-09-22.md) |
+| 关联记录 | [Gate H0 Hardware Acceptance Baseline / H0 硬件验收基线](../../../../current/05_verification_gates_验证与门禁/Gate_H0_Hardware_Acceptance_Baseline_H0硬件验收基线_2026-09-22.md) |
 | 后续补充 | [2026-09-24 身份/铭牌补充证据](../2026-09-24/README.md) |
 | 当前结论 | H0 现场检查和测量已执行；Gate 维持 HOLD，D-01～D-04 未关闭 |
 

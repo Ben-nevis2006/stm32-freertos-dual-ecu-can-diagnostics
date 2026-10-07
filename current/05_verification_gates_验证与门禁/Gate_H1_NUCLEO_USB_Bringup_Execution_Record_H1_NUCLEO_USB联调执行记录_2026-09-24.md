@@ -9,14 +9,14 @@
 | 版本 | v0.11 |
 | 日期 | 2026-10-01 |
 | 状态 | **PASS；两块 NUCLEO 均完成独立 USB 枚举、稳定性、ST-LINK/VCP、目标识别、Flash 只读访问与正常断开** |
-| 准入依据 | [Gate H0 v1.3：CONDITIONAL PASS](Gate_H0_Hardware_Acceptance_Baseline_2026-09-22.md) |
+| 准入依据 | [Gate H0 v1.3：CONDITIONAL PASS](Gate_H0_Hardware_Acceptance_Baseline_H0硬件验收基线_2026-09-22.md) |
 | 软件/IPC 功能基线 | `4377c5e feat: add dual-node FreeRTOS IPC baseline` |
 | H1 现场执行开始前 Git HEAD | `646bb6c`；现场记录不改变固件内容 |
 | 允许对象 | `NUCLEO-01`、`NUCLEO-02`，每次仅一块 |
 | 输出 | 每块板的照片、Windows 枚举、ST-LINK/VCP、CubeProgrammer 只读识别记录和 H1 结论 |
-| 首批现场证据 | [2026-09-27：NUCLEO-01 上电前与线缆接口确认原图](../evidence/hardware/H1/2026-09-27/README.md) |
-| 探针发现证据 | [2026-09-29：CubeProgrammer ST-LINK 探针面板](../evidence/hardware/H1/2026-09-29/README.md) |
-| NUCLEO-02 探针证据 | [2026-10-01：NUCLEO-02 CubeProgrammer 探针面板](../evidence/hardware/H1/2026-10-01/README.md) |
+| 首批现场证据 | [2026-09-27：NUCLEO-01 上电前与线缆接口确认原图](../../evidence/hardware/H1/2026-09-27/README.md) |
+| 探针发现证据 | [2026-09-29：CubeProgrammer ST-LINK 探针面板](../../evidence/hardware/H1/2026-09-29/README.md) |
+| NUCLEO-02 探针证据 | [2026-10-01：NUCLEO-02 CubeProgrammer 探针面板](../../evidence/hardware/H1/2026-10-01/README.md) |
 
 本记录启动 H1，但不把“文档已创建”误写成“硬件已验证”。只有两块板分别完成本文件的步骤并留下证据后，H1 才能关闭。
 
@@ -82,7 +82,7 @@ H1_NUCLEO-02_windows-enumeration_YYYYMMDD_01.png
 H1_NUCLEO-02_cubeprogrammer-target_YYYYMMDD_01.png
 ```
 
-首批实物照片、通电照及 Windows 枚举截图已归档至 [evidence/hardware/H1/2026-09-27](../evidence/hardware/H1/2026-09-27/README.md)。其中第一张照片的线缆设备端拍摄角度存在歧义，第二张补拍照片已明确其为 USB Mini-B；两张均保留以形成可审计的判断更正链路。
+首批实物照片、通电照及 Windows 枚举截图已归档至 [evidence/hardware/H1/2026-09-27](../../evidence/hardware/H1/2026-09-27/README.md)。其中第一张照片的线缆设备端拍摄角度存在歧义，第二张补拍照片已明确其为 USB Mini-B；两张均保留以形成可审计的判断更正链路。
 
 截图必须能辨认板 ID 对应关系。最稳妥的方法是：每块板开始前先拍带手写 ID 的正面照，并在截图记录表中写明执行时间；不要同时把两块板插在电脑上。
 

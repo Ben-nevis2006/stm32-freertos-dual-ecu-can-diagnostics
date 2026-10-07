@@ -27,14 +27,14 @@
 
 ## 3. 设计输入优先级
 
-1. `System_Architecture_Definition_v0.1_Synced_2026-09-02.docx`；
-2. `Fault_List_v0.1_Synced_2026-09-02.docx`；
-3. `CAN_Matrix_v0.1_Synced_2026-09-02.docx/.xlsx`；
-4. `FreeRTOS_Task_Architecture_v0.1_Synced_2026-09-02.docx`；
-5. `Hardware_Selection_v0.1_Working_Baseline_2026-09-08.docx`；
-6. `Architecture_Synchronization_Record_2026-09-03.docx`。
+1. `System_Architecture_Definition_系统架构定义_v0.1_Synced_已同步_2026-09-02.docx`；
+2. `Fault_List_故障清单_v0.1_Synced_已同步_2026-09-02.docx`；
+3. `CAN_Matrix_CAN矩阵_v0.1_Synced_已同步_2026-09-02.docx/.xlsx`；
+4. `FreeRTOS_Task_Architecture_FreeRTOS任务架构_v0.1_Synced_已同步_2026-09-02.docx`；
+5. `Hardware_Selection_硬件选型_v0.1_Working_Baseline_工作基线_2026-09-08.docx`；
+6. `Architecture_Synchronization_Record_架构同步记录_2026-09-03.docx`。
 
-旧版 `project charter.docx` 只用于说明立项目的。它包含的独立 Heartbeat、多条 10 ms 周期报文以及每个功能单独建 Task 等早期设想，已被上述同步文档替代。
+旧版 [`Project Charter / 项目章程（历史）`](../../archive/project%20charter.docx) 只用于说明立项目的。它包含的独立 Heartbeat、多条 10 ms 周期报文以及每个功能单独建 Task 等早期设想，已被上述同步文档替代。
 
 ## 4. 两节点公共配置
 
@@ -258,10 +258,10 @@ D:\STM32\stm32-dual-ecu-can\
 
 ## 13. 参考资料
 
-- 当前 `Fault_List_v0.1_Synced_2026-09-02.docx`
-- 当前 `System_Architecture_Definition_v0.1_Synced_2026-09-02.docx`
-- 当前 `CAN_Matrix_v0.1_Synced_2026-09-02.docx/.xlsx`
-- 当前 `FreeRTOS_Task_Architecture_v0.1_Synced_2026-09-02.docx`
+- 当前 `Fault_List_故障清单_v0.1_Synced_已同步_2026-09-02.docx`
+- 当前 `System_Architecture_Definition_系统架构定义_v0.1_Synced_已同步_2026-09-02.docx`
+- 当前 `CAN_Matrix_CAN矩阵_v0.1_Synced_已同步_2026-09-02.docx/.xlsx`
+- 当前 `FreeRTOS_Task_Architecture_FreeRTOS任务架构_v0.1_Synced_已同步_2026-09-02.docx`
 - STMicroelectronics, [STM32 Nucleo-64 boards User Manual UM1724](https://www.st.com/resource/en/user_manual/um1724-stm32-nucleo64-boards-mb1136-stmicroelectronics.pdf)
 - STMicroelectronics, [STM32F103x8/xB Datasheet](https://www.st.com/resource/en/datasheet/stm32f103rb.pdf)
 - STMicroelectronics, [STM32F1 Reference Manual RM0008](https://www.st.com/resource/en/reference_manual/CD00171190-.pdf)
