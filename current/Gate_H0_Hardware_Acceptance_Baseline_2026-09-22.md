@@ -6,14 +6,14 @@
 |---|---|
 | 项目 | 基于 STM32 + FreeRTOS 的双 ECU CAN 实时通信与故障检测系统 |
 | 文档用途 | 规定 Gate H0 的执行顺序、证据要求、判定规则和安全边界 |
-| 版本 | v1.5 |
+| 版本 | v1.6 |
 | 日期 | 2026-10-02 |
 | 状态 | 已结束；**CONDITIONAL PASS**（D-02、D-04 带入后续 Gate） |
-| 当前适用阶段 | Gate H1 已 PASS；正在关闭 H2 接线前适用的 D-02 身份证据子项 |
+| 当前适用阶段 | Gate H1 已 PASS；D-02 的 CAN/H2 身份证据子项已关闭，可进入 H2 受控无源接线检查 |
 | Gate H0 开始时 Git HEAD | `9a73210` |
 | 软件/IPC 功能基线 | `4377c5e feat: add dual-node FreeRTOS IPC baseline` |
 | 输出 | Gate H0 验收记录、照片索引、测量记录、偏差清单和 H1 准入结论 |
-| 证据归档 | [2026-09-23 初始证据](../evidence/hardware/H0/2026-09-23/README.md)；[2026-09-24 补充证据](../evidence/hardware/H0/2026-09-24/README.md)；[2026-10-01 D-02 背面补充证据](../evidence/hardware/H0/2026-10-01/README.md)；[2026-10-02 CAN 收发器顶标补拍尝试](../evidence/hardware/H0/2026-10-02/README.md) |
+| 证据归档 | [2026-09-23 初始证据](../evidence/hardware/H0/2026-09-23/README.md)；[2026-09-24 补充证据](../evidence/hardware/H0/2026-09-24/README.md)；[2026-10-01 D-02 背面补充证据](../evidence/hardware/H0/2026-10-01/README.md)；[2026-10-02 CAN 收发器顶标补拍与关闭证据](../evidence/hardware/H0/2026-10-02/README.md) |
 
 本文件是硬件到货验收的执行基准，不取代或修改冻结的 System Architecture Definition、Fault List、CAN Matrix 和 FreeRTOS Task Architecture。若本文件与上游冻结文档冲突，以上游冻结文档和后续正式变更记录为准。
 
@@ -179,7 +179,7 @@ Gate H0 不验证：
 | BOM ID | 设备或材料 | 基线期望 | 实物 ID | 实收数量 | 状态 |
 |---|---|---|---|---:|---|
 | HS-01 | MCU 开发板 | NUCLEO-F103RB ×2 | NUCLEO-01、NUCLEO-02 | 2 | PASS（正反面身份、独立 ST-LINK SN 和 H1 单板结果均已归档） |
-| HS-02 | CAN 物理层模块 | Adafruit CAN Pal 5708 / TJA1051T/3 ×2 | CANPAL-01、CANPAL-02 | 2 | HOLD（两块正反面、针脚和终端证据已补；实体收发器芯片顶标仍待补） |
+| HS-02 | CAN 物理层模块 | Adafruit CAN Pal 5708 / TJA1051T/3 ×2 | CANPAL-01、CANPAL-02 | 2 | PASS（两块正反面、针脚、终端及实体收发器主顶标均已独立归档；不代表 CAN 功能已验证） |
 | HS-03 | 风扇 | ARCTIC P8 PWM PST non-CO，12 V，4-wire ×1 | FAN-01 | 1 | HOLD（完整标签和插头近照待补） |
 | HS-04 | 温度采集 | 10 kΩ B3950 NTC + 10 kΩ ±1% 分压电阻 | NTC-01、R10K-01 | 各 1 件被测样品 | PASS（H0 标称/筛查；R10K-01 复测显示 9.911 kΩ，D-01 已关闭） |
 | HS-05/06 | 电流和电压采集 | INA260 breakout ×1 | INA260-01 | 1 | HOLD（正面身份/针脚/地址焊盘照已补；背面待补） |
@@ -241,8 +241,8 @@ STOP 条件：无法确认适配器是否断电、桌面潮湿、存在裸露带
 |---|---|---|---|---|---|---|---|---|
 | NUCLEO-01 | HS-01 | `NUCLEO-F103RB`，实体手写 ID `01` | `MB1136 rev C`；背面标签 `MB1136-F103RB-C05` | 出厂跳线与背面焊桥状态均已留痕 | 正反面照片可见范围内未见明显损伤 | `H0_NUCLEO-01_front_20260924_01.jpg`、`H0_NUCLEO-01_back_20261001_01.jpg` | PASS | 完整 ST-LINK SN 和 H1 结果另见 Gate H1；背面标签 `A250300248` 不作为个体唯一身份 |
 | NUCLEO-02 | HS-01 | `NUCLEO-F103RB`，实体手写 ID `02` | `MB1136 rev C`；背面标签 `MB1136-F103RB-C05` | 出厂跳线与背面焊桥状态均已留痕 | 正反面照片可见范围内未见明显损伤 | `H0_NUCLEO-02_front_20260924_01.jpg`、`H0_NUCLEO-02_back_20261001_01.jpg` | PASS | 与 NUCLEO-01 独立留痕；完整 ST-LINK SN 和 H1 结果另见 Gate H1 |
-| CANPAL-01 | HS-02 | CAN Pal 类模块，端子手写 ID `01`；背面丝印 `CAN Bus Transceiver / TJA1051T/3` | PCB 背面声明 `3-5V Vin/logic w/5V boost`、`Optional 120Ω termination`；实体收发器顶标仍不可可靠辨读 | `Vcc/GND/RX/TX/SLNT/CANH/CANL` 与 termination 开关正面可见；实测 120.26 Ω | 正反面照片可见范围内未见明显损伤 | `H0_CANPAL-01_front_20260924_01.jpg`、`H0_CANPAL-01_back_20261001_01.jpg`、M-05 | HOLD | 背面模块规格证据已补；接 NUCLEO 前仍需正面 SOIC-8 收发器顶标近照 |
-| CANPAL-02 | HS-02 | CAN Pal 类模块，端子手写 ID `02`；背面丝印 `CAN Bus Transceiver / TJA1051T/3` | PCB 背面声明 `3-5V Vin/logic w/5V boost`、`Optional 120Ω termination`；实体收发器顶标仍不可可靠辨读 | `Vcc/GND/RX/TX/SLNT/CANH/CANL` 与 termination 开关正面可见；实测 120.52 Ω | 正反面照片可见范围内未见明显损伤 | `H0_CANPAL-02_front_20260924_01.jpg`、`H0_CANPAL-02_back_20261001_01.jpg`、M-06 | HOLD | 与 CANPAL-01 独立留痕；接 NUCLEO 前仍需正面 SOIC-8 收发器顶标近照 |
+| CANPAL-01 | HS-02 | CAN Pal 类模块，端子手写 ID `01`；背面丝印 `CAN Bus Transceiver / TJA1051T/3` | PCB 背面声明 `3-5V Vin/logic w/5V boost`、`Optional 120Ω termination`；实体 SOIC-8 可辨 NXP 标志及主标 `A1051/3` | `Vcc/GND/RX/TX/SLNT/CANH/CANL` 与 termination 开关正面可见；实测 120.26 Ω | 正反面与顶标照片可见范围内未见明显损伤 | `H0_CANPAL-01_front_20260924_01.jpg`、`H0_CANPAL-01_back_20261001_01.jpg`、`H0_CANPAL-01_chip-top-readable_20261002_01.jpg`、M-05 | PASS（身份/无源配置） | 与 CANPAL-02 独立留痕；允许进入 H2 受控断电接线，不代表通信功能已通过 |
+| CANPAL-02 | HS-02 | CAN Pal 类模块，端子手写 ID `02`；背面丝印 `CAN Bus Transceiver / TJA1051T/3` | PCB 背面声明 `3-5V Vin/logic w/5V boost`、`Optional 120Ω termination`；实体 SOIC-8 可辨 NXP 标志及主标 `A1051/3` | `Vcc/GND/RX/TX/SLNT/CANH/CANL` 与 termination 开关正面可见；实测 120.52 Ω | 正反面与顶标照片可见范围内未见明显损伤 | `H0_CANPAL-02_front_20260924_01.jpg`、`H0_CANPAL-02_back_20261001_01.jpg`、`H0_CANPAL-02_chip-top-readable_20261002_01.jpg`、M-06 | PASS（身份/无源配置） | 与 CANPAL-01 独立留痕；允许进入 H2 受控断电接线，不代表通信功能已通过 |
 | FAN-01 | HS-03 | ARCTIC P8 PWM PST non-CO（执行人现场确认） | 标签额定值待照片复核 | 4-wire / PST 接口细节待补拍 | 执行人报告无明显损伤 | `H0_ALL_overview_20260923_01.jpg` | HOLD | H0 未通电、未剪线 |
 | INA260-01 | HS-05/06 | `INA260 Power Sensor` 正面丝印可见，实体手写 ID `01` | INA260 主芯片位置可见；顶部字符不足以逐字复核 | `Vcc/GND/SCL/SDA/Alert/VBUS/Vin+/Vin-` 与 A0/A1 焊盘可见 | 正面未见明显损伤 | `H0_INA260-01_front_20260924_01.jpg` | HOLD | 正面身份/针脚已补；背面待补，H0 未接 12 V、I2C 或 ALERT |
 | NTC-01 / R10K-01 / R4K7-01 | HS-04 / AUX-01 | 10 kΩ NTC、10 kΩ、4.7 kΩ | 封装/色环细节未单独归档 | 独立无源测量 | 执行人报告无明显损伤 | 对应 M-01～M-03 测量照片 | PASS（H0 标称/筛查） | NTC 与 R4K7 支持标称核对；R10K-01 复测 9.911 kΩ，D-01 已关闭 |
@@ -411,7 +411,7 @@ STOP 条件：被测对象仍与电源或其他模块连接、表笔位于电流
 | 偏差 ID | 实物 ID | 类型 | 现象 | 证据 | 风险 | 当前处置 | 关闭条件 | 状态 |
 |---|---|---|---|---|---|---|---|---|
 | D-01 | R10K-01 | 初测不稳定/结果无效 | 初测 9.730 kΩ 为 Live Photo 跳变过程单帧；2026-09-24 在 20 kΩ 档补测显示 9.911 kΩ | 初测 `H0_R10K-01_measurement_9K730_20260923_01.jpg`；关闭证据 `H0_R10K-01_remeasurement_9K911_20260924_01.jpg` | 初测单帧不可用于判定；补测值靠近 ±1% 下限，未校准仪表不能形成精密容差认证 | 撤回初测超差推断；接受 9.911 kΩ 作为 H0 到货筛查值，不把它外推为计量合格证 | 补测读数落在 9.900～10.100 kΩ 名义带内；H0 按筛查用途接受。NTC 分压实际搭建时仍须检查 ADC 合理性 | **CLOSED 2026-09-24（H0 筛查范围）** |
-| D-02 | 全部关键硬件 | 证据不足/可追溯性 | 2026-10-01 已补两块 NUCLEO 和两块 CAN Pal 背面原图；NUCLEO 子项已满足，CAN Pal 背面模块规格已明确。2026-10-02 已补两张 CAN Pal 正面近照，板号对应关系可见，但两块中央 SOIC-8 芯片顶标均因低对比度/失焦无法逐字复核。仍缺两块 CAN 收发器实体芯片清晰顶标、INA260 背面、FAN 标签/接口、Heater 铭牌、Heatsink 尺寸及部分辅材明细 | 2026-09-23 总览/测量照、2026-09-24 补充原图、2026-10-01 四张背面原图及 2026-10-02 两张顶标补拍尝试原图 | CAN/H2 子范围仍需用实体芯片顶标排除 PCB 丝印与实际装片不一致；其余未补部分分别阻止对应 H3/功率 Gate 接入 | NUCLEO 背面子项关闭；CAN Pal 背面子项关闭；2026-10-02 补拍尝试不作为型号证据；继续禁止 CAN Pal 接 NUCLEO，直至两块正面 SOIC-8 收发器顶标可辨 | 断电、平放并以斜侧光重新补拍；镜头对准绿色端子下方、终端开关左侧的中央 SOIC-8 芯片，字符与板号须可复核。派生裁图或生成式增强只能辅助查看，不能替代原始近照 | **OPEN（NUCLEO 背面与 CAN Pal 背面子项 2026-10-01 CLOSED；顶标补拍 2026-10-02 INSUFFICIENT）** |
+| D-02 | 全部关键硬件 | 证据不足/可追溯性 | 2026-10-01 已补两块 NUCLEO 和两块 CAN Pal 背面原图；2026-10-02 首轮 CAN Pal 顶标近照不足，随后两张原尺寸补拍已分别显示板号对应关系、NXP 标志和主标 `A1051/3`。仍缺 INA260 背面、FAN 标签/接口、Heater 铭牌、Heatsink 尺寸及部分辅材明细 | 2026-09-23 总览/测量照、2026-09-24 补充原图、2026-10-01 四张背面原图及 2026-10-02 四张顶标补拍原图 | CAN/H2 身份子范围已具备实装芯片主标与模块规格的交叉证据；其余未补部分分别阻止对应 H3/功率 Gate 接入 | NUCLEO 与 CAN Pal 的 H2 前身份子项关闭，允许按 H2 计划进行全断电、低压、逐步接线；其余外设继续隔离 | 在对应 H3/功率 Gate 前补齐 INA260、FAN、Heater、Heatsink 和辅材证据；不把 CAN 顶标关闭外推为通信功能通过 | **OPEN（CAN/H2 身份子项 2026-10-02 CLOSED；其余外设子项继续 OPEN）** |
 | D-03 | HEATER-01 | 低阻修正基线缺失 | Heater 原始显示 10.50 Ω；2026-09-24 以同一万用表 200 Ω 档补测表笔短接约 0.3 Ω，未再次测 Heater | `H0_HEATER-01_measurement_10R50_20260923_01.jpg`；关闭证据 `H0_METER-01_lead-short_0R3_20260924_01.jpg` | 事后短接不能消除两次接触条件差异，修正值不是精密测量 | 保留 10.50 Ω 原值并形成约 10.20 Ω 筛查修正值；继续禁止安装通电和温升测试 | H0 只需识别开路、短路或数量级错件；约 10.20 Ω 满足筛查目的。后续功率 Gate 必须另做受控上电，不能引用本项作为温升/功率验证 | **CLOSED 2026-09-24（H0 筛查范围）** |
 | D-04 | PSU12V-01 | 连续稳定性记录不完整 | 铭牌已补并确认型号、12 V / 3.0 A、中心正极；与 ±12.580 V 极性照片一致，但未记录连续观察时间和波动 | `H0_PSU12V-01_marking_20260924_01.jpg` 及两张 M-07 测量照 | 已关闭铭牌/极性不确定性；空载静态照片仍不能证明持续稳定或带载能力 | 继续禁止接入完整 12 V 负载回路 | 在输出端保持完全空载时观察约 10 s，记录显示范围及有无异味/异响/异常发热；不进行带载验证 | OPEN |
 
@@ -531,9 +531,9 @@ Gate H0 PASS 或 CONDITIONAL PASS 只授权进入 H1 的最小动作：
 - 原始照片按字节复制、规范重命名并集中归档于 [`../evidence/hardware/H0/2026-09-23/`](../evidence/hardware/H0/2026-09-23/README.md)；
 - 2026-09-24 收到的 8 张身份、铭牌和关闭补充原图归档于 [`../evidence/hardware/H0/2026-09-24/`](../evidence/hardware/H0/2026-09-24/README.md)；
 - 2026-10-01 收到的两块 NUCLEO 与两块 CAN Pal 背面原图归档于 [`../evidence/hardware/H0/2026-10-01/`](../evidence/hardware/H0/2026-10-01/README.md)；
-- 2026-10-02 收到的两块 CAN Pal 芯片顶标补拍尝试原图归档于 [`../evidence/hardware/H0/2026-10-02/`](../evidence/hardware/H0/2026-10-02/README.md)；两张图均保留为未读清尝试，不作为器件型号证明；
+- 2026-10-02 收到的两轮共四张 CAN Pal 芯片顶标补拍原图归档于 [`../evidence/hardware/H0/2026-10-02/`](../evidence/hardware/H0/2026-10-02/README.md)；首轮两张保留为未读清尝试，第二轮两张作为顶标关闭证据；
 - 归档清单记录原文件名、规范文件名、可见读数、证据边界、文件大小和 SHA-256；
-- 当前共归档 23 张用户提交的 H0 原图；没有把分析用放大/裁剪图作为原始证据，也没有修改照片内容；
+- 当前共归档 25 张用户提交的 H0 原图；没有把分析用放大/裁剪图作为原始证据，也没有修改照片内容；
 - 图片文件与记录文件进入 Git 工作区，随本次 H0 关闭记录提交。
 
 ### 13.3 结论声明
@@ -561,3 +561,4 @@ Gate H0 PASS 或 CONDITIONAL PASS 只授权进入 H1 的最小动作：
 | v1.3 | 2026-09-24 | 归档表笔短接和 R10K-01 复测原图；关闭 D-01、D-03；将 D-02、D-04 带入后续 Gate；形成 H0 CONDITIONAL PASS / H1 YES 结论 | 新证据满足 H0 筛查目的，剩余偏差可通过严格隔离与 H1 目标解耦 | Codex 整理；执行人待补签 |
 | v1.4 | 2026-10-01 | 归档两块 NUCLEO 与两块 CAN Pal 背面原图；关闭 D-02 的 NUCLEO 背面和 CAN Pal 背面子项，保留 CAN 收发器实体顶标及其他外设证据缺口 | H1 已 PASS，进入 H2 接外部信号前按带入偏差逐项完成身份追溯 | Codex 整理；现场执行人：用户 |
 | v1.5 | 2026-10-02 | 归档两块 CAN Pal 中央 SOIC-8 顶标补拍尝试；确认板号对应关系可用但字符仍不可逐字复核；D-02 顶标子项保持 OPEN | 不把 PCB 背面丝印、模糊字符或生成式增强结果误当作实际装片型号证据 | Codex 整理；现场执行人：用户 |
+| v1.6 | 2026-10-02 | 归档第二轮两块 CAN Pal 顶标原图；确认两颗中央 SOIC-8 均可辨 NXP 标志和 `A1051/3` 主标；关闭 D-02 的 CAN/H2 身份子项 | 新原图可将板号、实装芯片主标与 PCB 背面模块声明交叉关联，满足 H2 受控断电接线前提 | Codex 整理；现场执行人：用户 |

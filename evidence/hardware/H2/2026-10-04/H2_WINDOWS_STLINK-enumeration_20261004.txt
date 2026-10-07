@@ -1,0 +1,35 @@
+Gate H2 Windows ST-LINK enumeration evidence
+Capture date: 2026-10-04 (Asia/Shanghai)
+Context: Node B was already connected and stable; Node A was connected second for the dual-board power test.
+
+Device mapping
+==============
+
+Node B (connected first)
+- ST-LINK serial: 066DFF515149856767254421
+- Virtual COM at capture: COM8
+- USB location at capture: USBROOT(0)#USB(1) / PRT1
+- Last arrival: 2026-10-04 10:04:47
+
+Node A (connected second)
+- ST-LINK serial: 066BFF575151676667043206
+- Virtual COM at capture: COM7
+- USB location at capture: USBROOT(0)#USB(2) / PRT2
+- Last arrival: 2026-10-04 10:23:54-10:23:55
+
+Read-only Windows PnP observations
+==================================
+
+- Both USB composite devices reported Status=OK.
+- Both ST-Link Debug interfaces reported Status=OK.
+- Both STMicroelectronics STLink Virtual COM Port interfaces reported Status=OK.
+- COM8 parent: USB\VID_0483&PID_374B\066DFF515149856767254421
+- COM7 parent: USB\VID_0483&PID_374B\066BFF575151676667043206
+
+Evidence boundary
+=================
+
+- Node assignment is derived from the controlled connection sequence plus the Windows LastArrival timestamps.
+- The ST-LINK serial number is the durable flashing/debug identity used by this project.
+- COM numbers and physical USB port/location paths may change after reconnecting or moving a cable and must not be used as durable Node A/Node B identities.
+- This enumeration evidence proves USB presence/status only. It does not prove firmware identity, CAN traffic, UART payloads, or long-duration USB stability.

@@ -1,0 +1,71 @@
+Gate H2 CAN runtime precheck - failed
+Date: 2026-10-05 (Asia/Shanghai)
+
+Scope
+-----
+- Two NUCLEO-F103RB boards and two CAN Pal transceivers only.
+- No 12 V or power peripherals connected.
+- Firmware had already passed local clean builds and was flashed by ST-LINK serial number.
+- This was an approximately 15-second precheck, not the formal 60-second acceptance run.
+
+Identity and flash result
+-------------------------
+Node A ST-LINK: 066BFF575151676667043206
+Node A VCP:     COM7
+Node A ELF:     firmware/node_a/Debug/node_a.elf
+Node A flash:   Download verified successfully
+
+Node B ST-LINK: 066DFF515149856767254421
+Node B VCP:     COM8
+Node B ELF:     firmware/node_b/Debug/node_b.elf
+Node B flash:   Download verified successfully
+
+Representative Node A status lines
+----------------------------------
+H2,A,STAT,tick=47108,tx_try=367,tx_q=3,tx_fail=364,rx_irq=0,rx=0,rx_bad=0,seq_err=0,q_drop=0,seen=0,last=0,mb_free=0,hal_err=0x00200000,esr=0x0A000055
+H2,A,STAT,tick=61290,tx_try=507,tx_q=3,tx_fail=504,rx_irq=0,rx=0,rx_bad=0,seq_err=0,q_drop=0,seen=0,last=0,mb_free=0,hal_err=0x00200000,esr=0x62000055
+
+Representative Node B status lines
+----------------------------------
+H2,B,STAT,tick=43326,tx_try=330,tx_q=3,tx_fail=327,rx_irq=0,rx=0,rx_bad=0,seq_err=0,q_drop=0,seen=0,last=0,mb_free=0,hal_err=0x00200000,esr=0x50000055
+H2,B,STAT,tick=57508,tx_try=470,tx_q=3,tx_fail=467,rx_irq=0,rx=0,rx_bad=0,seq_err=0,q_drop=0,seen=0,last=0,mb_free=0,hal_err=0x00200000,esr=0x02000055
+
+Interpretation at capture time
+------------------------------
+- Both MCUs, RTOS schedulers, and UART logs were running.
+- Each node queued exactly three CAN messages, filling the three hardware mailboxes.
+- No mailbox became free afterward; tx_fail increased continuously.
+- Neither node observed a FIFO0 interrupt or a valid received frame.
+- hal_err=0x00200000 is HAL_CAN_ERROR_PARAM in the STM32F1 HAL and is a downstream result of calling HAL_CAN_AddTxMessage while no transmit mailbox is free; it is not by itself the physical root cause.
+- ESR values showed repeated CAN error/bus-off recovery activity.
+
+Retrospective physical review
+-----------------------------
+ST UM1724 Figure 13 and Table 27 place PA12 on CN10 pin 12 and PA11 on CN10 pin 14, both in the board-edge/even column. On-site inspection confirmed that both nodes already use this outer/even column; the earlier image-only conclusion that both used the inner/odd column was incorrect and is withdrawn. Node B has brown TX on PA12 and yellow RX on PA11. Node A has those two signals swapped: yellow on PA12 and brown on PA11. The Node A TX/RX swap is the leading cause to correct before another powered test.
+
+Disposition
+-----------
+FAIL / HOLD. Stop the formal 60-second test. Disconnect both USB cables, leave Node B unchanged, and swap only Node A's brown/yellow jumpers within the same outer column so brown TX reaches CN10-12/PA12 and yellow RX reaches CN10-14/PA11. Visually verify Node A while unpowered, then repeat the short precheck.
+
+Follow-up after Node A TX/RX correction
+---------------------------------------
+- The user powered both boards off and swapped only Node A's brown/yellow signal jumpers in the same board-edge/even column.
+- Node A was then powered again and both VCPs were sampled simultaneously for approximately 15 seconds without reflashing.
+- Node B wiring and all other low-voltage connections were left unchanged.
+
+Representative Node A follow-up status lines
+--------------------------------------------
+H2,A,STAT,tick=113966,tx_try=1027,tx_q=3,tx_fail=1024,rx_irq=0,rx=0,rx_bad=0,seq_err=0,q_drop=0,seen=0,last=0,mb_free=0,hal_err=0x00200000,esr=0x30000055
+H2,A,STAT,tick=128148,tx_try=1167,tx_q=3,tx_fail=1164,rx_irq=0,rx=0,rx_bad=0,seq_err=0,q_drop=0,seen=0,last=0,mb_free=0,hal_err=0x00200000,esr=0x00980053
+
+Representative Node B follow-up status lines
+--------------------------------------------
+H2,B,STAT,tick=111197,tx_try=1000,tx_q=3,tx_fail=997,rx_irq=0,rx=0,rx_bad=0,seq_err=0,q_drop=0,seen=0,last=0,mb_free=0,hal_err=0x00200000,esr=0x00980053
+H2,B,STAT,tick=125379,tx_try=1140,tx_q=3,tx_fail=1137,rx_irq=0,rx=0,rx_bad=0,seq_err=0,q_drop=0,seen=0,last=0,mb_free=0,hal_err=0x00200000,esr=0x3B000055
+
+Follow-up interpretation and disposition
+----------------------------------------
+- The retry still failed in the same mode: both nodes retained exactly three queued frames, no mailbox became free, and neither node received a frame.
+- Correcting Node A's reversed jumpers did not restore communication, so that wiring defect was not the only root cause.
+- The official CAN Pal wiring guide connects MCU CAN RX to CAN Pal RX and MCU CAN TX to CAN Pal TX; no further blind TX/RX reversal is authorized.
+- Formal 60-second acceptance remains on HOLD. The next diagnostic is a single oscilloscope check of Node A PA12/CAN Pal TX to determine whether the MCU is producing the expected logic-level CAN bitstream before changing firmware or bus wiring again.
