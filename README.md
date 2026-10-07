@@ -20,6 +20,7 @@
 | H0 硬件到货与身份 | CONDITIONAL PASS | CAN/H2 身份子项已关闭；其他外设随对应 Gate 继续验证 |
 | H1 NUCLEO USB Bring-up | PASS | 两板独立枚举、目标识别、Flash 访问与稳定性通过 |
 | H2 低压 CAN 物理链路 | **PASS（2026-10-07）** | 500 kbit/s；固定帧 3×80 s；正式 `0x100/0x180`；受控断线与恢复通过 |
+| H3 单外设验证 | **IN PROGRESS** | H3-00 已冻结 Node B NTC 的准入、拓扑、公式与安全边界；尚未接线或运行 |
 
 H2 仅覆盖 USB/3.3 V 低压双节点链路。`12 V`、Fan、Heater、INA260、NTC、完整 timeout/fault 状态机、负载耐久与 EMC 尚未由 H2 证明。
 
@@ -42,6 +43,8 @@ H2 仅覆盖 USB/3.3 V 低压双节点链路。`12 V`、Fan、Heater、INA260、
 - [H2 测试协议与验收结果](current/05_verification_gates_验证与门禁/H2_CAN_Minimal_Test_Protocol_H2_CAN最小测试协议_2026-10-05.md)
 - [H2 排障证据复盘](current/06_engineering_recaps_工程复盘/H2_CAN_Bringup_Troubleshooting_Evidence_Recap_H2_CAN联调排障证据复盘_2026-10-07.md)
 - [H2 2026-10-07 原始运行日志与 SHA-256](evidence/software/H2/2026-10-07/README.md)
+- [Gate H3 单外设验证执行记录](current/05_verification_gates_验证与门禁/Gate_H3_Single_Peripheral_Validation_Execution_Record_H3单外设验证执行记录_2026-10-07.md)
+- [H3 2026-10-07 准入证据索引](evidence/hardware/H3/2026-10-07/README.md)
 - [Node A 固件工程](firmware/node_a)
 - [Node B 固件工程](firmware/node_b)
 
