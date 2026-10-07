@@ -53,6 +53,6 @@
 | H0 硬件到货与身份 | CONDITIONAL PASS | CAN/H2 身份子项已关闭；[原始证据](../evidence/hardware/H0/) |
 | H1 NUCLEO USB Bring-up | PASS | 两板独立枚举、目标识别、Flash 访问与稳定性通过；[原始证据](../evidence/hardware/H1/) |
 | H2 低压 CAN 物理链路 | **PASS（2026-10-07）** | 500 kbit/s、正式帧、受控断线与恢复通过；[2026-10-05 首次失败](../evidence/software/H2/2026-10-05/README.md)、[2026-10-07 修复与验收](../evidence/software/H2/2026-10-07/README.md) |
-| H3 单外设验证 | **IN PROGRESS** | H3-00 准入与 NTC 分压设计已冻结；只放行下一步全断电无源搭建；[执行记录](05_verification_gates_验证与门禁/Gate_H3_Single_Peripheral_Validation_Execution_Record_H3单外设验证执行记录_2026-10-07.md) |
+| H3 单外设验证 | **IN PROGRESS** | H3-00、H3-01 已通过；板外 NTC 分压的阻值、视觉和轻微扰动连续性已关闭。H3-02 尚未开始，接板前须先规范/标记 T/S/G 线色并复测；[执行记录](05_verification_gates_验证与门禁/Gate_H3_Single_Peripheral_Validation_Execution_Record_H3单外设验证执行记录_2026-10-07.md)、[2026-10-08 关闭证据](../evidence/hardware/H3/2026-10-08/README.md) |
 
 > Gate H2 采用“阶段内本地累计、Gate 完成后统一推送”策略。远端关闭提交汇总 2026-10-02～10-07 的连续推进，各记录保留真实发生日期；失败、修复和验收没有被压缩成同一天的一次操作。
