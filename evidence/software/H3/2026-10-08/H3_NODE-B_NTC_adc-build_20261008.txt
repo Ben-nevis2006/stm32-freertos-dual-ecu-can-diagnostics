@@ -1,0 +1,32 @@
+Gate H3 Node B NTC ADC offline build transcript (normalized)
+Date: 2026-10-08 (Asia/Shanghai)
+Target: firmware/node_b/Debug/node_b.elf
+Toolchain: GNU Tools for STM32 14.3.1 (STM32CubeIDE 2.2.0 bundle)
+Build: generated makefile, single-thread make all
+
+arm-none-eabi-gcc "../Src/freertos.c" ... -Wall ... -o "Src/freertos.o"
+arm-none-eabi-gcc -o "node_b.elf" @"objects.list" ...
+Finished building target: node_b.elf
+
+arm-none-eabi-size node_b.elf
+   text    data     bss     dec     hex filename
+  33680     100   13844   47624    ba08 node_b.elf
+
+arm-none-eabi-objdump -h -S node_b.elf > node_b.list
+Finished building: node_b.list
+
+Exit code: 0
+Compiler warnings: 0 observed
+Compiler errors: 0
+ELF file size: 1095108 bytes
+ELF SHA-256: FB4B5445CA0103E64B859543D17793DBEF9568192A82ABBF029F1E4DC833605E
+
+Static stack-usage excerpts:
+H3_AdcSample                         24 bytes
+H3_LogBoot                          232 bytes
+H3_LogNtcStatus                     392 bytes
+StartBCyclic100msSupervisorTask      32 bytes
+
+Scope note:
+This is a normalized preservation of the successful tool output. No target was
+connected, erased, programmed, verified, or reset during this build.

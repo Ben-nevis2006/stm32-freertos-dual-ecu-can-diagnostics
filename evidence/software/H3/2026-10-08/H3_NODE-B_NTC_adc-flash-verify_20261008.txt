@@ -1,0 +1,52 @@
+Gate H3-02 Node B NTC ADC directed flash and verification
+Event date: 2026-10-08 (Asia/Shanghai)
+Record assembled: 2026-10-08T18:49:34+08:00
+
+Target identity frozen before write
+- Windows USB instance: USB\VID_0483&PID_374B\066DFF515149856767254421
+- ST-LINK serial: 066DFF515149856767254421
+- Assigned VCP at this event: COM8 (not used as permanent identity)
+- Intended target: Node B / Temperature Supervisor ECU
+
+Artifact frozen before write
+- Path: firmware/node_b/Debug/node_b.elf
+- File size: 1095108 bytes
+- SHA-256: FB4B5445CA0103E64B859543D17793DBEF9568192A82ABBF029F1E4DC833605E
+
+Read-only ST-LINK listing outside the restricted execution layer
+ST-Link Probe 0:
+  ST-LINK SN : 066DFF515149856767254421
+  ST-LINK FW : V2J46M32
+
+Read-only SWD connection before write
+ST-LINK SN  : 066DFF515149856767254421
+Voltage     : 3.16V
+Device ID   : 0x410
+Revision ID : Rev X
+Device name : STM32F101/F102/F103 Medium-density
+Flash size  : 128 KBytes
+Device CPU  : Cortex-M3
+
+Directed write command
+STM32_Programmer_CLI.exe -c port=SWD sn=066DFF515149856767254421 -d firmware/node_b/Debug/node_b.elf -v -rst
+
+Relevant programmer result
+ST-LINK SN  : 066DFF515149856767254421
+Voltage     : 3.15V
+Device ID   : 0x410
+Flash size  : 128 KBytes
+File        : node_b.elf
+Size        : 32.99 KB
+Address     : 0x08000000
+File download complete
+Download verified successfully
+MCU Reset
+Software reset is performed
+
+Result: PASS
+
+Evidence boundary
+- The serial number, target description, ELF hash and successful verify bind this write to Node B and to the recorded H3 artifact.
+- The programmer voltage is an ST-LINK monitor reading at a different time and instrument from the DMM T-G reading of 3.289 V; neither value is substituted for the other.
+- A later standalone software-reset command also returned "Software reset is performed", but the collected UART fragment did not show an observable tick restart. That later command is not used as independent reboot/boot-line evidence.
+- This file proves directed write and verification, not NTC trend, absolute temperature accuracy, CAN peer communication or long-duration stability.

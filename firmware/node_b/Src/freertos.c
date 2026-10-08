@@ -26,6 +26,7 @@
 /* Private includes ----------------------------------------------------------*/
 /* USER CODE BEGIN Includes */
 #include "app_ipc.h"
+#include "adc.h"
 #include "can.h"
 #include "usart.h"
 
@@ -51,6 +52,12 @@
 #define H2_CAN_RX_DLC            5U
 #define H2_CAN_RX_COUNTER_INDEX  2U
 
+#define H3_NTC_SAMPLE_PERIOD_MS  H2_CAN_PERIOD_MS
+#define H3_NTC_LOG_DIVIDER       10U
+#define H3_ADC_FULL_SCALE        4095U
+#define H3_VDDA_CONFIGURED_MV    3300U
+#define H3_R_FIXED_OHM           9911U
+
 /* USER CODE END PD */
 
 /* Private macro -------------------------------------------------------------*/
@@ -73,6 +80,16 @@ static volatile uint32_t g_h2_rx_invalid;
 static volatile uint32_t g_h2_rx_sequence_errors;
 static volatile uint8_t g_h2_rx_seen;
 static volatile uint8_t g_h2_last_rx_counter;
+
+static uint8_t g_h3_adc_cal_result;
+static uint8_t g_h3_adc_ready;
+static uint8_t g_h3_adc_last_result;
+static uint16_t g_h3_adc_latest_raw;
+static uint16_t g_h3_adc_window_min = H3_ADC_FULL_SCALE;
+static uint16_t g_h3_adc_window_max;
+static uint32_t g_h3_adc_samples_total;
+static uint32_t g_h3_adc_failures_total;
+static uint32_t g_h3_adc_window_samples;
 
 /* USER CODE END Variables */
 /* Definitions for B_ComRxTask */
@@ -104,12 +121,15 @@ const osMessageQueueAttr_t mbB_NodeAStatus_attributes = {
 /* USER CODE BEGIN FunctionPrototypes */
 
 static uint8_t H2_CanStart(void);
-static void H2_UartWrite(const char *text);
+static void App_UartWrite(const char *text);
 static void H2_LogBoot(uint8_t start_result);
 static void H2_LogStatus(void);
 static void H2_SendFrame(uint8_t counter);
 static uint8_t H2_IsValidPeerFrame(const AppCanRxFrame_t *frame);
 static uint8_t H2_GetPeerCounter(const AppCanRxFrame_t *frame);
+static uint8_t H3_AdcSample(uint16_t *raw);
+static void H3_LogBoot(void);
+static void H3_LogNtcStatus(void);
 
 /* USER CODE END FunctionPrototypes */
 
@@ -156,7 +176,7 @@ static uint8_t H2_CanStart(void)
   return 0U;
 }
 
-static void H2_UartWrite(const char *text)
+static void App_UartWrite(const char *text)
 {
   size_t length;
 
@@ -201,7 +221,7 @@ static void H2_LogBoot(uint8_t start_result)
   if (length > 0)
   {
     line[sizeof(line) - 1U] = '\0';
-    H2_UartWrite(line);
+    App_UartWrite(line);
   }
 }
 
@@ -230,7 +250,7 @@ static void H2_LogStatus(void)
   if (length > 0)
   {
     line[sizeof(line) - 1U] = '\0';
-    H2_UartWrite(line);
+    App_UartWrite(line);
   }
 }
 
@@ -294,6 +314,108 @@ static uint8_t H2_IsValidPeerFrame(const AppCanRxFrame_t *frame)
 static uint8_t H2_GetPeerCounter(const AppCanRxFrame_t *frame)
 {
   return (uint8_t)(frame->data[H2_CAN_RX_COUNTER_INDEX] & 0x0FU);
+}
+
+static uint8_t H3_AdcSample(uint16_t *raw)
+{
+  uint32_t value;
+
+  if (raw == NULL)
+  {
+    return 4U;
+  }
+  if (HAL_ADC_Start(&hadc1) != HAL_OK)
+  {
+    return 1U;
+  }
+  if (HAL_ADC_PollForConversion(&hadc1, 5U) != HAL_OK)
+  {
+    (void)HAL_ADC_Stop(&hadc1);
+    return 2U;
+  }
+
+  value = HAL_ADC_GetValue(&hadc1);
+  if (HAL_ADC_Stop(&hadc1) != HAL_OK)
+  {
+    return 3U;
+  }
+  if (value > H3_ADC_FULL_SCALE)
+  {
+    return 4U;
+  }
+
+  *raw = (uint16_t)value;
+  return 0U;
+}
+
+static void H3_LogBoot(void)
+{
+  char line[192];
+  int length;
+
+  length = snprintf(line, sizeof(line),
+                    "H3,B,NTC_BOOT,adc=ADC1_IN0,sample_ms=%lu,log_ms=%lu,vdda_cfg_mv=%lu,r_fixed_ohm=%lu,cal=%u,ready=%u\r\n",
+                    (unsigned long)H3_NTC_SAMPLE_PERIOD_MS,
+                    (unsigned long)(H3_NTC_SAMPLE_PERIOD_MS * H3_NTC_LOG_DIVIDER),
+                    (unsigned long)H3_VDDA_CONFIGURED_MV,
+                    (unsigned long)H3_R_FIXED_OHM,
+                    (unsigned int)g_h3_adc_cal_result,
+                    (unsigned int)g_h3_adc_ready);
+
+  if (length > 0)
+  {
+    line[sizeof(line) - 1U] = '\0';
+    App_UartWrite(line);
+  }
+}
+
+static void H3_LogNtcStatus(void)
+{
+  char line[256];
+  uint32_t adc_mv_nominal = 0U;
+  uint32_t r_ntc_ohm = 0U;
+  uint8_t calculation_valid = 0U;
+  int length;
+
+  if (g_h3_adc_window_samples > 0U)
+  {
+    adc_mv_nominal = ((uint32_t)g_h3_adc_latest_raw * H3_VDDA_CONFIGURED_MV) /
+                     H3_ADC_FULL_SCALE;
+    if (g_h3_adc_latest_raw > 0U)
+    {
+      r_ntc_ohm = (uint32_t)(((uint64_t)H3_R_FIXED_OHM *
+                              (H3_ADC_FULL_SCALE - g_h3_adc_latest_raw)) /
+                             g_h3_adc_latest_raw);
+      calculation_valid = 1U;
+    }
+  }
+
+  length = snprintf(line, sizeof(line),
+                    "H3,B,NTC,tick=%lu,cal=%u,ready=%u,raw=%u,raw_min=%u,raw_max=%u,adc_mv_nom=%lu,r_ntc_ohm=%lu,calc_valid=%u,samples=%lu,fail=%lu,last=%u\r\n",
+                    (unsigned long)HAL_GetTick(),
+                    (unsigned int)g_h3_adc_cal_result,
+                    (unsigned int)g_h3_adc_ready,
+                    (unsigned int)g_h3_adc_latest_raw,
+                    (unsigned int)((g_h3_adc_window_samples > 0U) ?
+                                   g_h3_adc_window_min : 0U),
+                    (unsigned int)((g_h3_adc_window_samples > 0U) ?
+                                   g_h3_adc_window_max : 0U),
+                    (unsigned long)adc_mv_nominal,
+                    (unsigned long)r_ntc_ohm,
+                    (unsigned int)calculation_valid,
+                    (unsigned long)g_h3_adc_samples_total,
+                    (unsigned long)g_h3_adc_failures_total,
+                    (unsigned int)g_h3_adc_last_result);
+
+  if (length > 0)
+  {
+    line[sizeof(line) - 1U] = '\0';
+    App_UartWrite(line);
+  }
+
+  g_h3_adc_window_min = H3_ADC_FULL_SCALE;
+  g_h3_adc_window_max = 0U;
+  g_h3_adc_window_samples = 0U;
 }
 
 void HAL_CAN_RxFifo0MsgPendingCallback(CAN_HandleTypeDef *can_handle)
@@ -471,16 +593,51 @@ void StartBCyclic100msSupervisorTask(void *argument)
   /* USER CODE BEGIN StartBCyclic100msSupervisorTask */
   uint8_t counter = 0U;
   uint32_t cycle_count = 0U;
+  uint16_t adc_raw = 0U;
+
+  g_h3_adc_cal_result = (uint8_t)HAL_ADCEx_Calibration_Start(&hadc1);
+  if (g_h3_adc_cal_result == (uint8_t)HAL_OK)
+  {
+    g_h3_adc_ready = 1U;
+  }
+  else
+  {
+    g_h3_adc_last_result = 5U;
+  }
 
   while (g_h2_can_ready == 0U)
   {
     osDelay(10U);
   }
   osDelay(H2_CAN_STARTUP_DELAY_MS);
+  H3_LogBoot();
 
   /* Infinite loop */
   for(;;)
   {
+    if (g_h3_adc_ready != 0U)
+    {
+      g_h3_adc_last_result = H3_AdcSample(&adc_raw);
+      if (g_h3_adc_last_result == 0U)
+      {
+        g_h3_adc_latest_raw = adc_raw;
+        if (adc_raw < g_h3_adc_window_min)
+        {
+          g_h3_adc_window_min = adc_raw;
+        }
+        if (adc_raw > g_h3_adc_window_max)
+        {
+          g_h3_adc_window_max = adc_raw;
+        }
+        g_h3_adc_samples_total++;
+        g_h3_adc_window_samples++;
+      }
+      else
+      {
+        g_h3_adc_failures_total++;
+      }
+    }
+
     H2_SendFrame(counter);
     counter = (uint8_t)((counter + 1U) & 0x0FU);
     cycle_count++;
@@ -492,6 +649,7 @@ void StartBCyclic100msSupervisorTask(void *argument)
     if ((cycle_count % 10U) == 0U)
     {
       H2_LogStatus();
+      H3_LogNtcStatus();
     }
 
     osDelay(H2_CAN_PERIOD_MS);

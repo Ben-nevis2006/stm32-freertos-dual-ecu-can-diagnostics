@@ -1,0 +1,37 @@
+Gate H3-02 Node B NTC ADC runtime smoke log
+Event date: 2026-10-08 (Asia/Shanghai)
+Acquisition: COM8, 115200 8N1, read-only, after verified H3 flash
+Host acquisition start time: not retained; record assembled 2026-10-08T18:49:34+08:00
+
+H2,B,STAT,tick=56058,tx_try=450,tx_q=3,tx_fail=447,rx_irq=0,rx=0,rx_bad=0,seq_err=0,q_drop=0,seen=0,last=0,mb_free=0,hal_err=0x00200000,esr=0x00800033
+H3,B,NTC,tick=56071,cal=0,ready=1,raw=1929,raw_min=1915,raw_max=1940,adc_mv_nom=1554,r_ntc_ohm=11128,calc_valid=1,samples=450,fail=0,last=0
+H2,B,STAT,tick=57084,tx_try=460,tx_q=3,tx_fail=457,rx_irq=0,rx=0,rx_bad=0,seq_err=0,q_drop=0,seen=0,last=0,mb_free=0,hal_err=0x00200000,esr=0x00800033
+H3,B,NTC,tick=57097,cal=0,ready=1,raw=1921,raw_min=1921,raw_max=1936,adc_mv_nom=1548,r_ntc_ohm=11216,calc_valid=1,samples=460,fail=0,last=0
+H2,B,STAT,tick=58110,tx_try=470,tx_q=3,tx_fail=467,rx_irq=0,rx=0,rx_bad=0,seq_err=0,q_drop=0,seen=0,last=0,mb_free=0,hal_err=0x00200000,esr=0x00800033
+H3,B,NTC,tick=58123,cal=0,ready=1,raw=1931,raw_min=1917,raw_max=1940,adc_mv_nom=1556,r_ntc_ohm=11106,calc_valid=1,samples=470,fail=0,last=0
+H2,B,STAT,tick=59136,tx_try=480,tx_q=3,tx_fail=477,rx_irq=0,rx=0,rx_bad=0,seq_err=0,q_drop=0,seen=0,last=0,mb_free=0,hal_err=0x00200000,esr=0x00800033
+H3,B,NTC,tick=59149,cal=0,ready=1,raw=1935,raw_min=1922,raw_max=1943,adc_mv_nom=1559,r_ntc_ohm=11063,calc_valid=1,samples=480,fail=0,last=0
+H2,B,STAT,tick=60162,tx_try=490,tx_q=3,tx_fail=487,rx_irq=0,rx=0,rx_bad=0,seq_err=0,q_drop=0,seen=0,last=0,mb_free=0,hal_err=0x00200000,esr=0x00800033
+H3,B,NTC,tick=60175,cal=0,ready=1,raw=1922,raw_min=1913,raw_max=1951,adc_mv_nom=1548,r_ntc_ohm=11205,calc_valid=1,samples=490,fail=0,last=0
+H2,B,STAT,tick=61188,tx_try=500,tx_q=3,tx_fail=497,rx_irq=0,rx=0,rx_bad=0,seq_err=0,q_drop=0,seen=0,last=0,mb_free=0,hal_err=0x00200000,esr=0x00800033
+H3,B,NTC,tick=61201,cal=0,ready=1,raw=1939,raw_min=1871,raw_max=1939,adc_mv_nom=1562,r_ntc_ohm=11020,calc_valid=1,samples=500,fail=0,last=0
+H2,B,STAT,tick=62214,tx_try=510,tx_q=3,tx_fail=507,rx_irq=0,rx=0,rx_bad=0,seq_err=0,q_drop=0,seen=0,last=0,mb_free=0,hal_err=0x00200000,esr=0x00800033
+H3,B,NTC,tick=62227,cal=0,ready=1,raw=1927,raw_min=1911,raw_max=1943,adc_mv_nom=1552,r_ntc_ohm=11150,calc_valid=1,samples=510,fail=0,last=0
+H2,B,STAT,tick=63240,tx_try=520,tx_q=3,tx_fail=517,rx_irq=0,rx=0,rx_bad=0,seq_err=0,q_drop=0,seen=0,last=0,mb_free=0,hal_err=0x00200000,esr=0x00800033
+H3,B,NTC,tick=63253,cal=0,ready=1,raw=1922,raw_min=1922,raw_max=1943,adc_mv_nom=1548,r_ntc_ohm=11205,calc_valid=1,samples=520,fail=0,last=0
+H2,B,STAT,tick=64266,tx_try=530,tx_q=3,tx_fail=527,rx_irq=0,rx=0,rx_bad=0,seq_err=0,q_drop=0,seen=0,last=0,mb_free=0,hal_err=0x00200000,esr=0x00800033
+H3,B,NTC,tick=64279,cal=0,ready=1,raw=1921,raw_min=1879,raw_max=1943,adc_mv_nom=1548,r_ntc_ohm=11216,calc_valid=1,samples=530,fail=0,last=0
+
+Observed summary over the nine H3 report lines
+- Device-tick span: 8.208 s
+- raw current field: min 1921, max 1939, average 1927.4
+- adc_mv_nom current field: average 1552.8 mV
+- r_ntc_ohm current field: min 11020, max 11216, average 11145.4 ohm
+- Across per-window extrema: raw_min reached 1871 and raw_max reached 1951; characterize these excursions in H3-03 rather than hiding them.
+- cal=0 and last=0 mean HAL_OK; ready=1; samples advanced by 80; fail remained 0.
+- The H2 lines show no CAN acknowledgement/peer reception in this isolated H3 capture. They are retained as context and are not classified as an ADC failure.
+
+Evidence boundary
+- This is a short H3-02 functional smoke capture, not the H3-03 room-temperature baseline and not a temperature calibration.
+- adc_mv_nom uses configured 3300 mV; it is not a contemporaneous measured VDDA.
+- No absolute temperature is calculated or claimed.
