@@ -1,0 +1,48 @@
+Gate H3-03 Node B NTC room-baseline summary
+Event date: 2026-10-08 (Asia/Shanghai)
+Raw evidence: H3_NODE-B_NTC_room-baseline_20261008_run01.txt
+Raw evidence SHA-256: 3CE95530D1EE519DB65B140BDC435597567840D916F1ACCB7DBD74D8EF08A66C
+
+Environment context
+- User-reported local/outdoor temperature: 17 C.
+- Indoor air temperature was not measured with a calibrated reference and may fluctuate.
+- The 17 C report is context only; it is not used as an NTC calibration point or a pass threshold.
+- User reported the room baseline ready and left the NTC untouched for the capture.
+
+Acquisition integrity
+- Host first H3 line: 2026-10-08T20:16:35.5346741+08:00
+- Host last H3 line: 2026-10-08T20:18:34.4978746+08:00
+- Host span: 118.963 s
+- Device tick span: 119.016 s
+- H3 report lines: 117
+- Inter-report device tick delta: min=1026 ms, max=1026 ms, average=1026.00 ms
+- ADC samples: 3330 -> 4490, delta=1160
+- ADC failures: 0 -> 0
+- All 117 lines: cal=0 (HAL_OK), ready=1, last=0 (HAL_OK), calc_valid=1
+
+Latest-sample field statistics across 117 reports
+- raw: min=1849, max=1897, peak-to-peak=48
+- raw: P05=1852, median=1864, P95=1878
+- raw: average=1865.11, population standard deviation=8.55
+- adc_mv_nom: min=1490 mV, max=1528 mV, average=1502.50 mV
+- r_ntc_ohm: min=11483 ohm, max=12038 ohm, average=11849.41 ohm
+- Least-squares raw slope: -1.987 count/min
+- First 30 s raw average: 1866.97 (30 reports)
+- Last 30 s raw average: 1864.20 (30 reports)
+- Last minus first 30 s average: -2.77 counts
+
+Per-window extrema retained for follow-up
+- Lowest reported raw_min across the 1 s windows: 1799
+- Highest reported raw_max across the 1 s windows: 1917
+- These short excursions are not hidden and are not automatically classified as contact failure. H3-03 heating must produce a sustained response clearly outside the baseline distribution.
+
+Pre-stimulus acceptance rules frozen from this baseline
+1. Heating direction: raw and adc_mv_nom rise while r_ntc_ohm falls.
+2. Significant heating response: the rolling median of 10 consecutive H3 report-line raw values reaches at least 1921. This threshold is baseline P95 + 5 population standard deviations, rounded up, and is also above the observed latest-sample maximum of 1897.
+3. Natural recovery: after heat removal, a complete 30-report average returns inside baseline mean +/- 3 standard deviations, i.e. raw 1839 to 1891, with the trend moving back toward the baseline rather than continuing upward.
+4. Integrity throughout: cal=0, ready=1, last=0, calc_valid=1, fail does not increment, device tick does not reset, and USB/VCP does not disconnect.
+5. No absolute-temperature pass criterion is used because B3950 and indoor temperature are not independently calibrated.
+
+Result
+- H3-03 room-baseline substep: PASS.
+- Full H3-03: IN PROGRESS; controlled finger warming and natural recovery remain pending.

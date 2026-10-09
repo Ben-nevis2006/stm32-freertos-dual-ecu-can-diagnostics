@@ -1,0 +1,70 @@
+H3-03 Node B NTC hand-warm / natural-recovery repeatability Run02
+Date: 2026-10-09 (Asia/Shanghai)
+Result: PASS
+
+Scope and safety
+- Target: Node B / NUCLEO-02 / ST-LINK SN 066DFF515149856767254421 / COM8.
+- Stimulus: operator finger contact on the encapsulated NTC bead only.
+- No powered heater, hot air, soldering iron, 12 V source, Fan, Heater, or INA260 was introduced.
+- The operator self-timed 30 s and released without waiting for a second assistant command. Contact duration is operator-reported, not independently instrumented.
+
+Primary capture
+- File: H3_NODE-B_NTC_warm-recovery_20261009_run02.txt
+- Repository SHA-256: A1F4B49A063ECE1396CB5D5FC4A8A0C90DB29382E35152E67C561550F5543FE0
+- Host interval: 00:40:55.8907282 to 00:46:54.9774075, span 359.087 s.
+- H3 records: 351; device tick span: 359100 ms; every adjacent tick delta: 1026 ms.
+- samples: 480 -> 3980 (+3500); every adjacent sample delta: 10.
+- Every record: cal=0, ready=1, calc_valid=1, fail=0, last=0.
+- No tick reset, sample counter reset, or VCP interruption occurred in the primary capture.
+
+Paired pre-stimulus window
+- Window: 00:41:32.8245723 to 00:42:02.5785209, 30 complete H3 records.
+- Mean raw: 1830.867.
+- Mean adc_mv_nom: 1475.033 mV.
+- Mean r_ntc_ohm: 12256.833 ohm.
+- This paired window is reported to expose the later-night ambient working-point shift; it does not replace the previously frozen threshold.
+
+Heating response
+- Frozen sustained threshold: 10-record rolling median raw >= 1921.
+- First passing rolling median: 1949.5 at 00:42:12.8375012.
+- Maximum rolling median: 2396 at 00:42:37.4604836.
+- Peak current raw: 2415 at 00:42:33.3565618.
+- At peak: adc_mv_nom=1946 mV; r_ntc_ohm=6894 ohm.
+- Relative to the frozen 2026-10-08 room-baseline mean, peak raw increased 29.48% and calculated resistance decreased 41.82%.
+- Direction matches the frozen topology: heating lowers NTC resistance and raises divider voltage/raw.
+
+Natural recovery
+- First complete post-peak 30-record window inside the frozen raw interval 1839..1891:
+  00:43:47.2264743 to 00:44:16.9795657; mean raw=1889.667.
+- This satisfies the pre-frozen recovery requirement without changing its interval.
+- The primary capture final 30-record mean was raw=1825.667, below the old absolute interval because the later-night operating point had shifted below the 2026-10-08 baseline before heating.
+
+Untouched recovery extension
+- File: H3_NODE-B_NTC_warm-recovery_20261009_run02_recovery-extension.txt
+- Repository SHA-256: 2AF6A6A7238E7165B1B7DF0DE8A30D0938BAE5AFDE37CF9A6375F3B37E7C685F
+- Host interval: 00:49:42.2094370 to 00:51:11.4683007, span 89.259 s.
+- H3 records: 88; device tick span: 89262 ms; samples: 5610 -> 6480 (+870).
+- Every record: cal=0, ready=1, calc_valid=1, fail=0, last=0.
+- Final 30-record means: raw=1825.767, adc_mv_nom=1470.800 mV, r_ntc_ohm=12319.167 ohm.
+- Compared with the paired pre-stimulus 30-record raw mean, the extension final mean differed by -5.100 counts (-0.279%).
+- Across the unrecorded interval between files, host time advanced 167.232 s, device tick advanced 167238 ms, and samples advanced 1630; therefore no MCU reset is indicated.
+
+Extrema and interpretation boundary
+- Primary-capture current raw range: 1663..2415.
+- Primary-capture one-second window extrema retained in the raw log: 1525..2491.
+- The extension one-second window extrema were 1781..2062.
+- Short within-window extrema are not substituted for the sustained rolling-median response.
+- The later-night ambient drift is retained rather than hidden. It does not invalidate the already observed complete 30-record recovery window or the close paired pre/post working points.
+- No absolute Celsius accuracy, B3950 validation, or calibrated thermal time constant is claimed.
+
+Discarded preliminary attempt
+- A preliminary Run02 attempt on 2026-10-08 was interrupted during the assistant quota pause and did not retain a complete recovery segment. It is excluded from PASS evidence and is not interpreted as a hardware fault.
+
+Acceptance decision
+1. raw and nominal ADC voltage rose while calculated NTC resistance fell: PASS.
+2. 10-record rolling median exceeded the frozen 1921 threshold: PASS.
+3. A complete 30-record recovery mean returned to the frozen 1839..1891 interval: PASS (1889.667).
+4. Status, tick, sample counter, fail counter, and VCP integrity remained normal: PASS.
+5. The response was independently repeated after Run01: PASS.
+
+H3-03 final decision: PASS. Next authorized step: H3-04 controlled low-voltage NTC boundary/fault stimulus planning and execution; 12 V remains prohibited.

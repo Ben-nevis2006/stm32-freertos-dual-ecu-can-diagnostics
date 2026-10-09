@@ -1,0 +1,50 @@
+Gate H3-03 Node B NTC controlled finger-warm / natural-recovery run01 summary
+Event date: 2026-10-08 (Asia/Shanghai)
+Raw evidence: H3_NODE-B_NTC_warm-recovery_20261008_run01.txt
+Raw evidence SHA-256: E5AB2D71DF355720064DAA3D0C7B786670D5D6784397F3EBFE9407D6446FED0D
+
+Test method and timing boundary
+- Heat source: instructed fingertip contact with the encapsulated black NTC bead; no powered heater, hot-air tool, soldering iron or 12 V circuit was used.
+- Serial input was discarded at capture start; each new H3 device line was retained with host timestamp and acquisition phase.
+- Heat-command marker: 2026-10-08T20:35:18.5436357+08:00.
+- Release-command marker: 2026-10-08T20:37:13.5360762+08:00.
+- Marker span: 114.992 s.
+- The marker timestamps record control-file observation, not independently instrumented finger contact. Tool/message delivery latency extended the intended 30 s exercise, so this run must not be described as an exact 30 s thermal step.
+- The overall peak occurred after the release marker; that may include bead thermal lag and unknown message/action latency. This test does not separate those causes.
+
+Acquisition integrity
+- H3 report lines: 410 (preheat=42, marker-defined heat=112, marker-defined recovery=256).
+- Host span: 419.872 s.
+- Device tick span: 419.903 s.
+- Inter-report device tick delta: 1026 to 1027 ms.
+- ADC samples: 13860 -> 17950, delta=4090.
+- ADC failures: 0 -> 0.
+- All 410 lines: cal=0 (HAL_OK), ready=1, last=0 (HAL_OK), calc_valid=1.
+- No device-tick reset or VCP interruption was observed.
+
+Response against the pre-frozen baseline
+- Preheat raw average: 1867.12; range 1823 to 1891.
+- First 10-report rolling-median threshold crossing: median=1956 at 2026-10-08T20:36:04.5921273+08:00.
+- Maximum heat-phase rolling median: 2471.
+- Heat-phase peak: raw=2489, adc_mv_nom=2005 mV, r_ntc_ohm=6394 ohm.
+- Overall peak: raw=2491, adc_mv_nom=2007 mV, r_ntc_ohm=6381 ohm, in marker-defined recovery at 2026-10-08T20:37:33.7823824+08:00.
+- Versus the room-baseline averages, overall peak raw rose 33.56%, nominal ADC voltage rose 33.58%, and inferred NTC resistance fell 46.15%.
+- Direction therefore matches the frozen upper-NTC divider model: warming -> resistance down -> ADC voltage/raw up.
+
+Natural recovery
+- First complete 30-report recovery average inside the frozen raw envelope 1839 to 1891: 1889.87 at 2026-10-08T20:39:54.4467148+08:00.
+- Time from release-command marker to first envelope entry: 160.911 s; this is a command-marker-relative time, not a calibrated thermal time constant.
+- Final recovery record: raw=1872, adc_mv_nom=1508 mV, r_ntc_ohm=11769 ohm.
+- Final 30-report averages: raw=1867.83, adc_mv_nom=1504.60 mV, r_ntc_ohm=11817.53 ohm.
+- Final 30-report raw average differs from the original room-baseline mean 1865.11 by +2.72 counts, well inside the frozen +/-3 sigma envelope.
+
+Outliers and annotation boundary
+- Across all 1 s windows, raw_min reached 1551 and raw_max reached 2647. These short excursions are retained and are not substituted for the report-line trend.
+- The acquisition helper emitted repeated RECOVERY_ENVELOPE_REACHED comment lines after the first crossing because its break applied only to the inner line-processing loop. The 410 H3 device records remain unique and monotonic; repeated helper comments are annotations, not duplicated ADC samples.
+
+Result
+- Run01 heat direction: PASS.
+- Run01 sustained heat threshold: PASS.
+- Run01 natural recovery envelope: PASS.
+- Run01 acquisition integrity: PASS.
+- H3-03 full repeatability: PENDING one shorter repeated heat/recovery cycle; run01 alone cannot prove repeatability.

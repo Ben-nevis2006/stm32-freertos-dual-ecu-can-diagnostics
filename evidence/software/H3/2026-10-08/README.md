@@ -61,6 +61,45 @@
 
 原始片段与统计边界见 [`H3_NODE-B_NTC_adc-runtime-smoke_20261008_run01.txt`](H3_NODE-B_NTC_adc-runtime-smoke_20261008_run01.txt)。同一片段中的 H2 CAN 统计显示无 ACK/无对端接收，这是当前单板 H3 捕获上下文，不作为 ADC 故障；它也不能替代后续双节点 CAN 回归。
 
+## H3-03 室温基线（20:16:35～20:18:34）
+
+执行人报告传感器已静置，并补充现场所在地气温约 `17°C`、室内可能浮动。该数值没有校准温度计背书，只作为环境背景，不作为温度标定点或 PASS 阈值。采集开始时清空串口旧缓存，此后只保存新产生的 H3 行并附主机时间戳。
+
+| 指标 | 结果 |
+|---|---:|
+| H3 行数 / 主机跨度 / tick 跨度 | `117 / 118.963 s / 119.016 s` |
+| 相邻报告 tick | 固定 `1026 ms` |
+| `samples` / `fail` | `3330→4490`（+1160）/ `0→0` |
+| 当前 raw | `1849～1897`；均值 `1865.11`；中位数 `1864`；标准差 `8.55` |
+| raw P05 / P95 | `1852 / 1878` |
+| 前 30 s / 后 30 s raw 均值 | `1866.97 / 1864.20`，差 `-2.77` |
+| raw 线性斜率 | `-1.987 count/min` |
+| `adc_mv_nom` | `1490～1528 mV`；均值 `1502.50 mV` |
+| `r_ntc_ohm` | `11483～12038 Ω`；均值 `11849.41 Ω` |
+| 1 s 窗口合并极值 | `raw_min=1799`、`raw_max=1917` |
+| 状态完整性 | 117 条均为 `cal=0 / ready=1 / last=0 / calc_valid=1`；无 tick 复位、无采样失败 |
+
+室温基线子项判定 **PASS**：前后 30 s 仅相差 `2.77` count，采样节拍完整且无失败。窗口短促极值仍原样保留，后续加温必须形成显著且持续的响应，不能用单点尖峰冒充趋势。为避免事后调标准，已在加温前冻结：10 条报告 rolling median raw 至少达到 `1921`；恢复后完整 30 条均值回到 `1839～1891`；全程不得出现采样失败、tick 复位或 USB/VCP 断连。
+
+原始逐行日志见 [`H3_NODE-B_NTC_room-baseline_20261008_run01.txt`](H3_NODE-B_NTC_room-baseline_20261008_run01.txt)，计算摘要与判据见 [`H3_NODE-B_NTC_room-baseline_20261008_run01_summary.txt`](H3_NODE-B_NTC_room-baseline_20261008_run01_summary.txt)。完整 H3-03 仍为 **IN PROGRESS**，安全加温与自然恢复尚未执行。
+
+## H3-03 手指加温—自然恢复 Run01（20:34:36～20:41:36）
+
+按安全边界只使用手指接触封装后的 NTC 珠体，不使用任何通电加热器、热风、烙铁或 12 V。共保存 410 条 H3 报告，主机/设备跨度分别为 `419.872/419.903 s`，相邻 tick 为 `1026～1027 ms`；`samples=13860→17950`、`fail=0→0`，全部状态字段正常且无复位/串口断连。
+
+| 指标 | 结果 | 判定 |
+|---|---:|---|
+| 预热 raw 均值 | `1867.12` | 与独立室温基线 `1865.11` 一致 |
+| 首次 10 条 rolling median 越过阈值 | `1956`（阈值 `1921`） | PASS |
+| 最大 heat-phase rolling median | `2471` | 持续响应显著，不是单点尖峰 |
+| 总峰值 | raw=`2491`、`2007 mV nominal`、`6381 Ω` | 相对基线 raw/电压约 `+33.56%/+33.58%`，阻值约 `-46.15%`；方向正确 |
+| 首次恢复 30 条均值进入区间 | `1889.87`；相对 release command marker `160.911 s` | PASS；该时间不是校准热时间常数 |
+| 最终 30 条均值 | raw=`1867.83`、`1504.60 mV nominal`、`11817.53 Ω` | raw 仅比原基线均值高 `2.72`，位于冻结恢复区间 |
+
+控制标记间隔为 `114.992 s`，但标记记录的是工具看到控制文件的时间，不能独立证明手指实际接触时刻；由于消息/工具延迟，本轮不能写成“精确 30 s 加温”。峰值出现在 release command marker 后，也可能同时包含珠体热惯性与实际松手消息延迟，二者未被独立分离。
+
+Run01 的升温方向、持续阈值、自然恢复和采集完整性均 **PASS**。当日结束时仍因“可重复”要求保持 H3-03 为 **IN PROGRESS**；随后于 2026-10-09 完成自行计时 30 s 的 Run02 并关闭 H3-03，见 [`2026-10-09 Run02 证据`](../2026-10-09/README.md)。原始记录见 [`H3_NODE-B_NTC_warm-recovery_20261008_run01.txt`](H3_NODE-B_NTC_warm-recovery_20261008_run01.txt)，受控摘要见 [`H3_NODE-B_NTC_warm-recovery_20261008_run01_summary.txt`](H3_NODE-B_NTC_warm-recovery_20261008_run01_summary.txt)。
+
 ## 证据文件完整性
 
 | 文件 | SHA-256 |
@@ -68,6 +107,10 @@
 | `H3_NODE-B_NTC_adc-build_20261008.txt` | `4D995B5D4BBEF25BA462F14BCF1F7F4525D7D9756978F26B0594B959E73ED009` |
 | `H3_NODE-B_NTC_adc-flash-verify_20261008.txt` | `3EEA64A7CF7754E2A5E2FB72A56FA716A542A0317746D53675FAA0654102C4BF` |
 | `H3_NODE-B_NTC_adc-runtime-smoke_20261008_run01.txt` | `EE150F2D3456CC9D795AED58B6A73922D7E925268C06C451EB47F54AEFAE97DB` |
+| `H3_NODE-B_NTC_room-baseline_20261008_run01.txt` | `3CE95530D1EE519DB65B140BDC435597567840D916F1ACCB7DBD74D8EF08A66C` |
+| `H3_NODE-B_NTC_room-baseline_20261008_run01_summary.txt` | `F7445316D8032EF55B06A58539DAA557F9AA604D179409AA55841412B2716ACB` |
+| `H3_NODE-B_NTC_warm-recovery_20261008_run01.txt` | `E5AB2D71DF355720064DAA3D0C7B786670D5D6784397F3EBFE9407D6446FED0D` |
+| `H3_NODE-B_NTC_warm-recovery_20261008_run01_summary.txt` | `4BD47F9BAF59D3AC1E8598286F40807CB0E7FACF0615F69669DB58E24BC033A7` |
 
 以上哈希绑定本次归档字节；若编辑对应文本，必须同步重新计算，不能沿用本表。
 

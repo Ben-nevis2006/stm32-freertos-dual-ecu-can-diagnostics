@@ -1,0 +1,520 @@
+# Gate H3-03 Node B NTC controlled finger-warm and natural-recovery capture
+# Event date: 2026-10-08 Asia/Shanghai
+# Interface: COM8, 115200 8N1; H3 lines only; serial input buffer discarded at start
+# Baseline-derived heat threshold: rolling median of 10 heat-phase raw values >= 1921
+# Baseline-derived recovery envelope: last 30 recovery raw average between 1839 and 1891
+# Start: 2026-10-08T20:34:36.0944577+08:00
+# Format: host_timestamp<TAB>phase<TAB>device_line
+2026-10-08T20:34:36.2397568+08:00	preheat	H3,B,NTC,tick=1432323,cal=0,ready=1,raw=1875,raw_min=1860,raw_max=1877,adc_mv_nom=1510,r_ntc_ohm=11734,calc_valid=1,samples=13860,fail=0,last=0
+2026-10-08T20:34:37.2721409+08:00	preheat	H3,B,NTC,tick=1433350,cal=0,ready=1,raw=1867,raw_min=1855,raw_max=1879,adc_mv_nom=1504,r_ntc_ohm=11827,calc_valid=1,samples=13870,fail=0,last=0
+2026-10-08T20:34:38.2698892+08:00	preheat	H3,B,NTC,tick=1434377,cal=0,ready=1,raw=1863,raw_min=1861,raw_max=1883,adc_mv_nom=1501,r_ntc_ohm=11874,calc_valid=1,samples=13880,fail=0,last=0
+2026-10-08T20:34:39.3272283+08:00	preheat	H3,B,NTC,tick=1435404,cal=0,ready=1,raw=1869,raw_min=1854,raw_max=1876,adc_mv_nom=1506,r_ntc_ohm=11804,calc_valid=1,samples=13890,fail=0,last=0
+2026-10-08T20:34:40.3590635+08:00	preheat	H3,B,NTC,tick=1436431,cal=0,ready=1,raw=1823,raw_min=1823,raw_max=1877,adc_mv_nom=1469,r_ntc_ohm=12352,calc_valid=1,samples=13900,fail=0,last=0
+2026-10-08T20:34:41.3701262+08:00	preheat	H3,B,NTC,tick=1437458,cal=0,ready=1,raw=1891,raw_min=1853,raw_max=1891,adc_mv_nom=1523,r_ntc_ohm=11551,calc_valid=1,samples=13910,fail=0,last=0
+2026-10-08T20:34:42.3657418+08:00	preheat	H3,B,NTC,tick=1438485,cal=0,ready=1,raw=1875,raw_min=1857,raw_max=1877,adc_mv_nom=1510,r_ntc_ohm=11734,calc_valid=1,samples=13920,fail=0,last=0
+2026-10-08T20:34:43.4237384+08:00	preheat	H3,B,NTC,tick=1439512,cal=0,ready=1,raw=1863,raw_min=1856,raw_max=1879,adc_mv_nom=1501,r_ntc_ohm=11874,calc_valid=1,samples=13930,fail=0,last=0
+2026-10-08T20:34:44.4236438+08:00	preheat	H3,B,NTC,tick=1440539,cal=0,ready=1,raw=1860,raw_min=1855,raw_max=1875,adc_mv_nom=1498,r_ntc_ohm=11909,calc_valid=1,samples=13940,fail=0,last=0
+2026-10-08T20:34:45.4846092+08:00	preheat	H3,B,NTC,tick=1441566,cal=0,ready=1,raw=1865,raw_min=1856,raw_max=1874,adc_mv_nom=1502,r_ntc_ohm=11850,calc_valid=1,samples=13950,fail=0,last=0
+2026-10-08T20:34:46.5149800+08:00	preheat	H3,B,NTC,tick=1442593,cal=0,ready=1,raw=1874,raw_min=1849,raw_max=1879,adc_mv_nom=1510,r_ntc_ohm=11746,calc_valid=1,samples=13960,fail=0,last=0
+2026-10-08T20:34:47.5248858+08:00	preheat	H3,B,NTC,tick=1443620,cal=0,ready=1,raw=1877,raw_min=1859,raw_max=1879,adc_mv_nom=1512,r_ntc_ohm=11711,calc_valid=1,samples=13970,fail=0,last=0
+2026-10-08T20:34:48.5828086+08:00	preheat	H3,B,NTC,tick=1444647,cal=0,ready=1,raw=1863,raw_min=1826,raw_max=1875,adc_mv_nom=1501,r_ntc_ohm=11874,calc_valid=1,samples=13980,fail=0,last=0
+2026-10-08T20:34:49.5911347+08:00	preheat	H3,B,NTC,tick=1445674,cal=0,ready=1,raw=1860,raw_min=1853,raw_max=1878,adc_mv_nom=1498,r_ntc_ohm=11909,calc_valid=1,samples=13990,fail=0,last=0
+2026-10-08T20:34:50.5848353+08:00	preheat	H3,B,NTC,tick=1446701,cal=0,ready=1,raw=1865,raw_min=1860,raw_max=1876,adc_mv_nom=1502,r_ntc_ohm=11850,calc_valid=1,samples=14000,fail=0,last=0
+2026-10-08T20:34:51.6541193+08:00	preheat	H3,B,NTC,tick=1447728,cal=0,ready=1,raw=1870,raw_min=1853,raw_max=1899,adc_mv_nom=1506,r_ntc_ohm=11792,calc_valid=1,samples=14010,fail=0,last=0
+2026-10-08T20:34:52.6632550+08:00	preheat	H3,B,NTC,tick=1448755,cal=0,ready=1,raw=1885,raw_min=1854,raw_max=1885,adc_mv_nom=1519,r_ntc_ohm=11619,calc_valid=1,samples=14020,fail=0,last=0
+2026-10-08T20:34:53.7213202+08:00	preheat	H3,B,NTC,tick=1449782,cal=0,ready=1,raw=1871,raw_min=1846,raw_max=1875,adc_mv_nom=1507,r_ntc_ohm=11780,calc_valid=1,samples=14030,fail=0,last=0
+2026-10-08T20:34:54.7209560+08:00	preheat	H3,B,NTC,tick=1450809,cal=0,ready=1,raw=1860,raw_min=1860,raw_max=1878,adc_mv_nom=1498,r_ntc_ohm=11909,calc_valid=1,samples=14040,fail=0,last=0
+2026-10-08T20:34:55.7221931+08:00	preheat	H3,B,NTC,tick=1451836,cal=0,ready=1,raw=1870,raw_min=1855,raw_max=1875,adc_mv_nom=1506,r_ntc_ohm=11792,calc_valid=1,samples=14050,fail=0,last=0
+2026-10-08T20:34:56.7935050+08:00	preheat	H3,B,NTC,tick=1452863,cal=0,ready=1,raw=1873,raw_min=1857,raw_max=1877,adc_mv_nom=1509,r_ntc_ohm=11757,calc_valid=1,samples=14060,fail=0,last=0
+2026-10-08T20:34:57.7979496+08:00	preheat	H3,B,NTC,tick=1453890,cal=0,ready=1,raw=1874,raw_min=1854,raw_max=1875,adc_mv_nom=1510,r_ntc_ohm=11746,calc_valid=1,samples=14070,fail=0,last=0
+2026-10-08T20:34:58.8020306+08:00	preheat	H3,B,NTC,tick=1454917,cal=0,ready=1,raw=1878,raw_min=1853,raw_max=1886,adc_mv_nom=1513,r_ntc_ohm=11700,calc_valid=1,samples=14080,fail=0,last=0
+2026-10-08T20:34:59.8622312+08:00	preheat	H3,B,NTC,tick=1455944,cal=0,ready=1,raw=1862,raw_min=1859,raw_max=1875,adc_mv_nom=1500,r_ntc_ohm=11885,calc_valid=1,samples=14090,fail=0,last=0
+2026-10-08T20:35:00.8606968+08:00	preheat	H3,B,NTC,tick=1456971,cal=0,ready=1,raw=1862,raw_min=1862,raw_max=1878,adc_mv_nom=1500,r_ntc_ohm=11885,calc_valid=1,samples=14100,fail=0,last=0
+2026-10-08T20:35:01.8898623+08:00	preheat	H3,B,NTC,tick=1457998,cal=0,ready=1,raw=1878,raw_min=1854,raw_max=1885,adc_mv_nom=1513,r_ntc_ohm=11700,calc_valid=1,samples=14110,fail=0,last=0
+2026-10-08T20:35:02.9545469+08:00	preheat	H3,B,NTC,tick=1459025,cal=0,ready=1,raw=1866,raw_min=1859,raw_max=1883,adc_mv_nom=1503,r_ntc_ohm=11839,calc_valid=1,samples=14120,fail=0,last=0
+2026-10-08T20:35:03.9544304+08:00	preheat	H3,B,NTC,tick=1460052,cal=0,ready=1,raw=1867,raw_min=1858,raw_max=1875,adc_mv_nom=1504,r_ntc_ohm=11827,calc_valid=1,samples=14130,fail=0,last=0
+2026-10-08T20:35:04.9796615+08:00	preheat	H3,B,NTC,tick=1461079,cal=0,ready=1,raw=1864,raw_min=1855,raw_max=1880,adc_mv_nom=1502,r_ntc_ohm=11862,calc_valid=1,samples=14140,fail=0,last=0
+2026-10-08T20:35:05.9861502+08:00	preheat	H3,B,NTC,tick=1462106,cal=0,ready=1,raw=1864,raw_min=1856,raw_max=1879,adc_mv_nom=1502,r_ntc_ohm=11862,calc_valid=1,samples=14150,fail=0,last=0
+2026-10-08T20:35:07.0618968+08:00	preheat	H3,B,NTC,tick=1463133,cal=0,ready=1,raw=1869,raw_min=1851,raw_max=1877,adc_mv_nom=1506,r_ntc_ohm=11804,calc_valid=1,samples=14160,fail=0,last=0
+2026-10-08T20:35:08.0774669+08:00	preheat	H3,B,NTC,tick=1464160,cal=0,ready=1,raw=1876,raw_min=1844,raw_max=1876,adc_mv_nom=1511,r_ntc_ohm=11723,calc_valid=1,samples=14170,fail=0,last=0
+2026-10-08T20:35:09.0924187+08:00	preheat	H3,B,NTC,tick=1465187,cal=0,ready=1,raw=1860,raw_min=1853,raw_max=1872,adc_mv_nom=1498,r_ntc_ohm=11909,calc_valid=1,samples=14180,fail=0,last=0
+2026-10-08T20:35:10.0928157+08:00	preheat	H3,B,NTC,tick=1466214,cal=0,ready=1,raw=1863,raw_min=1855,raw_max=1876,adc_mv_nom=1501,r_ntc_ohm=11874,calc_valid=1,samples=14190,fail=0,last=0
+2026-10-08T20:35:11.1540261+08:00	preheat	H3,B,NTC,tick=1467241,cal=0,ready=1,raw=1860,raw_min=1855,raw_max=1883,adc_mv_nom=1498,r_ntc_ohm=11909,calc_valid=1,samples=14200,fail=0,last=0
+2026-10-08T20:35:12.1510761+08:00	preheat	H3,B,NTC,tick=1468268,cal=0,ready=1,raw=1864,raw_min=1851,raw_max=1872,adc_mv_nom=1502,r_ntc_ohm=11862,calc_valid=1,samples=14210,fail=0,last=0
+2026-10-08T20:35:13.2131016+08:00	preheat	H3,B,NTC,tick=1469295,cal=0,ready=1,raw=1874,raw_min=1849,raw_max=1876,adc_mv_nom=1510,r_ntc_ohm=11746,calc_valid=1,samples=14220,fail=0,last=0
+2026-10-08T20:35:14.2139980+08:00	preheat	H3,B,NTC,tick=1470322,cal=0,ready=1,raw=1862,raw_min=1857,raw_max=1879,adc_mv_nom=1500,r_ntc_ohm=11885,calc_valid=1,samples=14230,fail=0,last=0
+2026-10-08T20:35:15.2652475+08:00	preheat	H3,B,NTC,tick=1471349,cal=0,ready=1,raw=1866,raw_min=1851,raw_max=1874,adc_mv_nom=1503,r_ntc_ohm=11839,calc_valid=1,samples=14240,fail=0,last=0
+2026-10-08T20:35:16.2832218+08:00	preheat	H3,B,NTC,tick=1472376,cal=0,ready=1,raw=1861,raw_min=1853,raw_max=1884,adc_mv_nom=1499,r_ntc_ohm=11897,calc_valid=1,samples=14250,fail=0,last=0
+2026-10-08T20:35:17.2937467+08:00	preheat	H3,B,NTC,tick=1473403,cal=0,ready=1,raw=1860,raw_min=1854,raw_max=1878,adc_mv_nom=1498,r_ntc_ohm=11909,calc_valid=1,samples=14260,fail=0,last=0
+2026-10-08T20:35:18.3551618+08:00	preheat	H3,B,NTC,tick=1474430,cal=0,ready=1,raw=1870,raw_min=1851,raw_max=1876,adc_mv_nom=1506,r_ntc_ohm=11792,calc_valid=1,samples=14270,fail=0,last=0
+# HEAT_START_COMMAND_MARKER: 2026-10-08T20:35:18.5436357+08:00
+2026-10-08T20:35:19.3546600+08:00	heat	H3,B,NTC,tick=1475457,cal=0,ready=1,raw=1864,raw_min=1854,raw_max=1876,adc_mv_nom=1502,r_ntc_ohm=11862,calc_valid=1,samples=14280,fail=0,last=0
+2026-10-08T20:35:20.4127534+08:00	heat	H3,B,NTC,tick=1476484,cal=0,ready=1,raw=1861,raw_min=1827,raw_max=1876,adc_mv_nom=1499,r_ntc_ohm=11897,calc_valid=1,samples=14290,fail=0,last=0
+2026-10-08T20:35:21.4089201+08:00	heat	H3,B,NTC,tick=1477511,cal=0,ready=1,raw=1859,raw_min=1853,raw_max=1872,adc_mv_nom=1498,r_ntc_ohm=11920,calc_valid=1,samples=14300,fail=0,last=0
+2026-10-08T20:35:22.4697509+08:00	heat	H3,B,NTC,tick=1478538,cal=0,ready=1,raw=1861,raw_min=1857,raw_max=1876,adc_mv_nom=1499,r_ntc_ohm=11897,calc_valid=1,samples=14310,fail=0,last=0
+2026-10-08T20:35:23.4738796+08:00	heat	H3,B,NTC,tick=1479565,cal=0,ready=1,raw=1877,raw_min=1859,raw_max=1877,adc_mv_nom=1512,r_ntc_ohm=11711,calc_valid=1,samples=14320,fail=0,last=0
+2026-10-08T20:35:24.4706676+08:00	heat	H3,B,NTC,tick=1480592,cal=0,ready=1,raw=1871,raw_min=1854,raw_max=1883,adc_mv_nom=1507,r_ntc_ohm=11780,calc_valid=1,samples=14330,fail=0,last=0
+2026-10-08T20:35:25.5342045+08:00	heat	H3,B,NTC,tick=1481619,cal=0,ready=1,raw=1861,raw_min=1854,raw_max=1878,adc_mv_nom=1499,r_ntc_ohm=11897,calc_valid=1,samples=14340,fail=0,last=0
+2026-10-08T20:35:26.5325730+08:00	heat	H3,B,NTC,tick=1482646,cal=0,ready=1,raw=1862,raw_min=1855,raw_max=1875,adc_mv_nom=1500,r_ntc_ohm=11885,calc_valid=1,samples=14350,fail=0,last=0
+2026-10-08T20:35:27.5600679+08:00	heat	H3,B,NTC,tick=1483673,cal=0,ready=1,raw=1870,raw_min=1861,raw_max=1876,adc_mv_nom=1506,r_ntc_ohm=11792,calc_valid=1,samples=14360,fail=0,last=0
+2026-10-08T20:35:28.6177951+08:00	heat	H3,B,NTC,tick=1484700,cal=0,ready=1,raw=1868,raw_min=1852,raw_max=1875,adc_mv_nom=1505,r_ntc_ohm=11815,calc_valid=1,samples=14370,fail=0,last=0
+2026-10-08T20:35:29.6281428+08:00	heat	H3,B,NTC,tick=1485727,cal=0,ready=1,raw=1877,raw_min=1854,raw_max=1878,adc_mv_nom=1512,r_ntc_ohm=11711,calc_valid=1,samples=14380,fail=0,last=0
+2026-10-08T20:35:30.6719395+08:00	heat	H3,B,NTC,tick=1486754,cal=0,ready=1,raw=1865,raw_min=1845,raw_max=1876,adc_mv_nom=1502,r_ntc_ohm=11850,calc_valid=1,samples=14390,fail=0,last=0
+2026-10-08T20:35:31.6992767+08:00	heat	H3,B,NTC,tick=1487781,cal=0,ready=1,raw=1863,raw_min=1855,raw_max=1866,adc_mv_nom=1501,r_ntc_ohm=11874,calc_valid=1,samples=14400,fail=0,last=0
+2026-10-08T20:35:32.7010995+08:00	heat	H3,B,NTC,tick=1488808,cal=0,ready=1,raw=1870,raw_min=1862,raw_max=1881,adc_mv_nom=1506,r_ntc_ohm=11792,calc_valid=1,samples=14410,fail=0,last=0
+2026-10-08T20:35:33.7461206+08:00	heat	H3,B,NTC,tick=1489835,cal=0,ready=1,raw=1878,raw_min=1857,raw_max=1900,adc_mv_nom=1513,r_ntc_ohm=11700,calc_valid=1,samples=14420,fail=0,last=0
+2026-10-08T20:35:34.7487736+08:00	heat	H3,B,NTC,tick=1490862,cal=0,ready=1,raw=1871,raw_min=1855,raw_max=1880,adc_mv_nom=1507,r_ntc_ohm=11780,calc_valid=1,samples=14430,fail=0,last=0
+2026-10-08T20:35:35.7786046+08:00	heat	H3,B,NTC,tick=1491889,cal=0,ready=1,raw=1863,raw_min=1853,raw_max=1886,adc_mv_nom=1501,r_ntc_ohm=11874,calc_valid=1,samples=14440,fail=0,last=0
+2026-10-08T20:35:36.8454958+08:00	heat	H3,B,NTC,tick=1492916,cal=0,ready=1,raw=1865,raw_min=1857,raw_max=1879,adc_mv_nom=1502,r_ntc_ohm=11850,calc_valid=1,samples=14450,fail=0,last=0
+2026-10-08T20:35:37.8538176+08:00	heat	H3,B,NTC,tick=1493943,cal=0,ready=1,raw=1864,raw_min=1854,raw_max=1877,adc_mv_nom=1502,r_ntc_ohm=11862,calc_valid=1,samples=14460,fail=0,last=0
+2026-10-08T20:35:38.8528667+08:00	heat	H3,B,NTC,tick=1494970,cal=0,ready=1,raw=1899,raw_min=1853,raw_max=1899,adc_mv_nom=1530,r_ntc_ohm=11461,calc_valid=1,samples=14470,fail=0,last=0
+2026-10-08T20:35:39.9078726+08:00	heat	H3,B,NTC,tick=1495997,cal=0,ready=1,raw=1877,raw_min=1857,raw_max=1981,adc_mv_nom=1512,r_ntc_ohm=11711,calc_valid=1,samples=14480,fail=0,last=0
+2026-10-08T20:35:40.9180560+08:00	heat	H3,B,NTC,tick=1497024,cal=0,ready=1,raw=1651,raw_min=1651,raw_max=1877,adc_mv_nom=1330,r_ntc_ohm=14671,calc_valid=1,samples=14490,fail=0,last=0
+2026-10-08T20:35:41.9746265+08:00	heat	H3,B,NTC,tick=1498051,cal=0,ready=1,raw=1862,raw_min=1841,raw_max=1878,adc_mv_nom=1500,r_ntc_ohm=11885,calc_valid=1,samples=14500,fail=0,last=0
+2026-10-08T20:35:42.9700508+08:00	heat	H3,B,NTC,tick=1499078,cal=0,ready=1,raw=1867,raw_min=1862,raw_max=1877,adc_mv_nom=1504,r_ntc_ohm=11827,calc_valid=1,samples=14510,fail=0,last=0
+2026-10-08T20:35:44.0434994+08:00	heat	H3,B,NTC,tick=1500105,cal=0,ready=1,raw=1863,raw_min=1858,raw_max=1879,adc_mv_nom=1501,r_ntc_ohm=11874,calc_valid=1,samples=14520,fail=0,last=0
+2026-10-08T20:35:45.0577669+08:00	heat	H3,B,NTC,tick=1501132,cal=0,ready=1,raw=1878,raw_min=1855,raw_max=1878,adc_mv_nom=1513,r_ntc_ohm=11700,calc_valid=1,samples=14530,fail=0,last=0
+2026-10-08T20:35:46.0798278+08:00	heat	H3,B,NTC,tick=1502159,cal=0,ready=1,raw=1864,raw_min=1844,raw_max=1872,adc_mv_nom=1502,r_ntc_ohm=11862,calc_valid=1,samples=14540,fail=0,last=0
+2026-10-08T20:35:47.0937007+08:00	heat	H3,B,NTC,tick=1503186,cal=0,ready=1,raw=1871,raw_min=1858,raw_max=1875,adc_mv_nom=1507,r_ntc_ohm=11780,calc_valid=1,samples=14550,fail=0,last=0
+2026-10-08T20:35:48.1041799+08:00	heat	H3,B,NTC,tick=1504213,cal=0,ready=1,raw=1869,raw_min=1858,raw_max=1879,adc_mv_nom=1506,r_ntc_ohm=11804,calc_valid=1,samples=14560,fail=0,last=0
+2026-10-08T20:35:49.1665276+08:00	heat	H3,B,NTC,tick=1505240,cal=0,ready=1,raw=1862,raw_min=1862,raw_max=1879,adc_mv_nom=1500,r_ntc_ohm=11885,calc_valid=1,samples=14570,fail=0,last=0
+2026-10-08T20:35:50.1672746+08:00	heat	H3,B,NTC,tick=1506267,cal=0,ready=1,raw=1876,raw_min=1862,raw_max=1879,adc_mv_nom=1511,r_ntc_ohm=11723,calc_valid=1,samples=14580,fail=0,last=0
+2026-10-08T20:35:51.2321526+08:00	heat	H3,B,NTC,tick=1507294,cal=0,ready=1,raw=1870,raw_min=1853,raw_max=1879,adc_mv_nom=1506,r_ntc_ohm=11792,calc_valid=1,samples=14590,fail=0,last=0
+2026-10-08T20:35:52.2391443+08:00	heat	H3,B,NTC,tick=1508321,cal=0,ready=1,raw=1865,raw_min=1858,raw_max=1878,adc_mv_nom=1502,r_ntc_ohm=11850,calc_valid=1,samples=14600,fail=0,last=0
+2026-10-08T20:35:53.2358123+08:00	heat	H3,B,NTC,tick=1509348,cal=0,ready=1,raw=1869,raw_min=1847,raw_max=1877,adc_mv_nom=1506,r_ntc_ohm=11804,calc_valid=1,samples=14610,fail=0,last=0
+2026-10-08T20:35:54.3041004+08:00	heat	H3,B,NTC,tick=1510375,cal=0,ready=1,raw=1869,raw_min=1859,raw_max=1877,adc_mv_nom=1506,r_ntc_ohm=11804,calc_valid=1,samples=14620,fail=0,last=0
+2026-10-08T20:35:55.3071969+08:00	heat	H3,B,NTC,tick=1511402,cal=0,ready=1,raw=1878,raw_min=1854,raw_max=1878,adc_mv_nom=1513,r_ntc_ohm=11700,calc_valid=1,samples=14630,fail=0,last=0
+2026-10-08T20:35:56.3260607+08:00	heat	H3,B,NTC,tick=1512429,cal=0,ready=1,raw=1866,raw_min=1840,raw_max=1877,adc_mv_nom=1503,r_ntc_ohm=11839,calc_valid=1,samples=14640,fail=0,last=0
+2026-10-08T20:35:57.3380757+08:00	heat	H3,B,NTC,tick=1513456,cal=0,ready=1,raw=1861,raw_min=1858,raw_max=1882,adc_mv_nom=1499,r_ntc_ohm=11897,calc_valid=1,samples=14650,fail=0,last=0
+2026-10-08T20:35:58.3977999+08:00	heat	H3,B,NTC,tick=1514483,cal=0,ready=1,raw=1863,raw_min=1853,raw_max=1878,adc_mv_nom=1501,r_ntc_ohm=11874,calc_valid=1,samples=14660,fail=0,last=0
+2026-10-08T20:35:59.3934589+08:00	heat	H3,B,NTC,tick=1515510,cal=0,ready=1,raw=1901,raw_min=1867,raw_max=1918,adc_mv_nom=1531,r_ntc_ohm=11438,calc_valid=1,samples=14670,fail=0,last=0
+2026-10-08T20:36:00.4599322+08:00	heat	H3,B,NTC,tick=1516537,cal=0,ready=1,raw=2011,raw_min=1940,raw_max=2011,adc_mv_nom=1620,r_ntc_ohm=10270,calc_valid=1,samples=14680,fail=0,last=0
+2026-10-08T20:36:01.4657855+08:00	heat	H3,B,NTC,tick=1517564,cal=0,ready=1,raw=2075,raw_min=2012,raw_max=2075,adc_mv_nom=1672,r_ntc_ohm=9648,calc_valid=1,samples=14690,fail=0,last=0
+2026-10-08T20:36:02.5273653+08:00	heat	H3,B,NTC,tick=1518590,cal=0,ready=1,raw=2140,raw_min=2084,raw_max=2140,adc_mv_nom=1724,r_ntc_ohm=9054,calc_valid=1,samples=14700,fail=0,last=0
+2026-10-08T20:36:03.5189298+08:00	heat	H3,B,NTC,tick=1519616,cal=0,ready=1,raw=2186,raw_min=2139,raw_max=2186,adc_mv_nom=1761,r_ntc_ohm=8655,calc_valid=1,samples=14710,fail=0,last=0
+2026-10-08T20:36:04.5921273+08:00	heat	H3,B,NTC,tick=1520642,cal=0,ready=1,raw=2232,raw_min=2184,raw_max=2233,adc_mv_nom=1798,r_ntc_ohm=8272,calc_valid=1,samples=14720,fail=0,last=0
+# HEAT_THRESHOLD_REACHED: 2026-10-08T20:36:04.5921273+08:00 median10=1956
+2026-10-08T20:36:05.5581401+08:00	heat	H3,B,NTC,tick=1521668,cal=0,ready=1,raw=2251,raw_min=2231,raw_max=2267,adc_mv_nom=1813,r_ntc_ohm=8119,calc_valid=1,samples=14730,fail=0,last=0
+2026-10-08T20:36:06.6196053+08:00	heat	H3,B,NTC,tick=1522694,cal=0,ready=1,raw=2273,raw_min=2256,raw_max=2297,adc_mv_nom=1831,r_ntc_ohm=7944,calc_valid=1,samples=14740,fail=0,last=0
+2026-10-08T20:36:07.6163166+08:00	heat	H3,B,NTC,tick=1523720,cal=0,ready=1,raw=2301,raw_min=2287,raw_max=2319,adc_mv_nom=1854,r_ntc_ohm=7727,calc_valid=1,samples=14750,fail=0,last=0
+2026-10-08T20:36:08.6774181+08:00	heat	H3,B,NTC,tick=1524746,cal=0,ready=1,raw=2333,raw_min=2299,raw_max=2333,adc_mv_nom=1880,r_ntc_ohm=7485,calc_valid=1,samples=14760,fail=0,last=0
+2026-10-08T20:36:09.6779418+08:00	heat	H3,B,NTC,tick=1525772,cal=0,ready=1,raw=2344,raw_min=2321,raw_max=2344,adc_mv_nom=1888,r_ntc_ohm=7403,calc_valid=1,samples=14770,fail=0,last=0
+2026-10-08T20:36:10.7361125+08:00	heat	H3,B,NTC,tick=1526798,cal=0,ready=1,raw=2368,raw_min=2330,raw_max=2368,adc_mv_nom=1908,r_ntc_ohm=7228,calc_valid=1,samples=14780,fail=0,last=0
+2026-10-08T20:36:11.7448542+08:00	heat	H3,B,NTC,tick=1527824,cal=0,ready=1,raw=2366,raw_min=2342,raw_max=2378,adc_mv_nom=1906,r_ntc_ohm=7242,calc_valid=1,samples=14790,fail=0,last=0
+2026-10-08T20:36:12.7421554+08:00	heat	H3,B,NTC,tick=1528850,cal=0,ready=1,raw=2361,raw_min=2358,raw_max=2416,adc_mv_nom=1902,r_ntc_ohm=7278,calc_valid=1,samples=14800,fail=0,last=0
+2026-10-08T20:36:13.8067437+08:00	heat	H3,B,NTC,tick=1529876,cal=0,ready=1,raw=2395,raw_min=2360,raw_max=2395,adc_mv_nom=1930,r_ntc_ohm=7034,calc_valid=1,samples=14810,fail=0,last=0
+2026-10-08T20:36:14.8085186+08:00	heat	H3,B,NTC,tick=1530902,cal=0,ready=1,raw=2381,raw_min=2371,raw_max=2391,adc_mv_nom=1918,r_ntc_ohm=7134,calc_valid=1,samples=14820,fail=0,last=0
+2026-10-08T20:36:15.8079181+08:00	heat	H3,B,NTC,tick=1531928,cal=0,ready=1,raw=2383,raw_min=2374,raw_max=2397,adc_mv_nom=1920,r_ntc_ohm=7120,calc_valid=1,samples=14830,fail=0,last=0
+2026-10-08T20:36:16.8777029+08:00	heat	H3,B,NTC,tick=1532954,cal=0,ready=1,raw=2391,raw_min=2373,raw_max=2406,adc_mv_nom=1926,r_ntc_ohm=7063,calc_valid=1,samples=14840,fail=0,last=0
+2026-10-08T20:36:17.8812630+08:00	heat	H3,B,NTC,tick=1533980,cal=0,ready=1,raw=2391,raw_min=2389,raw_max=2409,adc_mv_nom=1926,r_ntc_ohm=7063,calc_valid=1,samples=14850,fail=0,last=0
+2026-10-08T20:36:18.9422071+08:00	heat	H3,B,NTC,tick=1535006,cal=0,ready=1,raw=2395,raw_min=2391,raw_max=2412,adc_mv_nom=1930,r_ntc_ohm=7034,calc_valid=1,samples=14860,fail=0,last=0
+2026-10-08T20:36:19.9435013+08:00	heat	H3,B,NTC,tick=1536032,cal=0,ready=1,raw=2412,raw_min=2391,raw_max=2419,adc_mv_nom=1943,r_ntc_ohm=6915,calc_valid=1,samples=14870,fail=0,last=0
+2026-10-08T20:36:20.9454525+08:00	heat	H3,B,NTC,tick=1537058,cal=0,ready=1,raw=2418,raw_min=2323,raw_max=2419,adc_mv_nom=1948,r_ntc_ohm=6873,calc_valid=1,samples=14880,fail=0,last=0
+2026-10-08T20:36:22.0021069+08:00	heat	H3,B,NTC,tick=1538084,cal=0,ready=1,raw=2422,raw_min=2397,raw_max=2422,adc_mv_nom=1951,r_ntc_ohm=6846,calc_valid=1,samples=14890,fail=0,last=0
+2026-10-08T20:36:23.0033374+08:00	heat	H3,B,NTC,tick=1539110,cal=0,ready=1,raw=2415,raw_min=2402,raw_max=2423,adc_mv_nom=1946,r_ntc_ohm=6894,calc_valid=1,samples=14900,fail=0,last=0
+2026-10-08T20:36:24.0645464+08:00	heat	H3,B,NTC,tick=1540136,cal=0,ready=1,raw=2414,raw_min=2399,raw_max=2436,adc_mv_nom=1945,r_ntc_ohm=6901,calc_valid=1,samples=14910,fail=0,last=0
+2026-10-08T20:36:25.0667340+08:00	heat	H3,B,NTC,tick=1541162,cal=0,ready=1,raw=2417,raw_min=2399,raw_max=2439,adc_mv_nom=1947,r_ntc_ohm=6880,calc_valid=1,samples=14920,fail=0,last=0
+2026-10-08T20:36:26.0692924+08:00	heat	H3,B,NTC,tick=1542188,cal=0,ready=1,raw=2419,raw_min=2413,raw_max=2426,adc_mv_nom=1949,r_ntc_ohm=6866,calc_valid=1,samples=14930,fail=0,last=0
+2026-10-08T20:36:27.1337312+08:00	heat	H3,B,NTC,tick=1543214,cal=0,ready=1,raw=2410,raw_min=2399,raw_max=2436,adc_mv_nom=1942,r_ntc_ohm=6929,calc_valid=1,samples=14940,fail=0,last=0
+2026-10-08T20:36:28.1544804+08:00	heat	H3,B,NTC,tick=1544240,cal=0,ready=1,raw=2421,raw_min=2411,raw_max=2438,adc_mv_nom=1950,r_ntc_ohm=6852,calc_valid=1,samples=14950,fail=0,last=0
+2026-10-08T20:36:29.1671820+08:00	heat	H3,B,NTC,tick=1545266,cal=0,ready=1,raw=2424,raw_min=2418,raw_max=2455,adc_mv_nom=1953,r_ntc_ohm=6832,calc_valid=1,samples=14960,fail=0,last=0
+2026-10-08T20:36:30.1849063+08:00	heat	H3,B,NTC,tick=1546292,cal=0,ready=1,raw=2437,raw_min=2420,raw_max=2445,adc_mv_nom=1963,r_ntc_ohm=6742,calc_valid=1,samples=14970,fail=0,last=0
+2026-10-08T20:36:31.2486345+08:00	heat	H3,B,NTC,tick=1547318,cal=0,ready=1,raw=2445,raw_min=2418,raw_max=2445,adc_mv_nom=1970,r_ntc_ohm=6688,calc_valid=1,samples=14980,fail=0,last=0
+2026-10-08T20:36:32.2587862+08:00	heat	H3,B,NTC,tick=1548344,cal=0,ready=1,raw=2455,raw_min=2419,raw_max=2455,adc_mv_nom=1978,r_ntc_ohm=6620,calc_valid=1,samples=14990,fail=0,last=0
+2026-10-08T20:36:33.2535016+08:00	heat	H3,B,NTC,tick=1549370,cal=0,ready=1,raw=2441,raw_min=2431,raw_max=2450,adc_mv_nom=1967,r_ntc_ohm=6715,calc_valid=1,samples=15000,fail=0,last=0
+2026-10-08T20:36:34.3138268+08:00	heat	H3,B,NTC,tick=1550396,cal=0,ready=1,raw=2430,raw_min=2425,raw_max=2456,adc_mv_nom=1958,r_ntc_ohm=6790,calc_valid=1,samples=15010,fail=0,last=0
+2026-10-08T20:36:35.3374454+08:00	heat	H3,B,NTC,tick=1551422,cal=0,ready=1,raw=2441,raw_min=2434,raw_max=2455,adc_mv_nom=1967,r_ntc_ohm=6715,calc_valid=1,samples=15020,fail=0,last=0
+2026-10-08T20:36:36.3318521+08:00	heat	H3,B,NTC,tick=1552448,cal=0,ready=1,raw=2447,raw_min=2436,raw_max=2457,adc_mv_nom=1971,r_ntc_ohm=6674,calc_valid=1,samples=15030,fail=0,last=0
+2026-10-08T20:36:37.3930188+08:00	heat	H3,B,NTC,tick=1553474,cal=0,ready=1,raw=2445,raw_min=2441,raw_max=2459,adc_mv_nom=1970,r_ntc_ohm=6688,calc_valid=1,samples=15040,fail=0,last=0
+2026-10-08T20:36:38.4031645+08:00	heat	H3,B,NTC,tick=1554500,cal=0,ready=1,raw=2442,raw_min=2442,raw_max=2462,adc_mv_nom=1967,r_ntc_ohm=6708,calc_valid=1,samples=15050,fail=0,last=0
+2026-10-08T20:36:39.4023932+08:00	heat	H3,B,NTC,tick=1555526,cal=0,ready=1,raw=2463,raw_min=2437,raw_max=2463,adc_mv_nom=1984,r_ntc_ohm=6567,calc_valid=1,samples=15060,fail=0,last=0
+2026-10-08T20:36:40.4507541+08:00	heat	H3,B,NTC,tick=1556552,cal=0,ready=1,raw=2455,raw_min=2442,raw_max=2472,adc_mv_nom=1978,r_ntc_ohm=6620,calc_valid=1,samples=15070,fail=0,last=0
+2026-10-08T20:36:41.5122740+08:00	heat	H3,B,NTC,tick=1557578,cal=0,ready=1,raw=2463,raw_min=2441,raw_max=2509,adc_mv_nom=1984,r_ntc_ohm=6567,calc_valid=1,samples=15080,fail=0,last=0
+2026-10-08T20:36:42.5114718+08:00	heat	H3,B,NTC,tick=1558604,cal=0,ready=1,raw=2467,raw_min=2443,raw_max=2468,adc_mv_nom=1988,r_ntc_ohm=6540,calc_valid=1,samples=15090,fail=0,last=0
+2026-10-08T20:36:43.5145426+08:00	heat	H3,B,NTC,tick=1559630,cal=0,ready=1,raw=2452,raw_min=2441,raw_max=2463,adc_mv_nom=1975,r_ntc_ohm=6641,calc_valid=1,samples=15100,fail=0,last=0
+2026-10-08T20:36:44.5871865+08:00	heat	H3,B,NTC,tick=1560656,cal=0,ready=1,raw=2449,raw_min=2442,raw_max=2463,adc_mv_nom=1973,r_ntc_ohm=6661,calc_valid=1,samples=15110,fail=0,last=0
+2026-10-08T20:36:45.5872312+08:00	heat	H3,B,NTC,tick=1561682,cal=0,ready=1,raw=2449,raw_min=2432,raw_max=2471,adc_mv_nom=1973,r_ntc_ohm=6661,calc_valid=1,samples=15120,fail=0,last=0
+2026-10-08T20:36:46.5887783+08:00	heat	H3,B,NTC,tick=1562708,cal=0,ready=1,raw=2453,raw_min=2452,raw_max=2470,adc_mv_nom=1976,r_ntc_ohm=6634,calc_valid=1,samples=15130,fail=0,last=0
+2026-10-08T20:36:47.6496405+08:00	heat	H3,B,NTC,tick=1563734,cal=0,ready=1,raw=2453,raw_min=2449,raw_max=2474,adc_mv_nom=1976,r_ntc_ohm=6634,calc_valid=1,samples=15140,fail=0,last=0
+2026-10-08T20:36:48.6480886+08:00	heat	H3,B,NTC,tick=1564760,cal=0,ready=1,raw=2457,raw_min=2445,raw_max=2474,adc_mv_nom=1980,r_ntc_ohm=6607,calc_valid=1,samples=15150,fail=0,last=0
+2026-10-08T20:36:49.7171999+08:00	heat	H3,B,NTC,tick=1565786,cal=0,ready=1,raw=2458,raw_min=2450,raw_max=2473,adc_mv_nom=1980,r_ntc_ohm=6600,calc_valid=1,samples=15160,fail=0,last=0
+2026-10-08T20:36:50.7321402+08:00	heat	H3,B,NTC,tick=1566812,cal=0,ready=1,raw=2465,raw_min=2412,raw_max=2483,adc_mv_nom=1986,r_ntc_ohm=6553,calc_valid=1,samples=15170,fail=0,last=0
+2026-10-08T20:36:51.7292078+08:00	heat	H3,B,NTC,tick=1567838,cal=0,ready=1,raw=2471,raw_min=2442,raw_max=2471,adc_mv_nom=1991,r_ntc_ohm=6513,calc_valid=1,samples=15180,fail=0,last=0
+2026-10-08T20:36:52.7900052+08:00	heat	H3,B,NTC,tick=1568864,cal=0,ready=1,raw=2474,raw_min=2449,raw_max=2475,adc_mv_nom=1993,r_ntc_ohm=6493,calc_valid=1,samples=15190,fail=0,last=0
+2026-10-08T20:36:53.7855522+08:00	heat	H3,B,NTC,tick=1569890,cal=0,ready=1,raw=2474,raw_min=2455,raw_max=2477,adc_mv_nom=1993,r_ntc_ohm=6493,calc_valid=1,samples=15200,fail=0,last=0
+2026-10-08T20:36:54.8452462+08:00	heat	H3,B,NTC,tick=1570916,cal=0,ready=1,raw=2452,raw_min=2411,raw_max=2487,adc_mv_nom=1975,r_ntc_ohm=6641,calc_valid=1,samples=15210,fail=0,last=0
+2026-10-08T20:36:55.8441252+08:00	heat	H3,B,NTC,tick=1571942,cal=0,ready=1,raw=2458,raw_min=2437,raw_max=2478,adc_mv_nom=1980,r_ntc_ohm=6600,calc_valid=1,samples=15220,fail=0,last=0
+2026-10-08T20:36:56.8450317+08:00	heat	H3,B,NTC,tick=1572968,cal=0,ready=1,raw=2463,raw_min=2455,raw_max=2477,adc_mv_nom=1984,r_ntc_ohm=6567,calc_valid=1,samples=15230,fail=0,last=0
+2026-10-08T20:36:57.8736788+08:00	heat	H3,B,NTC,tick=1573994,cal=0,ready=1,raw=2461,raw_min=2455,raw_max=2479,adc_mv_nom=1983,r_ntc_ohm=6580,calc_valid=1,samples=15240,fail=0,last=0
+2026-10-08T20:36:58.9021777+08:00	heat	H3,B,NTC,tick=1575020,cal=0,ready=1,raw=2462,raw_min=2455,raw_max=2477,adc_mv_nom=1984,r_ntc_ohm=6573,calc_valid=1,samples=15250,fail=0,last=0
+2026-10-08T20:36:59.9351097+08:00	heat	H3,B,NTC,tick=1576046,cal=0,ready=1,raw=2469,raw_min=2447,raw_max=2482,adc_mv_nom=1989,r_ntc_ohm=6527,calc_valid=1,samples=15260,fail=0,last=0
+2026-10-08T20:37:00.9973420+08:00	heat	H3,B,NTC,tick=1577072,cal=0,ready=1,raw=2471,raw_min=2457,raw_max=2478,adc_mv_nom=1991,r_ntc_ohm=6513,calc_valid=1,samples=15270,fail=0,last=0
+2026-10-08T20:37:01.9944583+08:00	heat	H3,B,NTC,tick=1578098,cal=0,ready=1,raw=2474,raw_min=2457,raw_max=2479,adc_mv_nom=1993,r_ntc_ohm=6493,calc_valid=1,samples=15280,fail=0,last=0
+2026-10-08T20:37:03.0577411+08:00	heat	H3,B,NTC,tick=1579124,cal=0,ready=1,raw=2474,raw_min=2461,raw_max=2480,adc_mv_nom=1993,r_ntc_ohm=6493,calc_valid=1,samples=15290,fail=0,last=0
+2026-10-08T20:37:04.0618544+08:00	heat	H3,B,NTC,tick=1580150,cal=0,ready=1,raw=2482,raw_min=2454,raw_max=2482,adc_mv_nom=2000,r_ntc_ohm=6440,calc_valid=1,samples=15300,fail=0,last=0
+2026-10-08T20:37:05.0667866+08:00	heat	H3,B,NTC,tick=1581176,cal=0,ready=1,raw=2467,raw_min=2458,raw_max=2492,adc_mv_nom=1988,r_ntc_ohm=6540,calc_valid=1,samples=15310,fail=0,last=0
+2026-10-08T20:37:06.1256815+08:00	heat	H3,B,NTC,tick=1582202,cal=0,ready=1,raw=2471,raw_min=2458,raw_max=2492,adc_mv_nom=1991,r_ntc_ohm=6513,calc_valid=1,samples=15320,fail=0,last=0
+2026-10-08T20:37:07.1042677+08:00	heat	H3,B,NTC,tick=1583228,cal=0,ready=1,raw=2463,raw_min=2448,raw_max=2481,adc_mv_nom=1984,r_ntc_ohm=6567,calc_valid=1,samples=15330,fail=0,last=0
+2026-10-08T20:37:08.1661326+08:00	heat	H3,B,NTC,tick=1584254,cal=0,ready=1,raw=2468,raw_min=2460,raw_max=2485,adc_mv_nom=1988,r_ntc_ohm=6533,calc_valid=1,samples=15340,fail=0,last=0
+2026-10-08T20:37:09.1608438+08:00	heat	H3,B,NTC,tick=1585280,cal=0,ready=1,raw=2465,raw_min=2463,raw_max=2484,adc_mv_nom=1986,r_ntc_ohm=6553,calc_valid=1,samples=15350,fail=0,last=0
+2026-10-08T20:37:10.2224809+08:00	heat	H3,B,NTC,tick=1586306,cal=0,ready=1,raw=2489,raw_min=2463,raw_max=2647,adc_mv_nom=2005,r_ntc_ohm=6394,calc_valid=1,samples=15360,fail=0,last=0
+2026-10-08T20:37:11.2223730+08:00	heat	H3,B,NTC,tick=1587332,cal=0,ready=1,raw=2467,raw_min=2460,raw_max=2488,adc_mv_nom=1988,r_ntc_ohm=6540,calc_valid=1,samples=15370,fail=0,last=0
+2026-10-08T20:37:12.2887034+08:00	heat	H3,B,NTC,tick=1588358,cal=0,ready=1,raw=2478,raw_min=2463,raw_max=2487,adc_mv_nom=1996,r_ntc_ohm=6467,calc_valid=1,samples=15380,fail=0,last=0
+2026-10-08T20:37:13.2849113+08:00	heat	H3,B,NTC,tick=1589384,cal=0,ready=1,raw=2483,raw_min=2459,raw_max=2487,adc_mv_nom=2000,r_ntc_ohm=6434,calc_valid=1,samples=15390,fail=0,last=0
+# HEAT_RELEASE_COMMAND_MARKER: 2026-10-08T20:37:13.5360762+08:00
+2026-10-08T20:37:14.2858146+08:00	recovery	H3,B,NTC,tick=1590410,cal=0,ready=1,raw=2481,raw_min=2461,raw_max=2486,adc_mv_nom=1999,r_ntc_ohm=6447,calc_valid=1,samples=15400,fail=0,last=0
+2026-10-08T20:37:15.3443913+08:00	recovery	H3,B,NTC,tick=1591436,cal=0,ready=1,raw=2474,raw_min=2460,raw_max=2485,adc_mv_nom=1993,r_ntc_ohm=6493,calc_valid=1,samples=15410,fail=0,last=0
+2026-10-08T20:37:16.3566434+08:00	recovery	H3,B,NTC,tick=1592462,cal=0,ready=1,raw=2472,raw_min=2462,raw_max=2489,adc_mv_nom=1992,r_ntc_ohm=6507,calc_valid=1,samples=15420,fail=0,last=0
+2026-10-08T20:37:17.3710101+08:00	recovery	H3,B,NTC,tick=1593488,cal=0,ready=1,raw=2475,raw_min=2459,raw_max=2486,adc_mv_nom=1994,r_ntc_ohm=6487,calc_valid=1,samples=15430,fail=0,last=0
+2026-10-08T20:37:18.4355070+08:00	recovery	H3,B,NTC,tick=1594514,cal=0,ready=1,raw=2468,raw_min=2460,raw_max=2491,adc_mv_nom=1988,r_ntc_ohm=6533,calc_valid=1,samples=15440,fail=0,last=0
+2026-10-08T20:37:19.4361908+08:00	recovery	H3,B,NTC,tick=1595540,cal=0,ready=1,raw=2468,raw_min=2467,raw_max=2495,adc_mv_nom=1988,r_ntc_ohm=6533,calc_valid=1,samples=15450,fail=0,last=0
+2026-10-08T20:37:20.4707338+08:00	recovery	H3,B,NTC,tick=1596566,cal=0,ready=1,raw=2478,raw_min=2439,raw_max=2488,adc_mv_nom=1996,r_ntc_ohm=6467,calc_valid=1,samples=15460,fail=0,last=0
+2026-10-08T20:37:21.4793906+08:00	recovery	H3,B,NTC,tick=1597592,cal=0,ready=1,raw=2465,raw_min=2463,raw_max=2490,adc_mv_nom=1986,r_ntc_ohm=6553,calc_valid=1,samples=15470,fail=0,last=0
+2026-10-08T20:37:22.5418747+08:00	recovery	H3,B,NTC,tick=1598618,cal=0,ready=1,raw=2482,raw_min=2459,raw_max=2488,adc_mv_nom=2000,r_ntc_ohm=6440,calc_valid=1,samples=15480,fail=0,last=0
+2026-10-08T20:37:23.5447146+08:00	recovery	H3,B,NTC,tick=1599644,cal=0,ready=1,raw=2479,raw_min=2465,raw_max=2535,adc_mv_nom=1997,r_ntc_ohm=6460,calc_valid=1,samples=15490,fail=0,last=0
+2026-10-08T20:37:24.5606082+08:00	recovery	H3,B,NTC,tick=1600670,cal=0,ready=1,raw=2484,raw_min=2428,raw_max=2489,adc_mv_nom=2001,r_ntc_ohm=6427,calc_valid=1,samples=15500,fail=0,last=0
+2026-10-08T20:37:25.6204683+08:00	recovery	H3,B,NTC,tick=1601696,cal=0,ready=1,raw=2466,raw_min=2465,raw_max=2487,adc_mv_nom=1987,r_ntc_ohm=6547,calc_valid=1,samples=15510,fail=0,last=0
+2026-10-08T20:37:26.6180486+08:00	recovery	H3,B,NTC,tick=1602722,cal=0,ready=1,raw=2475,raw_min=2465,raw_max=2487,adc_mv_nom=1994,r_ntc_ohm=6487,calc_valid=1,samples=15520,fail=0,last=0
+2026-10-08T20:37:27.6218416+08:00	recovery	H3,B,NTC,tick=1603748,cal=0,ready=1,raw=2471,raw_min=2462,raw_max=2505,adc_mv_nom=1991,r_ntc_ohm=6513,calc_valid=1,samples=15530,fail=0,last=0
+2026-10-08T20:37:28.6726823+08:00	recovery	H3,B,NTC,tick=1604774,cal=0,ready=1,raw=2473,raw_min=2469,raw_max=2482,adc_mv_nom=1992,r_ntc_ohm=6500,calc_valid=1,samples=15540,fail=0,last=0
+2026-10-08T20:37:29.6837284+08:00	recovery	H3,B,NTC,tick=1605800,cal=0,ready=1,raw=2470,raw_min=2465,raw_max=2485,adc_mv_nom=1990,r_ntc_ohm=6520,calc_valid=1,samples=15550,fail=0,last=0
+2026-10-08T20:37:30.7420896+08:00	recovery	H3,B,NTC,tick=1606826,cal=0,ready=1,raw=2462,raw_min=2462,raw_max=2489,adc_mv_nom=1984,r_ntc_ohm=6573,calc_valid=1,samples=15560,fail=0,last=0
+2026-10-08T20:37:31.7407552+08:00	recovery	H3,B,NTC,tick=1607852,cal=0,ready=1,raw=2470,raw_min=2468,raw_max=2488,adc_mv_nom=1990,r_ntc_ohm=6520,calc_valid=1,samples=15570,fail=0,last=0
+2026-10-08T20:37:32.7644986+08:00	recovery	H3,B,NTC,tick=1608878,cal=0,ready=1,raw=2476,raw_min=2467,raw_max=2491,adc_mv_nom=1995,r_ntc_ohm=6480,calc_valid=1,samples=15580,fail=0,last=0
+2026-10-08T20:37:33.7823824+08:00	recovery	H3,B,NTC,tick=1609904,cal=0,ready=1,raw=2491,raw_min=2467,raw_max=2491,adc_mv_nom=2007,r_ntc_ohm=6381,calc_valid=1,samples=15590,fail=0,last=0
+2026-10-08T20:37:34.8444883+08:00	recovery	H3,B,NTC,tick=1610930,cal=0,ready=1,raw=2479,raw_min=2465,raw_max=2489,adc_mv_nom=1997,r_ntc_ohm=6460,calc_valid=1,samples=15600,fail=0,last=0
+2026-10-08T20:37:35.8431956+08:00	recovery	H3,B,NTC,tick=1611956,cal=0,ready=1,raw=2486,raw_min=2463,raw_max=2493,adc_mv_nom=2003,r_ntc_ohm=6414,calc_valid=1,samples=15610,fail=0,last=0
+2026-10-08T20:37:36.9156917+08:00	recovery	H3,B,NTC,tick=1612982,cal=0,ready=1,raw=2467,raw_min=2467,raw_max=2493,adc_mv_nom=1988,r_ntc_ohm=6540,calc_valid=1,samples=15620,fail=0,last=0
+2026-10-08T20:37:37.9117805+08:00	recovery	H3,B,NTC,tick=1614008,cal=0,ready=1,raw=2488,raw_min=2457,raw_max=2488,adc_mv_nom=2004,r_ntc_ohm=6401,calc_valid=1,samples=15630,fail=0,last=0
+2026-10-08T20:37:38.9103639+08:00	recovery	H3,B,NTC,tick=1615034,cal=0,ready=1,raw=2447,raw_min=2447,raw_max=2487,adc_mv_nom=1971,r_ntc_ohm=6674,calc_valid=1,samples=15640,fail=0,last=0
+2026-10-08T20:37:39.9730689+08:00	recovery	H3,B,NTC,tick=1616060,cal=0,ready=1,raw=2461,raw_min=2461,raw_max=2485,adc_mv_nom=1983,r_ntc_ohm=6580,calc_valid=1,samples=15650,fail=0,last=0
+2026-10-08T20:37:40.9741667+08:00	recovery	H3,B,NTC,tick=1617086,cal=0,ready=1,raw=2426,raw_min=2426,raw_max=2468,adc_mv_nom=1955,r_ntc_ohm=6818,calc_valid=1,samples=15660,fail=0,last=0
+2026-10-08T20:37:42.0379637+08:00	recovery	H3,B,NTC,tick=1618112,cal=0,ready=1,raw=2415,raw_min=2415,raw_max=2438,adc_mv_nom=1946,r_ntc_ohm=6894,calc_valid=1,samples=15670,fail=0,last=0
+2026-10-08T20:37:43.0422237+08:00	recovery	H3,B,NTC,tick=1619138,cal=0,ready=1,raw=2408,raw_min=2399,raw_max=2426,adc_mv_nom=1940,r_ntc_ohm=6943,calc_valid=1,samples=15680,fail=0,last=0
+2026-10-08T20:37:44.0442122+08:00	recovery	H3,B,NTC,tick=1620164,cal=0,ready=1,raw=2388,raw_min=2371,raw_max=2404,adc_mv_nom=1924,r_ntc_ohm=7084,calc_valid=1,samples=15690,fail=0,last=0
+2026-10-08T20:37:45.1200363+08:00	recovery	H3,B,NTC,tick=1621190,cal=0,ready=1,raw=2375,raw_min=2359,raw_max=2386,adc_mv_nom=1913,r_ntc_ohm=7177,calc_valid=1,samples=15700,fail=0,last=0
+2026-10-08T20:37:46.1182901+08:00	recovery	H3,B,NTC,tick=1622216,cal=0,ready=1,raw=2370,raw_min=2342,raw_max=2373,adc_mv_nom=1909,r_ntc_ohm=7213,calc_valid=1,samples=15710,fail=0,last=0
+2026-10-08T20:37:47.1527053+08:00	recovery	H3,B,NTC,tick=1623242,cal=0,ready=1,raw=2335,raw_min=2331,raw_max=2375,adc_mv_nom=1881,r_ntc_ohm=7470,calc_valid=1,samples=15720,fail=0,last=0
+2026-10-08T20:37:48.1494662+08:00	recovery	H3,B,NTC,tick=1624268,cal=0,ready=1,raw=2314,raw_min=2312,raw_max=2337,adc_mv_nom=1864,r_ntc_ohm=7628,calc_valid=1,samples=15730,fail=0,last=0
+2026-10-08T20:37:49.2096005+08:00	recovery	H3,B,NTC,tick=1625294,cal=0,ready=1,raw=2295,raw_min=2295,raw_max=2327,adc_mv_nom=1849,r_ntc_ohm=7773,calc_valid=1,samples=15740,fail=0,last=0
+2026-10-08T20:37:50.2088022+08:00	recovery	H3,B,NTC,tick=1626320,cal=0,ready=1,raw=2270,raw_min=2270,raw_max=2309,adc_mv_nom=1829,r_ntc_ohm=7968,calc_valid=1,samples=15750,fail=0,last=0
+2026-10-08T20:37:51.2756759+08:00	recovery	H3,B,NTC,tick=1627346,cal=0,ready=1,raw=2275,raw_min=2275,raw_max=2294,adc_mv_nom=1833,r_ntc_ohm=7928,calc_valid=1,samples=15760,fail=0,last=0
+2026-10-08T20:37:52.2720780+08:00	recovery	H3,B,NTC,tick=1628372,cal=0,ready=1,raw=2259,raw_min=2259,raw_max=2292,adc_mv_nom=1820,r_ntc_ohm=8055,calc_valid=1,samples=15770,fail=0,last=0
+2026-10-08T20:37:53.2711151+08:00	recovery	H3,B,NTC,tick=1629398,cal=0,ready=1,raw=2247,raw_min=2244,raw_max=2266,adc_mv_nom=1810,r_ntc_ohm=8151,calc_valid=1,samples=15780,fail=0,last=0
+2026-10-08T20:37:54.3268103+08:00	recovery	H3,B,NTC,tick=1630424,cal=0,ready=1,raw=2239,raw_min=2226,raw_max=2257,adc_mv_nom=1804,r_ntc_ohm=8215,calc_valid=1,samples=15790,fail=0,last=0
+2026-10-08T20:37:55.3268212+08:00	recovery	H3,B,NTC,tick=1631450,cal=0,ready=1,raw=2241,raw_min=2223,raw_max=2247,adc_mv_nom=1805,r_ntc_ohm=8199,calc_valid=1,samples=15800,fail=0,last=0
+2026-10-08T20:37:56.3626214+08:00	recovery	H3,B,NTC,tick=1632476,cal=0,ready=1,raw=2226,raw_min=2207,raw_max=2233,adc_mv_nom=1793,r_ntc_ohm=8321,calc_valid=1,samples=15810,fail=0,last=0
+2026-10-08T20:37:57.4248158+08:00	recovery	H3,B,NTC,tick=1633502,cal=0,ready=1,raw=2204,raw_min=2193,raw_max=2226,adc_mv_nom=1776,r_ntc_ohm=8503,calc_valid=1,samples=15820,fail=0,last=0
+2026-10-08T20:37:58.4241757+08:00	recovery	H3,B,NTC,tick=1634528,cal=0,ready=1,raw=2187,raw_min=2187,raw_max=2217,adc_mv_nom=1762,r_ntc_ohm=8646,calc_valid=1,samples=15830,fail=0,last=0
+2026-10-08T20:37:59.4313076+08:00	recovery	H3,B,NTC,tick=1635554,cal=0,ready=1,raw=2181,raw_min=2177,raw_max=2200,adc_mv_nom=1757,r_ntc_ohm=8697,calc_valid=1,samples=15840,fail=0,last=0
+2026-10-08T20:38:00.4925882+08:00	recovery	H3,B,NTC,tick=1636580,cal=0,ready=1,raw=2161,raw_min=2161,raw_max=2186,adc_mv_nom=1741,r_ntc_ohm=8869,calc_valid=1,samples=15850,fail=0,last=0
+2026-10-08T20:38:01.4890778+08:00	recovery	H3,B,NTC,tick=1637606,cal=0,ready=1,raw=2165,raw_min=2158,raw_max=2186,adc_mv_nom=1744,r_ntc_ohm=8835,calc_valid=1,samples=15860,fail=0,last=0
+2026-10-08T20:38:02.5494304+08:00	recovery	H3,B,NTC,tick=1638632,cal=0,ready=1,raw=2148,raw_min=2148,raw_max=2170,adc_mv_nom=1730,r_ntc_ohm=8983,calc_valid=1,samples=15870,fail=0,last=0
+2026-10-08T20:38:03.5461595+08:00	recovery	H3,B,NTC,tick=1639658,cal=0,ready=1,raw=2146,raw_min=2143,raw_max=2162,adc_mv_nom=1729,r_ntc_ohm=9001,calc_valid=1,samples=15880,fail=0,last=0
+2026-10-08T20:38:04.5589971+08:00	recovery	H3,B,NTC,tick=1640684,cal=0,ready=1,raw=2148,raw_min=2137,raw_max=2156,adc_mv_nom=1730,r_ntc_ohm=8983,calc_valid=1,samples=15890,fail=0,last=0
+2026-10-08T20:38:05.6152041+08:00	recovery	H3,B,NTC,tick=1641710,cal=0,ready=1,raw=2143,raw_min=2131,raw_max=2153,adc_mv_nom=1726,r_ntc_ohm=9027,calc_valid=1,samples=15900,fail=0,last=0
+2026-10-08T20:38:06.6135056+08:00	recovery	H3,B,NTC,tick=1642736,cal=0,ready=1,raw=2123,raw_min=2120,raw_max=2142,adc_mv_nom=1710,r_ntc_ohm=9206,calc_valid=1,samples=15910,fail=0,last=0
+2026-10-08T20:38:07.6731898+08:00	recovery	H3,B,NTC,tick=1643762,cal=0,ready=1,raw=2119,raw_min=2110,raw_max=2135,adc_mv_nom=1707,r_ntc_ohm=9242,calc_valid=1,samples=15920,fail=0,last=0
+2026-10-08T20:38:08.7014062+08:00	recovery	H3,B,NTC,tick=1644788,cal=0,ready=1,raw=2110,raw_min=2100,raw_max=2135,adc_mv_nom=1700,r_ntc_ohm=9323,calc_valid=1,samples=15930,fail=0,last=0
+2026-10-08T20:38:09.7319326+08:00	recovery	H3,B,NTC,tick=1645814,cal=0,ready=1,raw=2107,raw_min=2101,raw_max=2120,adc_mv_nom=1697,r_ntc_ohm=9351,calc_valid=1,samples=15940,fail=0,last=0
+2026-10-08T20:38:10.7637666+08:00	recovery	H3,B,NTC,tick=1646840,cal=0,ready=1,raw=2090,raw_min=2059,raw_max=2109,adc_mv_nom=1684,r_ntc_ohm=9507,calc_valid=1,samples=15950,fail=0,last=0
+2026-10-08T20:38:11.7792553+08:00	recovery	H3,B,NTC,tick=1647866,cal=0,ready=1,raw=2091,raw_min=2088,raw_max=2101,adc_mv_nom=1685,r_ntc_ohm=9498,calc_valid=1,samples=15960,fail=0,last=0
+2026-10-08T20:38:12.7782316+08:00	recovery	H3,B,NTC,tick=1648892,cal=0,ready=1,raw=2072,raw_min=2072,raw_max=2103,adc_mv_nom=1669,r_ntc_ohm=9676,calc_valid=1,samples=15970,fail=0,last=0
+2026-10-08T20:38:13.8377027+08:00	recovery	H3,B,NTC,tick=1649918,cal=0,ready=1,raw=2076,raw_min=2073,raw_max=2095,adc_mv_nom=1672,r_ntc_ohm=9638,calc_valid=1,samples=15980,fail=0,last=0
+2026-10-08T20:38:14.8353288+08:00	recovery	H3,B,NTC,tick=1650944,cal=0,ready=1,raw=2081,raw_min=2069,raw_max=2087,adc_mv_nom=1676,r_ntc_ohm=9591,calc_valid=1,samples=15990,fail=0,last=0
+2026-10-08T20:38:15.8995368+08:00	recovery	H3,B,NTC,tick=1651970,cal=0,ready=1,raw=2087,raw_min=2059,raw_max=2087,adc_mv_nom=1681,r_ntc_ohm=9535,calc_valid=1,samples=16000,fail=0,last=0
+2026-10-08T20:38:16.8917673+08:00	recovery	H3,B,NTC,tick=1652996,cal=0,ready=1,raw=2081,raw_min=2059,raw_max=2083,adc_mv_nom=1676,r_ntc_ohm=9591,calc_valid=1,samples=16010,fail=0,last=0
+2026-10-08T20:38:17.9025342+08:00	recovery	H3,B,NTC,tick=1654022,cal=0,ready=1,raw=2081,raw_min=2049,raw_max=2081,adc_mv_nom=1676,r_ntc_ohm=9591,calc_valid=1,samples=16020,fail=0,last=0
+2026-10-08T20:38:18.9601479+08:00	recovery	H3,B,NTC,tick=1655048,cal=0,ready=1,raw=2048,raw_min=2048,raw_max=2070,adc_mv_nom=1650,r_ntc_ohm=9906,calc_valid=1,samples=16030,fail=0,last=0
+2026-10-08T20:38:19.9583008+08:00	recovery	H3,B,NTC,tick=1656074,cal=0,ready=1,raw=2046,raw_min=2043,raw_max=2066,adc_mv_nom=1648,r_ntc_ohm=9925,calc_valid=1,samples=16040,fail=0,last=0
+2026-10-08T20:38:21.0187281+08:00	recovery	H3,B,NTC,tick=1657100,cal=0,ready=1,raw=2035,raw_min=2035,raw_max=2068,adc_mv_nom=1639,r_ntc_ohm=10032,calc_valid=1,samples=16050,fail=0,last=0
+2026-10-08T20:38:22.0177468+08:00	recovery	H3,B,NTC,tick=1658127,cal=0,ready=1,raw=2031,raw_min=2030,raw_max=2055,adc_mv_nom=1636,r_ntc_ohm=10072,calc_valid=1,samples=16060,fail=0,last=0
+2026-10-08T20:38:23.0810931+08:00	recovery	H3,B,NTC,tick=1659154,cal=0,ready=1,raw=2039,raw_min=2025,raw_max=2054,adc_mv_nom=1643,r_ntc_ohm=9993,calc_valid=1,samples=16070,fail=0,last=0
+2026-10-08T20:38:24.0766748+08:00	recovery	H3,B,NTC,tick=1660180,cal=0,ready=1,raw=2046,raw_min=2019,raw_max=2051,adc_mv_nom=1648,r_ntc_ohm=9925,calc_valid=1,samples=16080,fail=0,last=0
+2026-10-08T20:38:25.0811475+08:00	recovery	H3,B,NTC,tick=1661206,cal=0,ready=1,raw=2041,raw_min=2014,raw_max=2041,adc_mv_nom=1644,r_ntc_ohm=9974,calc_valid=1,samples=16090,fail=0,last=0
+2026-10-08T20:38:26.1479082+08:00	recovery	H3,B,NTC,tick=1662232,cal=0,ready=1,raw=2043,raw_min=2014,raw_max=2044,adc_mv_nom=1646,r_ntc_ohm=9954,calc_valid=1,samples=16100,fail=0,last=0
+2026-10-08T20:38:27.1430445+08:00	recovery	H3,B,NTC,tick=1663258,cal=0,ready=1,raw=2020,raw_min=2015,raw_max=2038,adc_mv_nom=1627,r_ntc_ohm=10180,calc_valid=1,samples=16110,fail=0,last=0
+2026-10-08T20:38:28.2142308+08:00	recovery	H3,B,NTC,tick=1664285,cal=0,ready=1,raw=2000,raw_min=2000,raw_max=2042,adc_mv_nom=1611,r_ntc_ohm=10381,calc_valid=1,samples=16120,fail=0,last=0
+2026-10-08T20:38:29.2335698+08:00	recovery	H3,B,NTC,tick=1665312,cal=0,ready=1,raw=2012,raw_min=2009,raw_max=2027,adc_mv_nom=1621,r_ntc_ohm=10260,calc_valid=1,samples=16130,fail=0,last=0
+2026-10-08T20:38:30.2601786+08:00	recovery	H3,B,NTC,tick=1666339,cal=0,ready=1,raw=2017,raw_min=2003,raw_max=2037,adc_mv_nom=1625,r_ntc_ohm=10210,calc_valid=1,samples=16140,fail=0,last=0
+2026-10-08T20:38:31.2608557+08:00	recovery	H3,B,NTC,tick=1667366,cal=0,ready=1,raw=2022,raw_min=1991,raw_max=2022,adc_mv_nom=1629,r_ntc_ohm=10160,calc_valid=1,samples=16150,fail=0,last=0
+2026-10-08T20:38:32.2678623+08:00	recovery	H3,B,NTC,tick=1668393,cal=0,ready=1,raw=2007,raw_min=1997,raw_max=2016,adc_mv_nom=1617,r_ntc_ohm=10310,calc_valid=1,samples=16160,fail=0,last=0
+2026-10-08T20:38:33.3290371+08:00	recovery	H3,B,NTC,tick=1669420,cal=0,ready=1,raw=2002,raw_min=1998,raw_max=2021,adc_mv_nom=1613,r_ntc_ohm=10361,calc_valid=1,samples=16170,fail=0,last=0
+2026-10-08T20:38:34.3331960+08:00	recovery	H3,B,NTC,tick=1670447,cal=0,ready=1,raw=1987,raw_min=1987,raw_max=2010,adc_mv_nom=1601,r_ntc_ohm=10514,calc_valid=1,samples=16180,fail=0,last=0
+2026-10-08T20:38:35.3901406+08:00	recovery	H3,B,NTC,tick=1671474,cal=0,ready=1,raw=1995,raw_min=1964,raw_max=2004,adc_mv_nom=1607,r_ntc_ohm=10432,calc_valid=1,samples=16190,fail=0,last=0
+2026-10-08T20:38:36.4092123+08:00	recovery	H3,B,NTC,tick=1672501,cal=0,ready=1,raw=2003,raw_min=1967,raw_max=2005,adc_mv_nom=1614,r_ntc_ohm=10351,calc_valid=1,samples=16200,fail=0,last=0
+2026-10-08T20:38:37.4114705+08:00	recovery	H3,B,NTC,tick=1673528,cal=0,ready=1,raw=1987,raw_min=1986,raw_max=2003,adc_mv_nom=1601,r_ntc_ohm=10514,calc_valid=1,samples=16210,fail=0,last=0
+2026-10-08T20:38:38.4773994+08:00	recovery	H3,B,NTC,tick=1674555,cal=0,ready=1,raw=1973,raw_min=1973,raw_max=1997,adc_mv_nom=1589,r_ntc_ohm=10659,calc_valid=1,samples=16220,fail=0,last=0
+2026-10-08T20:38:39.4772905+08:00	recovery	H3,B,NTC,tick=1675582,cal=0,ready=1,raw=1965,raw_min=1965,raw_max=1995,adc_mv_nom=1583,r_ntc_ohm=10743,calc_valid=1,samples=16230,fail=0,last=0
+2026-10-08T20:38:40.5388821+08:00	recovery	H3,B,NTC,tick=1676609,cal=0,ready=1,raw=1982,raw_min=1969,raw_max=1991,adc_mv_nom=1597,r_ntc_ohm=10566,calc_valid=1,samples=16240,fail=0,last=0
+2026-10-08T20:38:41.5403006+08:00	recovery	H3,B,NTC,tick=1677636,cal=0,ready=1,raw=1979,raw_min=1968,raw_max=1987,adc_mv_nom=1594,r_ntc_ohm=10597,calc_valid=1,samples=16250,fail=0,last=0
+2026-10-08T20:38:42.5350861+08:00	recovery	H3,B,NTC,tick=1678663,cal=0,ready=1,raw=1973,raw_min=1966,raw_max=1993,adc_mv_nom=1589,r_ntc_ohm=10659,calc_valid=1,samples=16260,fail=0,last=0
+2026-10-08T20:38:43.6031261+08:00	recovery	H3,B,NTC,tick=1679690,cal=0,ready=1,raw=1969,raw_min=1959,raw_max=1984,adc_mv_nom=1586,r_ntc_ohm=10701,calc_valid=1,samples=16270,fail=0,last=0
+2026-10-08T20:38:44.6024598+08:00	recovery	H3,B,NTC,tick=1680717,cal=0,ready=1,raw=1967,raw_min=1962,raw_max=1982,adc_mv_nom=1585,r_ntc_ohm=10722,calc_valid=1,samples=16280,fail=0,last=0
+2026-10-08T20:38:45.6657257+08:00	recovery	H3,B,NTC,tick=1681744,cal=0,ready=1,raw=1963,raw_min=1945,raw_max=1972,adc_mv_nom=1581,r_ntc_ohm=10764,calc_valid=1,samples=16290,fail=0,last=0
+2026-10-08T20:38:46.6617805+08:00	recovery	H3,B,NTC,tick=1682771,cal=0,ready=1,raw=1970,raw_min=1940,raw_max=1976,adc_mv_nom=1587,r_ntc_ohm=10690,calc_valid=1,samples=16300,fail=0,last=0
+2026-10-08T20:38:47.7231275+08:00	recovery	H3,B,NTC,tick=1683798,cal=0,ready=1,raw=1967,raw_min=1950,raw_max=1976,adc_mv_nom=1585,r_ntc_ohm=10722,calc_valid=1,samples=16310,fail=0,last=0
+2026-10-08T20:38:48.7217964+08:00	recovery	H3,B,NTC,tick=1684825,cal=0,ready=1,raw=1948,raw_min=1948,raw_max=1967,adc_mv_nom=1569,r_ntc_ohm=10923,calc_valid=1,samples=16320,fail=0,last=0
+2026-10-08T20:38:49.7224483+08:00	recovery	H3,B,NTC,tick=1685852,cal=0,ready=1,raw=1951,raw_min=1951,raw_max=1968,adc_mv_nom=1572,r_ntc_ohm=10891,calc_valid=1,samples=16330,fail=0,last=0
+2026-10-08T20:38:50.7825124+08:00	recovery	H3,B,NTC,tick=1686879,cal=0,ready=1,raw=1953,raw_min=1926,raw_max=1965,adc_mv_nom=1573,r_ntc_ohm=10870,calc_valid=1,samples=16340,fail=0,last=0
+2026-10-08T20:38:51.7919966+08:00	recovery	H3,B,NTC,tick=1687906,cal=0,ready=1,raw=1960,raw_min=1925,raw_max=1965,adc_mv_nom=1579,r_ntc_ohm=10795,calc_valid=1,samples=16350,fail=0,last=0
+2026-10-08T20:38:52.8466964+08:00	recovery	H3,B,NTC,tick=1688933,cal=0,ready=1,raw=1946,raw_min=1939,raw_max=1962,adc_mv_nom=1568,r_ntc_ohm=10944,calc_valid=1,samples=16360,fail=0,last=0
+2026-10-08T20:38:53.8470326+08:00	recovery	H3,B,NTC,tick=1689960,cal=0,ready=1,raw=1941,raw_min=1937,raw_max=1957,adc_mv_nom=1564,r_ntc_ohm=10998,calc_valid=1,samples=16370,fail=0,last=0
+2026-10-08T20:38:54.8618493+08:00	recovery	H3,B,NTC,tick=1690987,cal=0,ready=1,raw=1943,raw_min=1936,raw_max=2057,adc_mv_nom=1565,r_ntc_ohm=10977,calc_valid=1,samples=16380,fail=0,last=0
+2026-10-08T20:38:55.9224768+08:00	recovery	H3,B,NTC,tick=1692014,cal=0,ready=1,raw=1942,raw_min=1935,raw_max=1954,adc_mv_nom=1564,r_ntc_ohm=10987,calc_valid=1,samples=16390,fail=0,last=0
+2026-10-08T20:38:56.9366924+08:00	recovery	H3,B,NTC,tick=1693041,cal=0,ready=1,raw=1941,raw_min=1933,raw_max=1951,adc_mv_nom=1564,r_ntc_ohm=10998,calc_valid=1,samples=16400,fail=0,last=0
+2026-10-08T20:38:57.9649895+08:00	recovery	H3,B,NTC,tick=1694068,cal=0,ready=1,raw=1957,raw_min=1923,raw_max=1957,adc_mv_nom=1577,r_ntc_ohm=10827,calc_valid=1,samples=16410,fail=0,last=0
+2026-10-08T20:38:58.9666786+08:00	recovery	H3,B,NTC,tick=1695095,cal=0,ready=1,raw=1941,raw_min=1929,raw_max=1950,adc_mv_nom=1564,r_ntc_ohm=10998,calc_valid=1,samples=16420,fail=0,last=0
+2026-10-08T20:39:00.0542502+08:00	recovery	H3,B,NTC,tick=1696122,cal=0,ready=1,raw=1935,raw_min=1928,raw_max=1946,adc_mv_nom=1559,r_ntc_ohm=11063,calc_valid=1,samples=16430,fail=0,last=0
+2026-10-08T20:39:01.0533228+08:00	recovery	H3,B,NTC,tick=1697149,cal=0,ready=1,raw=1929,raw_min=1923,raw_max=1945,adc_mv_nom=1554,r_ntc_ohm=11128,calc_valid=1,samples=16440,fail=0,last=0
+2026-10-08T20:39:02.0491844+08:00	recovery	H3,B,NTC,tick=1698176,cal=0,ready=1,raw=1935,raw_min=1918,raw_max=1943,adc_mv_nom=1559,r_ntc_ohm=11063,calc_valid=1,samples=16450,fail=0,last=0
+2026-10-08T20:39:03.1117558+08:00	recovery	H3,B,NTC,tick=1699203,cal=0,ready=1,raw=1938,raw_min=1923,raw_max=1959,adc_mv_nom=1561,r_ntc_ohm=11030,calc_valid=1,samples=16460,fail=0,last=0
+2026-10-08T20:39:04.1095235+08:00	recovery	H3,B,NTC,tick=1700230,cal=0,ready=1,raw=1925,raw_min=1908,raw_max=1934,adc_mv_nom=1551,r_ntc_ohm=11172,calc_valid=1,samples=16470,fail=0,last=0
+2026-10-08T20:39:05.1885487+08:00	recovery	H3,B,NTC,tick=1701257,cal=0,ready=1,raw=1909,raw_min=1909,raw_max=1941,adc_mv_nom=1538,r_ntc_ohm=11349,calc_valid=1,samples=16480,fail=0,last=0
+2026-10-08T20:39:06.1912645+08:00	recovery	H3,B,NTC,tick=1702284,cal=0,ready=1,raw=1922,raw_min=1918,raw_max=1955,adc_mv_nom=1548,r_ntc_ohm=11205,calc_valid=1,samples=16490,fail=0,last=0
+2026-10-08T20:39:07.1938808+08:00	recovery	H3,B,NTC,tick=1703311,cal=0,ready=1,raw=1930,raw_min=1914,raw_max=1936,adc_mv_nom=1555,r_ntc_ohm=11117,calc_valid=1,samples=16500,fail=0,last=0
+2026-10-08T20:39:08.2542215+08:00	recovery	H3,B,NTC,tick=1704338,cal=0,ready=1,raw=1923,raw_min=1911,raw_max=1931,adc_mv_nom=1549,r_ntc_ohm=11194,calc_valid=1,samples=16510,fail=0,last=0
+2026-10-08T20:39:09.2523924+08:00	recovery	H3,B,NTC,tick=1705365,cal=0,ready=1,raw=1910,raw_min=1910,raw_max=1948,adc_mv_nom=1539,r_ntc_ohm=11337,calc_valid=1,samples=16520,fail=0,last=0
+2026-10-08T20:39:10.3115355+08:00	recovery	H3,B,NTC,tick=1706392,cal=0,ready=1,raw=1911,raw_min=1905,raw_max=1927,adc_mv_nom=1540,r_ntc_ohm=11326,calc_valid=1,samples=16530,fail=0,last=0
+2026-10-08T20:39:11.2938847+08:00	recovery	H3,B,NTC,tick=1707419,cal=0,ready=1,raw=1909,raw_min=1894,raw_max=1924,adc_mv_nom=1538,r_ntc_ohm=11349,calc_valid=1,samples=16540,fail=0,last=0
+2026-10-08T20:39:12.3246852+08:00	recovery	H3,B,NTC,tick=1708446,cal=0,ready=1,raw=1911,raw_min=1903,raw_max=1929,adc_mv_nom=1540,r_ntc_ohm=11326,calc_valid=1,samples=16550,fail=0,last=0
+2026-10-08T20:39:13.3424202+08:00	recovery	H3,B,NTC,tick=1709473,cal=0,ready=1,raw=1925,raw_min=1902,raw_max=1925,adc_mv_nom=1551,r_ntc_ohm=11172,calc_valid=1,samples=16560,fail=0,last=0
+2026-10-08T20:39:14.4174822+08:00	recovery	H3,B,NTC,tick=1710500,cal=0,ready=1,raw=1906,raw_min=1897,raw_max=1925,adc_mv_nom=1535,r_ntc_ohm=11382,calc_valid=1,samples=16570,fail=0,last=0
+2026-10-08T20:39:15.4351828+08:00	recovery	H3,B,NTC,tick=1711527,cal=0,ready=1,raw=1908,raw_min=1902,raw_max=1928,adc_mv_nom=1537,r_ntc_ohm=11360,calc_valid=1,samples=16580,fail=0,last=0
+2026-10-08T20:39:16.4380288+08:00	recovery	H3,B,NTC,tick=1712554,cal=0,ready=1,raw=1904,raw_min=1898,raw_max=1924,adc_mv_nom=1534,r_ntc_ohm=11404,calc_valid=1,samples=16590,fail=0,last=0
+2026-10-08T20:39:17.5125659+08:00	recovery	H3,B,NTC,tick=1713581,cal=0,ready=1,raw=1911,raw_min=1899,raw_max=1924,adc_mv_nom=1540,r_ntc_ohm=11326,calc_valid=1,samples=16600,fail=0,last=0
+2026-10-08T20:39:18.5131007+08:00	recovery	H3,B,NTC,tick=1714608,cal=0,ready=1,raw=1919,raw_min=1887,raw_max=1919,adc_mv_nom=1546,r_ntc_ohm=11238,calc_valid=1,samples=16610,fail=0,last=0
+2026-10-08T20:39:19.5264180+08:00	recovery	H3,B,NTC,tick=1715635,cal=0,ready=1,raw=1909,raw_min=1903,raw_max=1918,adc_mv_nom=1538,r_ntc_ohm=11349,calc_valid=1,samples=16620,fail=0,last=0
+2026-10-08T20:39:20.5882068+08:00	recovery	H3,B,NTC,tick=1716662,cal=0,ready=1,raw=1895,raw_min=1891,raw_max=1933,adc_mv_nom=1527,r_ntc_ohm=11506,calc_valid=1,samples=16630,fail=0,last=0
+2026-10-08T20:39:21.5861647+08:00	recovery	H3,B,NTC,tick=1717689,cal=0,ready=1,raw=1897,raw_min=1891,raw_max=1918,adc_mv_nom=1528,r_ntc_ohm=11483,calc_valid=1,samples=16640,fail=0,last=0
+2026-10-08T20:39:22.5918048+08:00	recovery	H3,B,NTC,tick=1718716,cal=0,ready=1,raw=1903,raw_min=1899,raw_max=1921,adc_mv_nom=1533,r_ntc_ohm=11416,calc_valid=1,samples=16650,fail=0,last=0
+2026-10-08T20:39:23.6698494+08:00	recovery	H3,B,NTC,tick=1719743,cal=0,ready=1,raw=1918,raw_min=1897,raw_max=1918,adc_mv_nom=1545,r_ntc_ohm=11249,calc_valid=1,samples=16660,fail=0,last=0
+2026-10-08T20:39:24.6648069+08:00	recovery	H3,B,NTC,tick=1720770,cal=0,ready=1,raw=1895,raw_min=1894,raw_max=1914,adc_mv_nom=1527,r_ntc_ohm=11506,calc_valid=1,samples=16670,fail=0,last=0
+2026-10-08T20:39:25.7261085+08:00	recovery	H3,B,NTC,tick=1721797,cal=0,ready=1,raw=1898,raw_min=1889,raw_max=1918,adc_mv_nom=1529,r_ntc_ohm=11472,calc_valid=1,samples=16680,fail=0,last=0
+2026-10-08T20:39:26.7311646+08:00	recovery	H3,B,NTC,tick=1722824,cal=0,ready=1,raw=1894,raw_min=1893,raw_max=1911,adc_mv_nom=1526,r_ntc_ohm=11517,calc_valid=1,samples=16690,fail=0,last=0
+2026-10-08T20:39:27.7296449+08:00	recovery	H3,B,NTC,tick=1723851,cal=0,ready=1,raw=1890,raw_min=1551,raw_max=1907,adc_mv_nom=1523,r_ntc_ohm=11562,calc_valid=1,samples=16700,fail=0,last=0
+2026-10-08T20:39:28.7924832+08:00	recovery	H3,B,NTC,tick=1724878,cal=0,ready=1,raw=1899,raw_min=1891,raw_max=1910,adc_mv_nom=1530,r_ntc_ohm=11461,calc_valid=1,samples=16710,fail=0,last=0
+2026-10-08T20:39:29.7971877+08:00	recovery	H3,B,NTC,tick=1725905,cal=0,ready=1,raw=1901,raw_min=1878,raw_max=1909,adc_mv_nom=1531,r_ntc_ohm=11438,calc_valid=1,samples=16720,fail=0,last=0
+2026-10-08T20:39:30.8632673+08:00	recovery	H3,B,NTC,tick=1726932,cal=0,ready=1,raw=1897,raw_min=1885,raw_max=1906,adc_mv_nom=1528,r_ntc_ohm=11483,calc_valid=1,samples=16730,fail=0,last=0
+2026-10-08T20:39:31.8658047+08:00	recovery	H3,B,NTC,tick=1727959,cal=0,ready=1,raw=1894,raw_min=1887,raw_max=1901,adc_mv_nom=1526,r_ntc_ohm=11517,calc_valid=1,samples=16740,fail=0,last=0
+2026-10-08T20:39:32.8693793+08:00	recovery	H3,B,NTC,tick=1728986,cal=0,ready=1,raw=1883,raw_min=1879,raw_max=1903,adc_mv_nom=1517,r_ntc_ohm=11642,calc_valid=1,samples=16750,fail=0,last=0
+2026-10-08T20:39:33.9316466+08:00	recovery	H3,B,NTC,tick=1730013,cal=0,ready=1,raw=1899,raw_min=1869,raw_max=1903,adc_mv_nom=1530,r_ntc_ohm=11461,calc_valid=1,samples=16760,fail=0,last=0
+2026-10-08T20:39:34.9274637+08:00	recovery	H3,B,NTC,tick=1731040,cal=0,ready=1,raw=1905,raw_min=1885,raw_max=1905,adc_mv_nom=1535,r_ntc_ohm=11393,calc_valid=1,samples=16770,fail=0,last=0
+2026-10-08T20:39:35.9854092+08:00	recovery	H3,B,NTC,tick=1732067,cal=0,ready=1,raw=1889,raw_min=1855,raw_max=1903,adc_mv_nom=1522,r_ntc_ohm=11574,calc_valid=1,samples=16780,fail=0,last=0
+2026-10-08T20:39:37.0142999+08:00	recovery	H3,B,NTC,tick=1733094,cal=0,ready=1,raw=1881,raw_min=1881,raw_max=1904,adc_mv_nom=1515,r_ntc_ohm=11665,calc_valid=1,samples=16790,fail=0,last=0
+2026-10-08T20:39:37.9975848+08:00	recovery	H3,B,NTC,tick=1734121,cal=0,ready=1,raw=1896,raw_min=1879,raw_max=1901,adc_mv_nom=1527,r_ntc_ohm=11494,calc_valid=1,samples=16800,fail=0,last=0
+2026-10-08T20:39:39.0575330+08:00	recovery	H3,B,NTC,tick=1735148,cal=0,ready=1,raw=1895,raw_min=1881,raw_max=1922,adc_mv_nom=1527,r_ntc_ohm=11506,calc_valid=1,samples=16810,fail=0,last=0
+2026-10-08T20:39:40.0545572+08:00	recovery	H3,B,NTC,tick=1736175,cal=0,ready=1,raw=1896,raw_min=1886,raw_max=1902,adc_mv_nom=1527,r_ntc_ohm=11494,calc_valid=1,samples=16820,fail=0,last=0
+2026-10-08T20:39:41.1121872+08:00	recovery	H3,B,NTC,tick=1737202,cal=0,ready=1,raw=1889,raw_min=1880,raw_max=1901,adc_mv_nom=1522,r_ntc_ohm=11574,calc_valid=1,samples=16830,fail=0,last=0
+2026-10-08T20:39:42.1242559+08:00	recovery	H3,B,NTC,tick=1738229,cal=0,ready=1,raw=1875,raw_min=1875,raw_max=1898,adc_mv_nom=1510,r_ntc_ohm=11734,calc_valid=1,samples=16840,fail=0,last=0
+2026-10-08T20:39:43.1409582+08:00	recovery	H3,B,NTC,tick=1739256,cal=0,ready=1,raw=1877,raw_min=1873,raw_max=1925,adc_mv_nom=1512,r_ntc_ohm=11711,calc_valid=1,samples=16850,fail=0,last=0
+2026-10-08T20:39:44.1698174+08:00	recovery	H3,B,NTC,tick=1740283,cal=0,ready=1,raw=1893,raw_min=1875,raw_max=1906,adc_mv_nom=1525,r_ntc_ohm=11528,calc_valid=1,samples=16860,fail=0,last=0
+2026-10-08T20:39:45.1853709+08:00	recovery	H3,B,NTC,tick=1741310,cal=0,ready=1,raw=1897,raw_min=1876,raw_max=1908,adc_mv_nom=1528,r_ntc_ohm=11483,calc_valid=1,samples=16870,fail=0,last=0
+2026-10-08T20:39:46.2165333+08:00	recovery	H3,B,NTC,tick=1742337,cal=0,ready=1,raw=1883,raw_min=1879,raw_max=1897,adc_mv_nom=1517,r_ntc_ohm=11642,calc_valid=1,samples=16880,fail=0,last=0
+2026-10-08T20:39:47.2794164+08:00	recovery	H3,B,NTC,tick=1743364,cal=0,ready=1,raw=1883,raw_min=1872,raw_max=1899,adc_mv_nom=1517,r_ntc_ohm=11642,calc_valid=1,samples=16890,fail=0,last=0
+2026-10-08T20:39:48.2915603+08:00	recovery	H3,B,NTC,tick=1744391,cal=0,ready=1,raw=1881,raw_min=1865,raw_max=1903,adc_mv_nom=1515,r_ntc_ohm=11665,calc_valid=1,samples=16900,fail=0,last=0
+2026-10-08T20:39:49.2892263+08:00	recovery	H3,B,NTC,tick=1745418,cal=0,ready=1,raw=1895,raw_min=1876,raw_max=1965,adc_mv_nom=1527,r_ntc_ohm=11506,calc_valid=1,samples=16910,fail=0,last=0
+2026-10-08T20:39:50.3541096+08:00	recovery	H3,B,NTC,tick=1746445,cal=0,ready=1,raw=1896,raw_min=1879,raw_max=1896,adc_mv_nom=1527,r_ntc_ohm=11494,calc_valid=1,samples=16920,fail=0,last=0
+2026-10-08T20:39:51.3573846+08:00	recovery	H3,B,NTC,tick=1747472,cal=0,ready=1,raw=1881,raw_min=1871,raw_max=1891,adc_mv_nom=1515,r_ntc_ohm=11665,calc_valid=1,samples=16930,fail=0,last=0
+2026-10-08T20:39:52.3859357+08:00	recovery	H3,B,NTC,tick=1748499,cal=0,ready=1,raw=1870,raw_min=1861,raw_max=1891,adc_mv_nom=1506,r_ntc_ohm=11792,calc_valid=1,samples=16940,fail=0,last=0
+2026-10-08T20:39:53.4468919+08:00	recovery	H3,B,NTC,tick=1749526,cal=0,ready=1,raw=1881,raw_min=1875,raw_max=1895,adc_mv_nom=1515,r_ntc_ohm=11665,calc_valid=1,samples=16950,fail=0,last=0
+2026-10-08T20:39:54.4467148+08:00	recovery	H3,B,NTC,tick=1750553,cal=0,ready=1,raw=1883,raw_min=1871,raw_max=1897,adc_mv_nom=1517,r_ntc_ohm=11642,calc_valid=1,samples=16960,fail=0,last=0
+# RECOVERY_ENVELOPE_REACHED: 2026-10-08T20:39:54.4467148+08:00 average30=1889.87
+2026-10-08T20:39:55.5068279+08:00	recovery	H3,B,NTC,tick=1751580,cal=0,ready=1,raw=1891,raw_min=1873,raw_max=1895,adc_mv_nom=1523,r_ntc_ohm=11551,calc_valid=1,samples=16970,fail=0,last=0
+# RECOVERY_ENVELOPE_REACHED: 2026-10-08T20:39:55.5068279+08:00 average30=1889.73
+2026-10-08T20:39:56.5015623+08:00	recovery	H3,B,NTC,tick=1752607,cal=0,ready=1,raw=1894,raw_min=1875,raw_max=1894,adc_mv_nom=1526,r_ntc_ohm=11517,calc_valid=1,samples=16980,fail=0,last=0
+# RECOVERY_ENVELOPE_REACHED: 2026-10-08T20:39:56.5015623+08:00 average30=1889.6
+2026-10-08T20:39:57.5164285+08:00	recovery	H3,B,NTC,tick=1753634,cal=0,ready=1,raw=1880,raw_min=1855,raw_max=1892,adc_mv_nom=1515,r_ntc_ohm=11677,calc_valid=1,samples=16990,fail=0,last=0
+# RECOVERY_ENVELOPE_REACHED: 2026-10-08T20:39:57.5164285+08:00 average30=1889.13
+2026-10-08T20:39:58.5779087+08:00	recovery	H3,B,NTC,tick=1754661,cal=0,ready=1,raw=1876,raw_min=1875,raw_max=1890,adc_mv_nom=1511,r_ntc_ohm=11723,calc_valid=1,samples=17000,fail=0,last=0
+# RECOVERY_ENVELOPE_REACHED: 2026-10-08T20:39:58.5779087+08:00 average30=1888.67
+2026-10-08T20:39:59.5890809+08:00	recovery	H3,B,NTC,tick=1755688,cal=0,ready=1,raw=1882,raw_min=1845,raw_max=1891,adc_mv_nom=1516,r_ntc_ohm=11654,calc_valid=1,samples=17010,fail=0,last=0
+# RECOVERY_ENVELOPE_REACHED: 2026-10-08T20:39:59.5890809+08:00 average30=1888.1
+2026-10-08T20:40:00.5883501+08:00	recovery	H3,B,NTC,tick=1756715,cal=0,ready=1,raw=1888,raw_min=1871,raw_max=1894,adc_mv_nom=1521,r_ntc_ohm=11585,calc_valid=1,samples=17020,fail=0,last=0
+# RECOVERY_ENVELOPE_REACHED: 2026-10-08T20:40:00.5883501+08:00 average30=1887.67
+2026-10-08T20:40:01.6516717+08:00	recovery	H3,B,NTC,tick=1757742,cal=0,ready=1,raw=1889,raw_min=1874,raw_max=1895,adc_mv_nom=1522,r_ntc_ohm=11574,calc_valid=1,samples=17030,fail=0,last=0
+# RECOVERY_ENVELOPE_REACHED: 2026-10-08T20:40:01.6516717+08:00 average30=1887.4
+2026-10-08T20:40:02.6502455+08:00	recovery	H3,B,NTC,tick=1758769,cal=0,ready=1,raw=1881,raw_min=1871,raw_max=1891,adc_mv_nom=1515,r_ntc_ohm=11665,calc_valid=1,samples=17040,fail=0,last=0
+# RECOVERY_ENVELOPE_REACHED: 2026-10-08T20:40:02.6502455+08:00 average30=1886.97
+2026-10-08T20:40:03.7114362+08:00	recovery	H3,B,NTC,tick=1759796,cal=0,ready=1,raw=1882,raw_min=1868,raw_max=1889,adc_mv_nom=1516,r_ntc_ohm=11654,calc_valid=1,samples=17050,fail=0,last=0
+# RECOVERY_ENVELOPE_REACHED: 2026-10-08T20:40:03.7114362+08:00 average30=1886.93
+2026-10-08T20:40:04.7113470+08:00	recovery	H3,B,NTC,tick=1760823,cal=0,ready=1,raw=1879,raw_min=1873,raw_max=1893,adc_mv_nom=1514,r_ntc_ohm=11688,calc_valid=1,samples=17060,fail=0,last=0
+# RECOVERY_ENVELOPE_REACHED: 2026-10-08T20:40:04.7113470+08:00 average30=1886.27
+2026-10-08T20:40:05.7705840+08:00	recovery	H3,B,NTC,tick=1761850,cal=0,ready=1,raw=1884,raw_min=1851,raw_max=1884,adc_mv_nom=1518,r_ntc_ohm=11631,calc_valid=1,samples=17070,fail=0,last=0
+# RECOVERY_ENVELOPE_REACHED: 2026-10-08T20:40:05.7705840+08:00 average30=1885.57
+2026-10-08T20:40:06.7800167+08:00	recovery	H3,B,NTC,tick=1762877,cal=0,ready=1,raw=1886,raw_min=1868,raw_max=1887,adc_mv_nom=1519,r_ntc_ohm=11608,calc_valid=1,samples=17080,fail=0,last=0
+# RECOVERY_ENVELOPE_REACHED: 2026-10-08T20:40:06.7800167+08:00 average30=1885.47
+2026-10-08T20:40:07.8108601+08:00	recovery	H3,B,NTC,tick=1763904,cal=0,ready=1,raw=1874,raw_min=1857,raw_max=1887,adc_mv_nom=1510,r_ntc_ohm=11746,calc_valid=1,samples=17090,fail=0,last=0
+# RECOVERY_ENVELOPE_REACHED: 2026-10-08T20:40:07.8108601+08:00 average30=1885.23
+2026-10-08T20:40:08.8128895+08:00	recovery	H3,B,NTC,tick=1764931,cal=0,ready=1,raw=1878,raw_min=1869,raw_max=1890,adc_mv_nom=1513,r_ntc_ohm=11700,calc_valid=1,samples=17100,fail=0,last=0
+# RECOVERY_ENVELOPE_REACHED: 2026-10-08T20:40:08.8128895+08:00 average30=1884.63
+2026-10-08T20:40:09.8806581+08:00	recovery	H3,B,NTC,tick=1765958,cal=0,ready=1,raw=1873,raw_min=1866,raw_max=1891,adc_mv_nom=1509,r_ntc_ohm=11757,calc_valid=1,samples=17110,fail=0,last=0
+# RECOVERY_ENVELOPE_REACHED: 2026-10-08T20:40:09.8806581+08:00 average30=1883.9
+2026-10-08T20:40:10.8786712+08:00	recovery	H3,B,NTC,tick=1766985,cal=0,ready=1,raw=1884,raw_min=1863,raw_max=1897,adc_mv_nom=1518,r_ntc_ohm=11631,calc_valid=1,samples=17120,fail=0,last=0
+# RECOVERY_ENVELOPE_REACHED: 2026-10-08T20:40:10.8786712+08:00 average30=1883.5
+2026-10-08T20:40:11.8826442+08:00	recovery	H3,B,NTC,tick=1768012,cal=0,ready=1,raw=1872,raw_min=1833,raw_max=1886,adc_mv_nom=1508,r_ntc_ohm=11769,calc_valid=1,samples=17130,fail=0,last=0
+# RECOVERY_ENVELOPE_REACHED: 2026-10-08T20:40:11.8826442+08:00 average30=1882.93
+2026-10-08T20:40:12.9415754+08:00	recovery	H3,B,NTC,tick=1769039,cal=0,ready=1,raw=1870,raw_min=1863,raw_max=1886,adc_mv_nom=1506,r_ntc_ohm=11792,calc_valid=1,samples=17140,fail=0,last=0
+# RECOVERY_ENVELOPE_REACHED: 2026-10-08T20:40:12.9415754+08:00 average30=1882.77
+2026-10-08T20:40:13.9391798+08:00	recovery	H3,B,NTC,tick=1770066,cal=0,ready=1,raw=1867,raw_min=1867,raw_max=1887,adc_mv_nom=1504,r_ntc_ohm=11827,calc_valid=1,samples=17150,fail=0,last=0
+# RECOVERY_ENVELOPE_REACHED: 2026-10-08T20:40:13.9391798+08:00 average30=1882.43
+2026-10-08T20:40:15.0128749+08:00	recovery	H3,B,NTC,tick=1771093,cal=0,ready=1,raw=1877,raw_min=1865,raw_max=1905,adc_mv_nom=1512,r_ntc_ohm=11711,calc_valid=1,samples=17160,fail=0,last=0
+# RECOVERY_ENVELOPE_REACHED: 2026-10-08T20:40:15.0128749+08:00 average30=1881.9
+2026-10-08T20:40:16.0110145+08:00	recovery	H3,B,NTC,tick=1772120,cal=0,ready=1,raw=1867,raw_min=1865,raw_max=1890,adc_mv_nom=1504,r_ntc_ohm=11827,calc_valid=1,samples=17170,fail=0,last=0
+# RECOVERY_ENVELOPE_REACHED: 2026-10-08T20:40:16.0110145+08:00 average30=1880.9
+2026-10-08T20:40:17.0646627+08:00	recovery	H3,B,NTC,tick=1773147,cal=0,ready=1,raw=1875,raw_min=1844,raw_max=1884,adc_mv_nom=1510,r_ntc_ohm=11734,calc_valid=1,samples=17180,fail=0,last=0
+# RECOVERY_ENVELOPE_REACHED: 2026-10-08T20:40:17.0646627+08:00 average30=1880.63
+2026-10-08T20:40:18.0712726+08:00	recovery	H3,B,NTC,tick=1774174,cal=0,ready=1,raw=1876,raw_min=1870,raw_max=1889,adc_mv_nom=1511,r_ntc_ohm=11723,calc_valid=1,samples=17190,fail=0,last=0
+# RECOVERY_ENVELOPE_REACHED: 2026-10-08T20:40:18.0712726+08:00 average30=1880.4
+2026-10-08T20:40:19.1294972+08:00	recovery	H3,B,NTC,tick=1775201,cal=0,ready=1,raw=1874,raw_min=1867,raw_max=1881,adc_mv_nom=1510,r_ntc_ohm=11746,calc_valid=1,samples=17200,fail=0,last=0
+# RECOVERY_ENVELOPE_REACHED: 2026-10-08T20:40:19.1294972+08:00 average30=1880.17
+2026-10-08T20:40:20.1259448+08:00	recovery	H3,B,NTC,tick=1776228,cal=0,ready=1,raw=1865,raw_min=1856,raw_max=1883,adc_mv_nom=1502,r_ntc_ohm=11850,calc_valid=1,samples=17210,fail=0,last=0
+# RECOVERY_ENVELOPE_REACHED: 2026-10-08T20:40:20.1259448+08:00 average30=1879.17
+2026-10-08T20:40:21.1257582+08:00	recovery	H3,B,NTC,tick=1777255,cal=0,ready=1,raw=1888,raw_min=1863,raw_max=1888,adc_mv_nom=1521,r_ntc_ohm=11585,calc_valid=1,samples=17220,fail=0,last=0
+# RECOVERY_ENVELOPE_REACHED: 2026-10-08T20:40:21.1257582+08:00 average30=1878.9
+2026-10-08T20:40:22.2017666+08:00	recovery	H3,B,NTC,tick=1778282,cal=0,ready=1,raw=1890,raw_min=1849,raw_max=1890,adc_mv_nom=1523,r_ntc_ohm=11562,calc_valid=1,samples=17230,fail=0,last=0
+# RECOVERY_ENVELOPE_REACHED: 2026-10-08T20:40:22.2017666+08:00 average30=1879.2
+2026-10-08T20:40:23.1850119+08:00	recovery	H3,B,NTC,tick=1779309,cal=0,ready=1,raw=1873,raw_min=1868,raw_max=1884,adc_mv_nom=1509,r_ntc_ohm=11757,calc_valid=1,samples=17240,fail=0,last=0
+# RECOVERY_ENVELOPE_REACHED: 2026-10-08T20:40:23.1850119+08:00 average30=1879.3
+2026-10-08T20:40:24.2594452+08:00	recovery	H3,B,NTC,tick=1780336,cal=0,ready=1,raw=1869,raw_min=1868,raw_max=1887,adc_mv_nom=1506,r_ntc_ohm=11804,calc_valid=1,samples=17250,fail=0,last=0
+# RECOVERY_ENVELOPE_REACHED: 2026-10-08T20:40:24.2594452+08:00 average30=1878.9
+2026-10-08T20:40:25.2556232+08:00	recovery	H3,B,NTC,tick=1781363,cal=0,ready=1,raw=1871,raw_min=1866,raw_max=1885,adc_mv_nom=1507,r_ntc_ohm=11780,calc_valid=1,samples=17260,fail=0,last=0
+# RECOVERY_ENVELOPE_REACHED: 2026-10-08T20:40:25.2556232+08:00 average30=1878.5
+2026-10-08T20:40:26.2589328+08:00	recovery	H3,B,NTC,tick=1782390,cal=0,ready=1,raw=1880,raw_min=1858,raw_max=1893,adc_mv_nom=1515,r_ntc_ohm=11677,calc_valid=1,samples=17270,fail=0,last=0
+# RECOVERY_ENVELOPE_REACHED: 2026-10-08T20:40:26.2589328+08:00 average30=1878.13
+2026-10-08T20:40:27.3213067+08:00	recovery	H3,B,NTC,tick=1783417,cal=0,ready=1,raw=1888,raw_min=1864,raw_max=1888,adc_mv_nom=1521,r_ntc_ohm=11585,calc_valid=1,samples=17280,fail=0,last=0
+# RECOVERY_ENVELOPE_REACHED: 2026-10-08T20:40:27.3213067+08:00 average30=1877.93
+2026-10-08T20:40:28.3161740+08:00	recovery	H3,B,NTC,tick=1784444,cal=0,ready=1,raw=1873,raw_min=1866,raw_max=1886,adc_mv_nom=1509,r_ntc_ohm=11757,calc_valid=1,samples=17290,fail=0,last=0
+# RECOVERY_ENVELOPE_REACHED: 2026-10-08T20:40:28.3161740+08:00 average30=1877.7
+2026-10-08T20:40:29.3765809+08:00	recovery	H3,B,NTC,tick=1785471,cal=0,ready=1,raw=1867,raw_min=1867,raw_max=1886,adc_mv_nom=1504,r_ntc_ohm=11827,calc_valid=1,samples=17300,fail=0,last=0
+# RECOVERY_ENVELOPE_REACHED: 2026-10-08T20:40:29.3765809+08:00 average30=1877.4
+2026-10-08T20:40:30.3802812+08:00	recovery	H3,B,NTC,tick=1786498,cal=0,ready=1,raw=1867,raw_min=1867,raw_max=1886,adc_mv_nom=1504,r_ntc_ohm=11827,calc_valid=1,samples=17310,fail=0,last=0
+# RECOVERY_ENVELOPE_REACHED: 2026-10-08T20:40:30.3802812+08:00 average30=1876.9
+2026-10-08T20:40:31.4384874+08:00	recovery	H3,B,NTC,tick=1787525,cal=0,ready=1,raw=1873,raw_min=1865,raw_max=1902,adc_mv_nom=1509,r_ntc_ohm=11757,calc_valid=1,samples=17320,fail=0,last=0
+# RECOVERY_ENVELOPE_REACHED: 2026-10-08T20:40:31.4384874+08:00 average30=1876.4
+2026-10-08T20:40:32.4202752+08:00	recovery	H3,B,NTC,tick=1788552,cal=0,ready=1,raw=1883,raw_min=1863,raw_max=1889,adc_mv_nom=1517,r_ntc_ohm=11642,calc_valid=1,samples=17330,fail=0,last=0
+# RECOVERY_ENVELOPE_REACHED: 2026-10-08T20:40:32.4202752+08:00 average30=1876.2
+2026-10-08T20:40:33.4968197+08:00	recovery	H3,B,NTC,tick=1789579,cal=0,ready=1,raw=1877,raw_min=1865,raw_max=1886,adc_mv_nom=1512,r_ntc_ohm=11711,calc_valid=1,samples=17340,fail=0,last=0
+# RECOVERY_ENVELOPE_REACHED: 2026-10-08T20:40:33.4968197+08:00 average30=1876.07
+2026-10-08T20:40:34.4886382+08:00	recovery	H3,B,NTC,tick=1790606,cal=0,ready=1,raw=1869,raw_min=1852,raw_max=1885,adc_mv_nom=1506,r_ntc_ohm=11804,calc_valid=1,samples=17350,fail=0,last=0
+# RECOVERY_ENVELOPE_REACHED: 2026-10-08T20:40:34.4886382+08:00 average30=1875.63
+2026-10-08T20:40:35.5540112+08:00	recovery	H3,B,NTC,tick=1791633,cal=0,ready=1,raw=1872,raw_min=1861,raw_max=1886,adc_mv_nom=1508,r_ntc_ohm=11769,calc_valid=1,samples=17360,fail=0,last=0
+# RECOVERY_ENVELOPE_REACHED: 2026-10-08T20:40:35.5540112+08:00 average30=1875.4
+2026-10-08T20:40:36.5496913+08:00	recovery	H3,B,NTC,tick=1792660,cal=0,ready=1,raw=1874,raw_min=1868,raw_max=1884,adc_mv_nom=1510,r_ntc_ohm=11746,calc_valid=1,samples=17370,fail=0,last=0
+# RECOVERY_ENVELOPE_REACHED: 2026-10-08T20:40:36.5496913+08:00 average30=1875.07
+2026-10-08T20:40:37.5575127+08:00	recovery	H3,B,NTC,tick=1793687,cal=0,ready=1,raw=1884,raw_min=1853,raw_max=1884,adc_mv_nom=1518,r_ntc_ohm=11631,calc_valid=1,samples=17380,fail=0,last=0
+# RECOVERY_ENVELOPE_REACHED: 2026-10-08T20:40:37.5575127+08:00 average30=1875
+2026-10-08T20:40:38.6164825+08:00	recovery	H3,B,NTC,tick=1794714,cal=0,ready=1,raw=1874,raw_min=1857,raw_max=1907,adc_mv_nom=1510,r_ntc_ohm=11746,calc_valid=1,samples=17390,fail=0,last=0
+# RECOVERY_ENVELOPE_REACHED: 2026-10-08T20:40:38.6164825+08:00 average30=1875
+2026-10-08T20:40:39.6231872+08:00	recovery	H3,B,NTC,tick=1795741,cal=0,ready=1,raw=1871,raw_min=1861,raw_max=1891,adc_mv_nom=1507,r_ntc_ohm=11780,calc_valid=1,samples=17400,fail=0,last=0
+# RECOVERY_ENVELOPE_REACHED: 2026-10-08T20:40:39.6231872+08:00 average30=1874.77
+2026-10-08T20:40:40.6932957+08:00	recovery	H3,B,NTC,tick=1796768,cal=0,ready=1,raw=1807,raw_min=1807,raw_max=1887,adc_mv_nom=1456,r_ntc_ohm=12549,calc_valid=1,samples=17410,fail=0,last=0
+# RECOVERY_ENVELOPE_REACHED: 2026-10-08T20:40:40.6932957+08:00 average30=1872.57
+2026-10-08T20:40:41.6874757+08:00	recovery	H3,B,NTC,tick=1797795,cal=0,ready=1,raw=1867,raw_min=1861,raw_max=1886,adc_mv_nom=1504,r_ntc_ohm=11827,calc_valid=1,samples=17420,fail=0,last=0
+# RECOVERY_ENVELOPE_REACHED: 2026-10-08T20:40:41.6874757+08:00 average30=1872
+2026-10-08T20:40:42.7497482+08:00	recovery	H3,B,NTC,tick=1798822,cal=0,ready=1,raw=1884,raw_min=1858,raw_max=1884,adc_mv_nom=1518,r_ntc_ohm=11631,calc_valid=1,samples=17430,fail=0,last=0
+# RECOVERY_ENVELOPE_REACHED: 2026-10-08T20:40:42.7497482+08:00 average30=1872.4
+2026-10-08T20:40:43.7175633+08:00	recovery	H3,B,NTC,tick=1799849,cal=0,ready=1,raw=1871,raw_min=1865,raw_max=1884,adc_mv_nom=1507,r_ntc_ohm=11780,calc_valid=1,samples=17440,fail=0,last=0
+# RECOVERY_ENVELOPE_REACHED: 2026-10-08T20:40:43.7175633+08:00 average30=1872.43
+2026-10-08T20:40:44.7929138+08:00	recovery	H3,B,NTC,tick=1800876,cal=0,ready=1,raw=1868,raw_min=1864,raw_max=1884,adc_mv_nom=1505,r_ntc_ohm=11815,calc_valid=1,samples=17450,fail=0,last=0
+# RECOVERY_ENVELOPE_REACHED: 2026-10-08T20:40:44.7929138+08:00 average30=1872.47
+2026-10-08T20:40:45.7904895+08:00	recovery	H3,B,NTC,tick=1801903,cal=0,ready=1,raw=1861,raw_min=1861,raw_max=1888,adc_mv_nom=1499,r_ntc_ohm=11897,calc_valid=1,samples=17460,fail=0,last=0
+# RECOVERY_ENVELOPE_REACHED: 2026-10-08T20:40:45.7904895+08:00 average30=1871.93
+2026-10-08T20:40:46.7972288+08:00	recovery	H3,B,NTC,tick=1802930,cal=0,ready=1,raw=1868,raw_min=1865,raw_max=1886,adc_mv_nom=1505,r_ntc_ohm=11815,calc_valid=1,samples=17470,fail=0,last=0
+# RECOVERY_ENVELOPE_REACHED: 2026-10-08T20:40:46.7972288+08:00 average30=1871.97
+2026-10-08T20:40:47.8239050+08:00	recovery	H3,B,NTC,tick=1803957,cal=0,ready=1,raw=1880,raw_min=1866,raw_max=1882,adc_mv_nom=1515,r_ntc_ohm=11677,calc_valid=1,samples=17480,fail=0,last=0
+# RECOVERY_ENVELOPE_REACHED: 2026-10-08T20:40:47.8239050+08:00 average30=1872.13
+2026-10-08T20:40:48.8853050+08:00	recovery	H3,B,NTC,tick=1804984,cal=0,ready=1,raw=1871,raw_min=1866,raw_max=1888,adc_mv_nom=1507,r_ntc_ohm=11780,calc_valid=1,samples=17490,fail=0,last=0
+# RECOVERY_ENVELOPE_REACHED: 2026-10-08T20:40:48.8853050+08:00 average30=1871.97
+2026-10-08T20:40:49.8822303+08:00	recovery	H3,B,NTC,tick=1806011,cal=0,ready=1,raw=1870,raw_min=1853,raw_max=1885,adc_mv_nom=1506,r_ntc_ohm=11792,calc_valid=1,samples=17500,fail=0,last=0
+# RECOVERY_ENVELOPE_REACHED: 2026-10-08T20:40:49.8822303+08:00 average30=1871.83
+2026-10-08T20:40:50.9434938+08:00	recovery	H3,B,NTC,tick=1807038,cal=0,ready=1,raw=1873,raw_min=1854,raw_max=1877,adc_mv_nom=1509,r_ntc_ohm=11757,calc_valid=1,samples=17510,fail=0,last=0
+# RECOVERY_ENVELOPE_REACHED: 2026-10-08T20:40:50.9434938+08:00 average30=1872.1
+2026-10-08T20:40:51.9434053+08:00	recovery	H3,B,NTC,tick=1808065,cal=0,ready=1,raw=1877,raw_min=1864,raw_max=1881,adc_mv_nom=1512,r_ntc_ohm=11711,calc_valid=1,samples=17520,fail=0,last=0
+# RECOVERY_ENVELOPE_REACHED: 2026-10-08T20:40:51.9434053+08:00 average30=1871.73
+2026-10-08T20:40:53.0044226+08:00	recovery	H3,B,NTC,tick=1809092,cal=0,ready=1,raw=1872,raw_min=1863,raw_max=1886,adc_mv_nom=1508,r_ntc_ohm=11769,calc_valid=1,samples=17530,fail=0,last=0
+# RECOVERY_ENVELOPE_REACHED: 2026-10-08T20:40:53.0044226+08:00 average30=1871.13
+2026-10-08T20:40:54.0017381+08:00	recovery	H3,B,NTC,tick=1810119,cal=0,ready=1,raw=1879,raw_min=1859,raw_max=1890,adc_mv_nom=1514,r_ntc_ohm=11688,calc_valid=1,samples=17540,fail=0,last=0
+# RECOVERY_ENVELOPE_REACHED: 2026-10-08T20:40:54.0017381+08:00 average30=1871.33
+2026-10-08T20:40:55.0658446+08:00	recovery	H3,B,NTC,tick=1811146,cal=0,ready=1,raw=1873,raw_min=1856,raw_max=1884,adc_mv_nom=1509,r_ntc_ohm=11757,calc_valid=1,samples=17550,fail=0,last=0
+# RECOVERY_ENVELOPE_REACHED: 2026-10-08T20:40:55.0658446+08:00 average30=1871.47
+2026-10-08T20:40:56.0677172+08:00	recovery	H3,B,NTC,tick=1812173,cal=0,ready=1,raw=1842,raw_min=1842,raw_max=1882,adc_mv_nom=1484,r_ntc_ohm=12122,calc_valid=1,samples=17560,fail=0,last=0
+# RECOVERY_ENVELOPE_REACHED: 2026-10-08T20:40:56.0677172+08:00 average30=1870.5
+2026-10-08T20:40:57.1271853+08:00	recovery	H3,B,NTC,tick=1813200,cal=0,ready=1,raw=1871,raw_min=1839,raw_max=1881,adc_mv_nom=1507,r_ntc_ohm=11780,calc_valid=1,samples=17570,fail=0,last=0
+# RECOVERY_ENVELOPE_REACHED: 2026-10-08T20:40:57.1271853+08:00 average30=1870.2
+2026-10-08T20:40:58.1237377+08:00	recovery	H3,B,NTC,tick=1814227,cal=0,ready=1,raw=1879,raw_min=1864,raw_max=1879,adc_mv_nom=1514,r_ntc_ohm=11688,calc_valid=1,samples=17580,fail=0,last=0
+# RECOVERY_ENVELOPE_REACHED: 2026-10-08T20:40:58.1237377+08:00 average30=1869.9
+2026-10-08T20:40:59.1416389+08:00	recovery	H3,B,NTC,tick=1815254,cal=0,ready=1,raw=1883,raw_min=1862,raw_max=1883,adc_mv_nom=1517,r_ntc_ohm=11642,calc_valid=1,samples=17590,fail=0,last=0
+# RECOVERY_ENVELOPE_REACHED: 2026-10-08T20:40:59.1416389+08:00 average30=1870.23
+2026-10-08T20:41:00.2033503+08:00	recovery	H3,B,NTC,tick=1816281,cal=0,ready=1,raw=1866,raw_min=1863,raw_max=1880,adc_mv_nom=1503,r_ntc_ohm=11839,calc_valid=1,samples=17600,fail=0,last=0
+# RECOVERY_ENVELOPE_REACHED: 2026-10-08T20:41:00.2033503+08:00 average30=1870.2
+2026-10-08T20:41:01.2335260+08:00	recovery	H3,B,NTC,tick=1817308,cal=0,ready=1,raw=1864,raw_min=1858,raw_max=1883,adc_mv_nom=1502,r_ntc_ohm=11862,calc_valid=1,samples=17610,fail=0,last=0
+# RECOVERY_ENVELOPE_REACHED: 2026-10-08T20:41:01.2335260+08:00 average30=1870.1
+2026-10-08T20:41:02.2602656+08:00	recovery	H3,B,NTC,tick=1818335,cal=0,ready=1,raw=1863,raw_min=1856,raw_max=1882,adc_mv_nom=1501,r_ntc_ohm=11874,calc_valid=1,samples=17620,fail=0,last=0
+# RECOVERY_ENVELOPE_REACHED: 2026-10-08T20:41:02.2602656+08:00 average30=1869.77
+2026-10-08T20:41:03.2561464+08:00	recovery	H3,B,NTC,tick=1819362,cal=0,ready=1,raw=1871,raw_min=1862,raw_max=1879,adc_mv_nom=1507,r_ntc_ohm=11780,calc_valid=1,samples=17630,fail=0,last=0
+# RECOVERY_ENVELOPE_REACHED: 2026-10-08T20:41:03.2561464+08:00 average30=1869.37
+2026-10-08T20:41:04.3160330+08:00	recovery	H3,B,NTC,tick=1820389,cal=0,ready=1,raw=1873,raw_min=1856,raw_max=1879,adc_mv_nom=1509,r_ntc_ohm=11757,calc_valid=1,samples=17640,fail=0,last=0
+# RECOVERY_ENVELOPE_REACHED: 2026-10-08T20:41:04.3160330+08:00 average30=1869.23
+2026-10-08T20:41:05.3135424+08:00	recovery	H3,B,NTC,tick=1821416,cal=0,ready=1,raw=1870,raw_min=1833,raw_max=1879,adc_mv_nom=1506,r_ntc_ohm=11792,calc_valid=1,samples=17650,fail=0,last=0
+# RECOVERY_ENVELOPE_REACHED: 2026-10-08T20:41:05.3135424+08:00 average30=1869.27
+2026-10-08T20:41:06.3408343+08:00	recovery	H3,B,NTC,tick=1822443,cal=0,ready=1,raw=1869,raw_min=1854,raw_max=1882,adc_mv_nom=1506,r_ntc_ohm=11804,calc_valid=1,samples=17660,fail=0,last=0
+# RECOVERY_ENVELOPE_REACHED: 2026-10-08T20:41:06.3408343+08:00 average30=1869.17
+2026-10-08T20:41:07.3395773+08:00	recovery	H3,B,NTC,tick=1823470,cal=0,ready=1,raw=1852,raw_min=1852,raw_max=1889,adc_mv_nom=1492,r_ntc_ohm=12003,calc_valid=1,samples=17670,fail=0,last=0
+# RECOVERY_ENVELOPE_REACHED: 2026-10-08T20:41:07.3395773+08:00 average30=1868.43
+2026-10-08T20:41:08.3986599+08:00	recovery	H3,B,NTC,tick=1824497,cal=0,ready=1,raw=1875,raw_min=1860,raw_max=1885,adc_mv_nom=1510,r_ntc_ohm=11734,calc_valid=1,samples=17680,fail=0,last=0
+# RECOVERY_ENVELOPE_REACHED: 2026-10-08T20:41:08.3986599+08:00 average30=1868.13
+2026-10-08T20:41:09.4022539+08:00	recovery	H3,B,NTC,tick=1825524,cal=0,ready=1,raw=1875,raw_min=1861,raw_max=1879,adc_mv_nom=1510,r_ntc_ohm=11734,calc_valid=1,samples=17690,fail=0,last=0
+# RECOVERY_ENVELOPE_REACHED: 2026-10-08T20:41:09.4022539+08:00 average30=1868.17
+2026-10-08T20:41:10.4616248+08:00	recovery	H3,B,NTC,tick=1826551,cal=0,ready=1,raw=1871,raw_min=1857,raw_max=1880,adc_mv_nom=1507,r_ntc_ohm=11780,calc_valid=1,samples=17700,fail=0,last=0
+# RECOVERY_ENVELOPE_REACHED: 2026-10-08T20:41:10.4616248+08:00 average30=1868.17
+2026-10-08T20:41:11.4619439+08:00	recovery	H3,B,NTC,tick=1827578,cal=0,ready=1,raw=1866,raw_min=1854,raw_max=1878,adc_mv_nom=1503,r_ntc_ohm=11839,calc_valid=1,samples=17710,fail=0,last=0
+# RECOVERY_ENVELOPE_REACHED: 2026-10-08T20:41:11.4619439+08:00 average30=1870.13
+2026-10-08T20:41:12.5231820+08:00	recovery	H3,B,NTC,tick=1828605,cal=0,ready=1,raw=1861,raw_min=1861,raw_max=1886,adc_mv_nom=1499,r_ntc_ohm=11897,calc_valid=1,samples=17720,fail=0,last=0
+# RECOVERY_ENVELOPE_REACHED: 2026-10-08T20:41:12.5231820+08:00 average30=1869.93
+2026-10-08T20:41:13.5244556+08:00	recovery	H3,B,NTC,tick=1829632,cal=0,ready=1,raw=1872,raw_min=1858,raw_max=1880,adc_mv_nom=1508,r_ntc_ohm=11769,calc_valid=1,samples=17730,fail=0,last=0
+# RECOVERY_ENVELOPE_REACHED: 2026-10-08T20:41:13.5244556+08:00 average30=1869.53
+2026-10-08T20:41:14.5818540+08:00	recovery	H3,B,NTC,tick=1830659,cal=0,ready=1,raw=1869,raw_min=1859,raw_max=1880,adc_mv_nom=1506,r_ntc_ohm=11804,calc_valid=1,samples=17740,fail=0,last=0
+# RECOVERY_ENVELOPE_REACHED: 2026-10-08T20:41:14.5818540+08:00 average30=1869.47
+2026-10-08T20:41:15.5799743+08:00	recovery	H3,B,NTC,tick=1831686,cal=0,ready=1,raw=1855,raw_min=1855,raw_max=1880,adc_mv_nom=1494,r_ntc_ohm=11968,calc_valid=1,samples=17750,fail=0,last=0
+# RECOVERY_ENVELOPE_REACHED: 2026-10-08T20:41:15.5799743+08:00 average30=1869.03
+2026-10-08T20:41:16.5807070+08:00	recovery	H3,B,NTC,tick=1832713,cal=0,ready=1,raw=1856,raw_min=1856,raw_max=1884,adc_mv_nom=1495,r_ntc_ohm=11956,calc_valid=1,samples=17760,fail=0,last=0
+# RECOVERY_ENVELOPE_REACHED: 2026-10-08T20:41:16.5807070+08:00 average30=1868.87
+2026-10-08T20:41:17.6528803+08:00	recovery	H3,B,NTC,tick=1833740,cal=0,ready=1,raw=1868,raw_min=1850,raw_max=1887,adc_mv_nom=1505,r_ntc_ohm=11815,calc_valid=1,samples=17770,fail=0,last=0
+# RECOVERY_ENVELOPE_REACHED: 2026-10-08T20:41:17.6528803+08:00 average30=1868.87
+2026-10-08T20:41:18.6537956+08:00	recovery	H3,B,NTC,tick=1834767,cal=0,ready=1,raw=1869,raw_min=1849,raw_max=1884,adc_mv_nom=1506,r_ntc_ohm=11804,calc_valid=1,samples=17780,fail=0,last=0
+# RECOVERY_ENVELOPE_REACHED: 2026-10-08T20:41:18.6537956+08:00 average30=1868.5
+2026-10-08T20:41:19.7161073+08:00	recovery	H3,B,NTC,tick=1835794,cal=0,ready=1,raw=1877,raw_min=1862,raw_max=1878,adc_mv_nom=1512,r_ntc_ohm=11711,calc_valid=1,samples=17790,fail=0,last=0
+# RECOVERY_ENVELOPE_REACHED: 2026-10-08T20:41:19.7161073+08:00 average30=1868.7
+2026-10-08T20:41:20.7338748+08:00	recovery	H3,B,NTC,tick=1836821,cal=0,ready=1,raw=1869,raw_min=1834,raw_max=1881,adc_mv_nom=1506,r_ntc_ohm=11804,calc_valid=1,samples=17800,fail=0,last=0
+# RECOVERY_ENVELOPE_REACHED: 2026-10-08T20:41:20.7338748+08:00 average30=1868.67
+2026-10-08T20:41:21.7348249+08:00	recovery	H3,B,NTC,tick=1837848,cal=0,ready=1,raw=1865,raw_min=1854,raw_max=1879,adc_mv_nom=1502,r_ntc_ohm=11850,calc_valid=1,samples=17810,fail=0,last=0
+# RECOVERY_ENVELOPE_REACHED: 2026-10-08T20:41:21.7348249+08:00 average30=1868.4
+2026-10-08T20:41:22.7972846+08:00	recovery	H3,B,NTC,tick=1838875,cal=0,ready=1,raw=1863,raw_min=1859,raw_max=1879,adc_mv_nom=1501,r_ntc_ohm=11874,calc_valid=1,samples=17820,fail=0,last=0
+# RECOVERY_ENVELOPE_REACHED: 2026-10-08T20:41:22.7972846+08:00 average30=1867.93
+2026-10-08T20:41:23.7982588+08:00	recovery	H3,B,NTC,tick=1839902,cal=0,ready=1,raw=1865,raw_min=1857,raw_max=1885,adc_mv_nom=1502,r_ntc_ohm=11850,calc_valid=1,samples=17830,fail=0,last=0
+# RECOVERY_ENVELOPE_REACHED: 2026-10-08T20:41:23.7982588+08:00 average30=1867.7
+2026-10-08T20:41:24.8097889+08:00	recovery	H3,B,NTC,tick=1840929,cal=0,ready=1,raw=1875,raw_min=1862,raw_max=1885,adc_mv_nom=1510,r_ntc_ohm=11734,calc_valid=1,samples=17840,fail=0,last=0
+# RECOVERY_ENVELOPE_REACHED: 2026-10-08T20:41:24.8097889+08:00 average30=1867.57
+2026-10-08T20:41:25.8701664+08:00	recovery	H3,B,NTC,tick=1841956,cal=0,ready=1,raw=1873,raw_min=1857,raw_max=1884,adc_mv_nom=1509,r_ntc_ohm=11757,calc_valid=1,samples=17850,fail=0,last=0
+# RECOVERY_ENVELOPE_REACHED: 2026-10-08T20:41:25.8701664+08:00 average30=1867.57
+2026-10-08T20:41:26.8708193+08:00	recovery	H3,B,NTC,tick=1842983,cal=0,ready=1,raw=1867,raw_min=1861,raw_max=1879,adc_mv_nom=1504,r_ntc_ohm=11827,calc_valid=1,samples=17860,fail=0,last=0
+# RECOVERY_ENVELOPE_REACHED: 2026-10-08T20:41:26.8708193+08:00 average30=1868.4
+2026-10-08T20:41:27.9264667+08:00	recovery	H3,B,NTC,tick=1844010,cal=0,ready=1,raw=1860,raw_min=1855,raw_max=1885,adc_mv_nom=1498,r_ntc_ohm=11909,calc_valid=1,samples=17870,fail=0,last=0
+# RECOVERY_ENVELOPE_REACHED: 2026-10-08T20:41:27.9264667+08:00 average30=1868.03
+2026-10-08T20:41:28.9256516+08:00	recovery	H3,B,NTC,tick=1845037,cal=0,ready=1,raw=1867,raw_min=1863,raw_max=1878,adc_mv_nom=1504,r_ntc_ohm=11827,calc_valid=1,samples=17880,fail=0,last=0
+# RECOVERY_ENVELOPE_REACHED: 2026-10-08T20:41:28.9256516+08:00 average30=1867.63
+2026-10-08T20:41:29.9888169+08:00	recovery	H3,B,NTC,tick=1846064,cal=0,ready=1,raw=1875,raw_min=1858,raw_max=1895,adc_mv_nom=1510,r_ntc_ohm=11734,calc_valid=1,samples=17890,fail=0,last=0
+# RECOVERY_ENVELOPE_REACHED: 2026-10-08T20:41:29.9888169+08:00 average30=1867.37
+2026-10-08T20:41:30.9841630+08:00	recovery	H3,B,NTC,tick=1847091,cal=0,ready=1,raw=1875,raw_min=1863,raw_max=1885,adc_mv_nom=1510,r_ntc_ohm=11734,calc_valid=1,samples=17900,fail=0,last=0
+# RECOVERY_ENVELOPE_REACHED: 2026-10-08T20:41:30.9841630+08:00 average30=1867.67
+2026-10-08T20:41:32.0141280+08:00	recovery	H3,B,NTC,tick=1848118,cal=0,ready=1,raw=1863,raw_min=1861,raw_max=1881,adc_mv_nom=1501,r_ntc_ohm=11874,calc_valid=1,samples=17910,fail=0,last=0
+# RECOVERY_ENVELOPE_REACHED: 2026-10-08T20:41:32.0141280+08:00 average30=1867.63
+2026-10-08T20:41:33.0593217+08:00	recovery	H3,B,NTC,tick=1849145,cal=0,ready=1,raw=1865,raw_min=1860,raw_max=1879,adc_mv_nom=1502,r_ntc_ohm=11850,calc_valid=1,samples=17920,fail=0,last=0
+# RECOVERY_ENVELOPE_REACHED: 2026-10-08T20:41:33.0593217+08:00 average30=1867.7
+2026-10-08T20:41:34.0557777+08:00	recovery	H3,B,NTC,tick=1850172,cal=0,ready=1,raw=1867,raw_min=1862,raw_max=1883,adc_mv_nom=1504,r_ntc_ohm=11827,calc_valid=1,samples=17930,fail=0,last=0
+# RECOVERY_ENVELOPE_REACHED: 2026-10-08T20:41:34.0557777+08:00 average30=1867.57
+2026-10-08T20:41:35.1148831+08:00	recovery	H3,B,NTC,tick=1851199,cal=0,ready=1,raw=1879,raw_min=1863,raw_max=1882,adc_mv_nom=1514,r_ntc_ohm=11688,calc_valid=1,samples=17940,fail=0,last=0
+# RECOVERY_ENVELOPE_REACHED: 2026-10-08T20:41:35.1148831+08:00 average30=1867.77
+2026-10-08T20:41:36.1120285+08:00	recovery	H3,B,NTC,tick=1852226,cal=0,ready=1,raw=1872,raw_min=1857,raw_max=1879,adc_mv_nom=1508,r_ntc_ohm=11769,calc_valid=1,samples=17950,fail=0,last=0
+# RECOVERY_ENVELOPE_REACHED: 2026-10-08T20:41:36.1120285+08:00 average30=1867.83
