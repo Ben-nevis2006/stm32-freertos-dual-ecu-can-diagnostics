@@ -1,0 +1,41 @@
+Gate H3-04 Node B NTC boundary classifier offline build (normalized record)
+Date: 2026-10-10 (Asia/Shanghai)
+Scope: firmware/node_b; 3.3 V NTC laboratory boundary classification only
+
+Source change
+- File: firmware/node_b/Src/freertos.c
+- SHA-256 after change: 0A7131840E602B1F6436644FB1DF8D1CDC3FB8D8C35AA14CFCCA5E104B7BB917
+- Added open threshold: raw <= 50 -> ntc_state=1, calc_valid=0
+- Added short threshold: raw >= 3950 -> ntc_state=2, calc_valid=0
+- Normal interval: 51..3949 -> ntc_state=0, calc_valid=1
+- Boot/status records now expose thresholds and ntc_state.
+
+Toolchain
+- STM32CubeIDE 2.2.0 bundled GNU Tools for STM32 14.3.1
+- IDE-generated Debug Makefile; single-thread make all
+
+Build result
+- Exit code: 0
+- Compiler warnings: 0
+- Compiler errors: 0
+- text/data/bss/dec: 33780 / 100 / 13844 / 47724 bytes
+- node_b.elf size: 1095288 bytes
+- node_b.elf SHA-256: 8CFC084B8AD03683931CC8FDF91C4D8BCF46173FD88F2EA63D006BE6A364A9A2
+
+Compiler static-frame report
+- H3_AdcSample: 24 bytes
+- H3_LogBoot: 240 bytes
+- H3_LogNtcStatus: 400 bytes
+- Default task configured stack: 2048 bytes
+
+Offline replay against archived raw samples
+- 2026-10-09 T-open: 59/59 records classify OPEN (state 1)
+- 2026-10-09 baseline-restored: 58/58 records classify NORMAL (state 0)
+- 2026-10-09 T-S bypass: 58/58 records classify SHORT (state 2)
+- 2026-10-09 final-recovery: 59/59 records classify NORMAL (state 0)
+- 2026-10-09 warm Run02: 351/351 records remain NORMAL (state 0)
+
+Evidence boundary
+- This is a normalized build record, not a verbatim full console transcript.
+- Static frame sizes do not replace an on-target stack high-water measurement.
+- Thresholds are H3 laboratory recognition limits derived from the recorded rig; they are not yet production temperature-range or component-tolerance limits.

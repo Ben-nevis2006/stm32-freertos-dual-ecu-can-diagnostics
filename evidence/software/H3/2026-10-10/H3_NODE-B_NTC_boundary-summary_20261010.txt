@@ -1,0 +1,42 @@
+Gate H3-04 Node B NTC controlled boundary/fault-stimulus summary
+Date range: 2026-10-09 to 2026-10-10 (Asia/Shanghai)
+Topology: Node B 3V3 -> NTC -> S/A0 -> 9.911 kOhm fixed resistor -> GND
+
+Purpose
+Establish reproducible laboratory signatures for an open NTC upper branch and a shorted NTC, implement explicit classification, then prove recovery to the original wiring state. No 12 V, fan, heater, hot air, soldering iron, or powered heater was used.
+
+2026-10-09 characterization before explicit ntc_state firmware
+1. T-open: 59 H3 records over 59.448 s; current raw 0..17, average 1.03; window range 0..43; ADC fail=0.
+2. Baseline restored: 58 records over 58.480 s; current raw 1843..1902, average 1872.21; calc_valid=1; fail=0.
+3. T-S bypass: 58 records over 58.423 s; current raw 3990..4095, average 4088.22; window range 3973..4095; fail=0.
+4. Final recovery: 59 records over 59.506 s; current raw 1839..1896, average 1865.10; calc_valid=1; fail=0.
+
+The old calculation treated every nonzero raw value as numerically valid. It therefore produced unstable validity or extreme resistance near an open branch and a small resistance near full scale, but had no explicit open/short state. These captures are characterization evidence, not a claimed diagnostic PASS.
+
+Threshold decision implemented 2026-10-10
+- raw <= 50: OPEN, ntc_state=1, calc_valid=0, r_ntc_ohm=0
+- raw 51..3949: NORMAL, ntc_state=0, calc_valid=1
+- raw >= 3950: SHORT, ntc_state=2, calc_valid=0, r_ntc_ohm=0
+
+The thresholds were chosen from archived rig samples before the new-firmware rerun: open current max=17 and window max=43; short current min=3990 and window min=3973. The implementation intentionally leaves margin from those characterized samples without claiming a complete production operating envelope.
+
+2026-10-10 new-firmware verification
+1. Normal: 68/68 records state 0 and valid 1; 68.802 s; raw 1786..1867, average 1827.03; fail=0.
+2. Boot-normal: one boot record exposes open_raw_max=50, short_raw_min=3950, cal=0, ready=1; subsequent normal records remain state 0.
+3. T-open: 21/21 records state 1 and valid 0; 20.499 s; raw 0..15, average 1.05; r_ntc_ohm=0; fail=0.
+4. T-S bypass: 21/21 records state 2 and valid 0; 20.534 s; raw 3961..4095, average 4064.19; r_ntc_ohm=0; fail=0.
+5. Original wiring restored: 21/21 records state 0 and valid 1; 20.536 s; raw 1878..1934, average 1911.43; fail=0.
+
+Acceptance result
+- Open signature is stable and explicitly recognized: PASS.
+- Short/bypass signature is stable and explicitly recognized: PASS.
+- Removing either stimulus restores NORMAL without reset-dependent lockup: PASS.
+- ADC sampling remains active with fail=0 and last=0 throughout captured H3 records: PASS.
+- H3-04 controlled low-voltage boundary/fault stimulus: PASS on 2026-10-10.
+
+Required limitations
+- This is a prototype/technical-validation result for the current breadboard, NTC, fixed resistor, Node B, USB supply, and room conditions.
+- The lowest new-firmware SHORT current sample is 3961, only 11 counts above the 3950 threshold. That is sufficient for this controlled H3 run, but not evidence of production margin across temperature, VDDA, ADC error, wiring resistance, aging, or component tolerance.
+- There is no hysteresis, debounce, diagnostic latching, DTC integration, or calibrated legal-temperature window in this change.
+- The T-S bypass current is limited primarily by the approximately 9.93 kOhm lower resistor (about 0.33 mA at 3.3 V); it is not a hard 3V3-to-GND short.
+- In-circuit resistance readings with the unpowered MCU connected include board input/protection and rail paths. Only isolated component measurements may be used to judge the NTC or fixed resistor itself.

@@ -1,0 +1,34 @@
+Gate H3-04 Node B NTC boundary classifier directed flash and verification (normalized record)
+Date: 2026-10-10 (Asia/Shanghai)
+
+Target binding
+- Connected ST-LINK count: 1
+- Frozen target identity: Node B
+- ST-LINK serial number: 066DFF515149856767254421
+- Device ID: 0x410
+- Target memory: 128 KBytes
+- Core: Cortex-M3
+- STM32CubeProgrammer: v2.19
+- Reported target voltage: 3.24 V
+- Node A: not connected and not accessed during this operation
+
+Programmed artifact
+- File: firmware/node_b/Debug/node_b.elf
+- Size: 1095288 bytes
+- SHA-256: 8CFC084B8AD03683931CC8FDF91C4D8BCF46173FD88F2EA63D006BE6A364A9A2
+
+Operation result
+- Download completed.
+- Tool result: Download verified successfully.
+- Reset was requested after verification.
+- The first normal capture began at 2026-10-10T15:42:57+08:00.
+
+Runtime binding
+- A later reset captured the firmware boot record at 2026-10-10T15:51:55.1842569+08:00.
+- Boot record exposed open_raw_max=50 and short_raw_min=3950.
+- ADC calibration/readiness in that record were cal=0 and ready=1.
+
+Evidence boundary
+- This is a normalized operation record, not an unabridged CubeProgrammer console transcript.
+- Directed flash plus successful verify binds the ELF to Node B, while the boot/runtime logs bind the active behavior to the threshold configuration.
+- It does not prove production diagnostic coverage, long-duration stability, absolute temperature accuracy, or any 12 V peripheral.

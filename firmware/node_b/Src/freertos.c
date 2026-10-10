@@ -57,6 +57,12 @@
 #define H3_ADC_FULL_SCALE        4095U
 #define H3_VDDA_CONFIGURED_MV    3300U
 #define H3_R_FIXED_OHM           9911U
+#define H3_NTC_OPEN_RAW_MAX      50U
+#define H3_NTC_SHORT_RAW_MIN     3950U
+
+#define H3_NTC_STATE_NORMAL      0U
+#define H3_NTC_STATE_OPEN        1U
+#define H3_NTC_STATE_SHORT       2U
 
 /* USER CODE END PD */
 
@@ -354,11 +360,13 @@ static void H3_LogBoot(void)
   int length;
 
   length = snprintf(line, sizeof(line),
-                    "H3,B,NTC_BOOT,adc=ADC1_IN0,sample_ms=%lu,log_ms=%lu,vdda_cfg_mv=%lu,r_fixed_ohm=%lu,cal=%u,ready=%u\r\n",
+                    "H3,B,NTC_BOOT,adc=ADC1_IN0,sample_ms=%lu,log_ms=%lu,vdda_cfg_mv=%lu,r_fixed_ohm=%lu,open_raw_max=%u,short_raw_min=%u,cal=%u,ready=%u\r\n",
                     (unsigned long)H3_NTC_SAMPLE_PERIOD_MS,
                     (unsigned long)(H3_NTC_SAMPLE_PERIOD_MS * H3_NTC_LOG_DIVIDER),
                     (unsigned long)H3_VDDA_CONFIGURED_MV,
                     (unsigned long)H3_R_FIXED_OHM,
+                    (unsigned int)H3_NTC_OPEN_RAW_MAX,
+                    (unsigned int)H3_NTC_SHORT_RAW_MIN,
                     (unsigned int)g_h3_adc_cal_result,
                     (unsigned int)g_h3_adc_ready);
 
@@ -375,13 +383,22 @@ static void H3_LogNtcStatus(void)
   uint32_t adc_mv_nominal = 0U;
   uint32_t r_ntc_ohm = 0U;
   uint8_t calculation_valid = 0U;
+  uint8_t ntc_state = H3_NTC_STATE_NORMAL;
   int length;
 
   if (g_h3_adc_window_samples > 0U)
   {
     adc_mv_nominal = ((uint32_t)g_h3_adc_latest_raw * H3_VDDA_CONFIGURED_MV) /
                      H3_ADC_FULL_SCALE;
-    if (g_h3_adc_latest_raw > 0U)
+    if (g_h3_adc_latest_raw <= H3_NTC_OPEN_RAW_MAX)
+    {
+      ntc_state = H3_NTC_STATE_OPEN;
+    }
+    else if (g_h3_adc_latest_raw >= H3_NTC_SHORT_RAW_MIN)
+    {
+      ntc_state = H3_NTC_STATE_SHORT;
+    }
+    else
     {
       r_ntc_ohm = (uint32_t)(((uint64_t)H3_R_FIXED_OHM *
                               (H3_ADC_FULL_SCALE - g_h3_adc_latest_raw)) /
@@ -391,7 +408,7 @@ static void H3_LogNtcStatus(void)
   }
 
   length = snprintf(line, sizeof(line),
-                    "H3,B,NTC,tick=%lu,cal=%u,ready=%u,raw=%u,raw_min=%u,raw_max=%u,adc_mv_nom=%lu,r_ntc_ohm=%lu,calc_valid=%u,samples=%lu,fail=%lu,last=%u\r\n",
+                    "H3,B,NTC,tick=%lu,cal=%u,ready=%u,raw=%u,raw_min=%u,raw_max=%u,adc_mv_nom=%lu,r_ntc_ohm=%lu,ntc_state=%u,calc_valid=%u,samples=%lu,fail=%lu,last=%u\r\n",
                     (unsigned long)HAL_GetTick(),
                     (unsigned int)g_h3_adc_cal_result,
                     (unsigned int)g_h3_adc_ready,
@@ -402,6 +419,7 @@ static void H3_LogNtcStatus(void)
                                    g_h3_adc_window_max : 0U),
                     (unsigned long)adc_mv_nominal,
                     (unsigned long)r_ntc_ohm,
+                    (unsigned int)ntc_state,
                     (unsigned int)calculation_valid,
                     (unsigned long)g_h3_adc_samples_total,
                     (unsigned long)g_h3_adc_failures_total,

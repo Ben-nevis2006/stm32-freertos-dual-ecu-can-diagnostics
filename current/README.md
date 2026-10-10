@@ -45,6 +45,7 @@
 ## 06 Engineering Recaps / 工程复盘
 
 - [H2 CAN Bring-up Troubleshooting Evidence Recap / H2 CAN 联调排障证据复盘（2026-10-02～10-07）](06_engineering_recaps_工程复盘/H2_CAN_Bringup_Troubleshooting_Evidence_Recap_H2_CAN联调排障证据复盘_2026-10-07.md)
+- [H3 NTC Bring-up Troubleshooting Evidence Recap / H3 NTC 联调排障证据复盘（2026-10-07～10-10）](06_engineering_recaps_工程复盘/H3_NTC_Bringup_Troubleshooting_Evidence_Recap_H3_NTC联调排障证据复盘_2026-10-10.md)
 
 ## 当前 Gate 状态
 
@@ -53,6 +54,8 @@
 | H0 硬件到货与身份 | CONDITIONAL PASS | CAN/H2 身份子项已关闭；[原始证据](../evidence/hardware/H0/) |
 | H1 NUCLEO USB Bring-up | PASS | 两板独立枚举、目标识别、Flash 访问与稳定性通过；[原始证据](../evidence/hardware/H1/) |
 | H2 低压 CAN 物理链路 | **PASS（2026-10-07）** | 500 kbit/s、正式帧、受控断线与恢复通过；[2026-10-05 首次失败](../evidence/software/H2/2026-10-05/README.md)、[2026-10-07 修复与验收](../evidence/software/H2/2026-10-07/README.md) |
-| H3 单外设验证 | **IN PROGRESS** | H3-00～H3-03 已通过；Node B NTC 的室温基线、Run01 与自行计时 30 s 的 Run02 均已留存，趋势可重复；下一步 H3-04 受控边界/故障刺激；[执行记录](05_verification_gates_验证与门禁/Gate_H3_Single_Peripheral_Validation_Execution_Record_H3单外设验证执行记录_2026-10-07.md)、[硬件证据](../evidence/hardware/H3/2026-10-08/README.md)、[2026-10-08 软件证据](../evidence/software/H3/2026-10-08/README.md)、[2026-10-09 Run02](../evidence/software/H3/2026-10-09/README.md) |
+| H3 单外设验证 | **IN PROGRESS** | Node B NTC 子项 H3-00～H3-05 已关闭；开路/旁路/恢复三态实测通过。下一步仅做 Fan PWM 准入审计，尚未放行 12 V；[执行记录](05_verification_gates_验证与门禁/Gate_H3_Single_Peripheral_Validation_Execution_Record_H3单外设验证执行记录_2026-10-07.md)、[硬件证据](../evidence/hardware/H3/2026-10-08/README.md)、[10-08 软件证据](../evidence/software/H3/2026-10-08/README.md)、[10-09 Run02/表征](../evidence/software/H3/2026-10-09/README.md)、[10-10 边界验收](../evidence/software/H3/2026-10-10/README.md) |
 
 > Gate H2 采用“阶段内本地累计、Gate 完成后统一推送”策略。远端关闭提交汇总 2026-10-02～10-07 的连续推进，各记录保留真实发生日期；失败、修复和验收没有被压缩成同一天的一次操作。
+
+> Gate H3 延续同一策略。NTC 子项实际跨越 2026-10-07～10-10，本次只做本地关闭；Fan PWM、Tach/PPR 和 INA260 完成并关闭整个 H3 后，才统一推送远端。

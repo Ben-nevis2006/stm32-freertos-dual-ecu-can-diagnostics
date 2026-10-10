@@ -20,7 +20,7 @@
 | H0 硬件到货与身份 | CONDITIONAL PASS | CAN/H2 身份子项已关闭；其他外设随对应 Gate 继续验证 |
 | H1 NUCLEO USB Bring-up | PASS | 两板独立枚举、目标识别、Flash 访问与稳定性通过 |
 | H2 低压 CAN 物理链路 | **PASS（2026-10-07）** | 500 kbit/s；固定帧 3×80 s；正式 `0x100/0x180`；受控断线与恢复通过 |
-| H3 单外设验证 | **IN PROGRESS** | H3-00～H3-03 已通过；Node B NTC 室温、两轮加温及自然恢复趋势可重复，下一步 H3-04 受控边界/故障刺激 |
+| H3 单外设验证 | **IN PROGRESS** | Node B NTC 子项 H3-00～H3-05 已于 2026-10-10 关闭；下一步仅做 Fan PWM 准入审计，尚未放行 12 V 接入 |
 
 H2 仅覆盖 USB/3.3 V 低压双节点链路。`12 V`、Fan、Heater、INA260、NTC、完整 timeout/fault 状态机、负载耐久与 EMC 尚未由 H2 证明。
 
@@ -36,6 +36,17 @@ H2 仅覆盖 USB/3.3 V 低压双节点链路。`12 V`、Fan、Heater、INA260、
 
 历史失败记录没有被最终 PASS 覆盖，也没有伪造或回填历史 Git 提交时间。
 
+## H3 NTC 推进时间线
+
+H3 仍采用“阶段内本地累计、整个 Gate 完成后统一推送”策略；以下日期是实际动作日期，不等于未来统一推送时间：
+
+- `2026-10-07`：冻结 NTC 拓扑、换算模型和安全边界，完成第一轮板外无源检查；
+- `2026-10-08`：关闭机械/线色风险，完成接板预检、ADC 实现、定向刷写、室温基线与 Run01；
+- `2026-10-09`：完成自行计时 Run02、恢复延长段、旧固件开/短路样本表征与在路阻值排查；
+- `2026-10-10`：实现 OPEN/NORMAL/SHORT 三态，完成构建、定向刷写、开路/旁路/最终恢复验收，关闭 NTC 子项。
+
+NTC 关闭不等于整个 H3 关闭；Fan PWM、Tach/PPR 和 INA260 仍需分别准入与验证。
+
 ## 关键入口
 
 - [当前阶段文档索引](current/README.md)
@@ -47,6 +58,9 @@ H2 仅覆盖 USB/3.3 V 低压双节点链路。`12 V`、Fan、Heater、INA260、
 - [H3 2026-10-07 准入证据索引](evidence/hardware/H3/2026-10-07/README.md)
 - [H3 2026-10-08 H3-01 关闭证据索引](evidence/hardware/H3/2026-10-08/README.md)
 - [H3 2026-10-08 ADC 构建、刷写与运行证据索引](evidence/software/H3/2026-10-08/README.md)
+- [H3 2026-10-09 Run02 与边界表征证据](evidence/software/H3/2026-10-09/README.md)
+- [H3 2026-10-10 边界实现与 NTC 子项关闭证据](evidence/software/H3/2026-10-10/README.md)
+- [H3 NTC 联调排障证据复盘](current/06_engineering_recaps_工程复盘/H3_NTC_Bringup_Troubleshooting_Evidence_Recap_H3_NTC联调排障证据复盘_2026-10-10.md)
 - [Node A 固件工程](firmware/node_a)
 - [Node B 固件工程](firmware/node_b)
 
