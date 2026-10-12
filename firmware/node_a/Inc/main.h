@@ -81,6 +81,10 @@ void Error_Handler(void);
 
 /* USER CODE BEGIN Private defines */
 
+#define H3_FAN_PWM_FREQUENCY_HZ          25000U
+#define H3_FAN_PWM_DUTY_PERCENT          50U
+#define H3_FAN_PWM_COMPARE_50_PERCENT    1280U
+
 /* USER CODE END Private defines */
 
 #ifdef __cplusplus

@@ -99,6 +99,14 @@ int main(void)
   MX_USART2_UART_Init();
   /* USER CODE BEGIN 2 */
 
+  __HAL_TIM_SET_COMPARE(&htim3,
+                        TIM_CHANNEL_2,
+                        H3_FAN_PWM_COMPARE_50_PERCENT);
+  if (HAL_TIM_PWM_Start(&htim3, TIM_CHANNEL_2) != HAL_OK)
+  {
+    Error_Handler();
+  }
+
   /* USER CODE END 2 */
 
   /* Init scheduler */

@@ -6,13 +6,13 @@
 |---|---|
 | 版本 | v1.0（NTC 关闭；Fan PWM 分步准入进行中） |
 | 日期 | 2026-10-07～2026-10-12 |
-| 状态 | **IN PROGRESS；NTC 子项 H3-00～H3-05 PASS；FAN-00A、PSU-00B、FAN-00C、FAN-00D、FAN-00E-A PASS；当前进行 FAN-00E-B PWM 开路电压测量** |
+| 状态 | **IN PROGRESS；NTC 子项 H3-00～H3-05 PASS；FAN-00A～FAN-00F 驱动决策已完成；当前准备 FAN-01 PC7 低压侧波形验证** |
 | 前序 Gate | Gate H0 CONDITIONAL PASS；Gate H1 PASS；Gate H2 PASS（2026-10-07） |
 | H3 开始时 Git HEAD | `b03c874 docs: organize active project records` |
 | 固件回退基线 | `bc19580 feat: close Gate H2 CAN bring-up` |
-| 当前准入范围 | Node B 的 3.3 V NTC 子项以及 `FAN-00A`、`PSU-00B / D-04`、`FAN-00C`、`FAN-00D`、`FAN-00E-A` 已通过；当前只允许风扇独立供电、以系统地为参考测量 `F4/PWM` 开路直流电压；Node、Tach、Heater、INA260 继续隔离 |
+| 当前准入范围 | Node B 的 3.3 V NTC 子项以及 Fan 的 `FAN-00A～FAN-00F` 已完成；当前只允许在风扇 12 V、PWM、Tach、Heater、INA260 全部隔离时，为 Node A 准备并验证 `PC7/TIM3_CH2` 约 25 kHz 开漏低压侧波形；尚未授权 PWM 联合接线 |
 | 远端策略 | H3 阶段内按真实日期在本地累计；Gate 完成后统一整合、提交并推送一次。统一推送不改变各动作的实际日期 |
-| 证据索引 | [`2026-10-07 搭建与照片`](../../evidence/hardware/H3/2026-10-07/README.md)；[`2026-10-08 硬件接线与电压预检`](../../evidence/hardware/H3/2026-10-08/README.md)；[`2026-10-08 H3-02、基线与 Run01`](../../evidence/software/H3/2026-10-08/README.md)；[`2026-10-09 Run02 与边界表征`](../../evidence/software/H3/2026-10-09/README.md)；[`2026-10-10 边界实现与验收`](../../evidence/software/H3/2026-10-10/README.md)；[`2026-10-10 FAN 身份/接口`](../../evidence/hardware/H3/2026-10-10/README.md)；[`2026-10-12 PSU 空载稳定性/残压`](../../evidence/hardware/H3/2026-10-12/README.md) |
+| 证据索引 | [`2026-10-07 搭建与照片`](../../evidence/hardware/H3/2026-10-07/README.md)；[`2026-10-08 硬件接线与电压预检`](../../evidence/hardware/H3/2026-10-08/README.md)；[`2026-10-08 H3-02、基线与 Run01`](../../evidence/software/H3/2026-10-08/README.md)；[`2026-10-09 Run02 与边界表征`](../../evidence/software/H3/2026-10-09/README.md)；[`2026-10-10 边界实现与验收`](../../evidence/software/H3/2026-10-10/README.md)；[`2026-10-10 FAN 身份/接口`](../../evidence/hardware/H3/2026-10-10/README.md)；[`2026-10-12 FAN 供电/接口实测`](../../evidence/hardware/H3/2026-10-12/README.md)；[`2026-10-12 FAN-01 固件预备`](../../evidence/software/H3/2026-10-12/README.md) |
 
 ## 2. Gate 目标与边界
 
@@ -390,19 +390,19 @@ NTC 子项的原始照片、无源阻值、连续性、上电前 DMM、构建与
 
 ## 17. Gate H3 后续授权边界
 
-整个 Gate H3 仍为 **IN PROGRESS**。Fan PWM 已完成 `FAN-00A`、`PSU-00B`、延长线映射和 `FAN-00D` 独立上电；PWM 开路电压、低压侧波形和联合实测尚未完成，Tach/PPR 与 INA260 也尚未建立独立证据。
+整个 Gate H3 仍为 **IN PROGRESS**。Fan PWM 已完成 `FAN-00A～FAN-00F` 的实物身份、独立供电、针位映射、PWM 对地开路电压和驱动方案决策；低压侧波形和联合实测尚未完成，Tach/PPR 与 INA260 也尚未建立独立证据。
 
-Fan PWM 子项已于 2026-10-10 完成文档审计、安全方案冻结和 `FAN-00A` 实物身份/接口补证，并于 2026-10-12 依次通过 `PSU-00B`、`FAN-00C` 与 `FAN-00D`。下一步进入 **`FAN-00E` PWM 开路电压验证**；先以无源连续性锁定 PWM 物理孔位，再决定带电测量。H3 仍按“整个 Gate 完成后统一推送”执行，因此当前新增记录只允许本地提交，不单独推送 GitHub。
+Fan PWM 子项已于 2026-10-10 完成文档审计、安全方案冻结和 `FAN-00A` 实物身份/接口补证，并于 2026-10-12 依次通过 `PSU-00B`、`FAN-00C`、`FAN-00D`、`FAN-00E` 与受控范围的 `FAN-00F`。下一步进入 **`FAN-01` PC7 开漏低压侧波形验证**：风扇与 12 V 继续隔离，用外部 `10 kΩ` 将 PC7 上拉到 Node A `3V3`，再观测约 25 kHz / 50% 的对地波形。H3 仍按“整个 Gate 完成后统一推送”执行，因此当前新增记录只允许本地提交，不单独推送 GitHub。
 
 ## 18. Fan PWM-00 准入审计（2026-10-10）
 
 ### 18.1 当前判定
 
-Fan PWM-00 当前判定为 **IN PROGRESS AT FAN-00E（不是器件 FAIL）**。2026-10-10 收到并归档 5 张原始照片后，`FAN-00A` 判定为 **PASS（身份/接口范围）**：实物标签确认 `ARCTIC P8 PWM PST / DC 12 V 0.09 A`，原装主接口为 4 位 4 触点，PST 串联输出为 4 位外壳内 3 个触点，独立延长线两端均为 4 位 4 触点。该差异符合 PST 只转接 `GND / +12 V / PWM`、不并联多只风扇 Tach 输出的设计，不登记为缺针或损坏。
+Fan PWM-00 当前判定为 **PASS（`FAN-00A～FAN-00F`）**，Fan PWM 整体当前进展为 **IN PROGRESS AT FAN-01（不是器件 FAIL）**。2026-10-10 收到并归档 5 张原始照片后，`FAN-00A` 判定为 **PASS（身份/接口范围）**：实物标签确认 `ARCTIC P8 PWM PST / DC 12 V 0.09 A`，原装主接口为 4 位 4 触点，PST 串联输出为 4 位外壳内 3 个触点，独立延长线两端均为 4 位 4 触点。该差异符合 PST 只转接 `GND / +12 V / PWM`、不并联多只风扇 Tach 输出的设计，不登记为缺针或损坏。
 
 H0 `D-02` 的 FAN 身份/接口子项据此关闭；完整销售 SKU 未印在现场标签上，因此不把候选网页中的 `ACFAN00150A` 当成现场可读事实。2026-10-12 的 `PSU-00B` 在完全空载状态连续观察 10 s，输出 `12.487～12.588 V`、末值 `12.588 V`，无跳变、异味、异响或异常发热，据此关闭 H0 `D-04` 的空载基本稳定性缺口。
 
-`FAN-00C` 随后确认延长线四路一一对应、不同针位无短路、晃动无断续；`FAN-00D` 又确认端到端供电极性正确、单风扇可立即起转并稳定运行 10 s。当前只允许推进 `FAN-00E` PWM 开路电压验证；仍不允许连接 Node A、搭建 INA260 高边路径或编写并刷写风扇控制固件。
+`FAN-00C` 随后确认延长线四路一一对应、不同针位无短路、晃动无断续；`FAN-00D` 又确认端到端供电极性正确、单风扇可立即起转并稳定运行 10 s；`FAN-00E/F` 又完成 PWM 对地开路电压和 PC7 受控直连决策。当前只允许在风扇、12 V、Tach、Heater 和 INA260 全部隔离时编译、刷写并验证 `FAN-01` 的 Node A PC7 空载开漏波形；尚不允许 PWM 联合接线。
 
 ### 18.2 已确认的设计基线
 
@@ -457,7 +457,7 @@ PST 额外接口     -> 不使用、单独绝缘固定
 7. **FAN-01 低压侧先验**：先不接风扇，在 Node A 的 D9/PC7 上以示波器验证固定占空比和约 25 kHz 波形，再决定是否进行公共地与 PWM 单线联调；
 8. **FAN-02 单风扇 PWM 实测**：只增加 PWM 单线，按受控占空比档位验证转速方向性/停转行为；Tach、INA260、Heater 继续隔离。
 
-第 1 步 `FAN-00A` 已于 2026-10-10 通过，第 2 步 `PSU-00B`、第 3 步 `FAN-00C`、第 4 步 `FAN-00D` 已于 2026-10-12 通过。当前只授权第 5 步 `FAN-00E`，并先执行全断电的 PWM 孔位映射；`FAN-00F` 及后续步骤继续 HOLD。Git 仍按完整 Gate H3 关闭后统一推送；本审计记录不触发单独远端推送。
+第 1 步 `FAN-00A` 已于 2026-10-10 通过，第 2～6 步 `PSU-00B`、`FAN-00C`、`FAN-00D`、`FAN-00E`、`FAN-00F` 已于 2026-10-12 通过。当前只授权第 7 步 `FAN-01` 的离线固件准备、Node A 定向刷写与风扇完全隔离条件下的空载波形验证；第 8 步 `FAN-02` 继续 HOLD。Git 仍按完整 Gate H3 关闭后统一推送；本审计记录不触发单独远端推送。
 
 ### 18.6 FAN-00A 关闭证据（2026-10-10）
 
@@ -558,3 +558,29 @@ FANEXT-01 Pin 3/Tach、Pin 4/PWM
 PWM 只在 `F4` 命中且 `F3` 不蜂鸣，因此 `FAN-00E-A` 判定为 **PASS**，冻结完整功能映射为 `F1=GND`、`F2=+12 V`、`F3=Tach`、`F4=PWM`。其中 `F3=Tach` 是结合标准四针顺序、PST 省略 Tach 的既有结构证据和唯一剩余孔位得出的闭环映射；Tach 在本子项继续保持不连接。
 
 下一授权点为 `FAN-00E-B`：Node、Tach、Heater、INA260 均隔离，只给风扇独立供电；以 `F1/GND`（可在 DC 端子负极取参考）为黑表笔参考，通过独立高阻测量引线读取 `F4/PWM` 相对地的开路直流电压及 10 s 范围。PWM 不得连接任何 MCU GPIO。
+
+### 18.14 FAN-00E-B PWM 开路电压与现场纠正（2026-10-12）
+
+首次口头报告为 `7.681～7.683 V`，随后执行人立即发现黑表笔参考点误接在 `+12 V`，该数值实际是电源线与 PWM 线之间的电位差，不是 PWM 对地开路电压，故标记为 **INVALID / 不进入验收统计**。重新以 `F1/GND` 为参考测量后，执行人报告 `F4/PWM` 稳定为 `4.850 V`。
+
+有效结果 `4.850 V` 低于 Intel 四线 PWM 风扇接口给出的风扇侧 PWM 上拉绝对上限 `5.25 V`。风扇在测量中继续稳定转动；完成后仍须保持 Node 与 Tach 隔离。`FAN-00E-B` 判定为 **PASS（以纠正后的 GND 参考值为准）**，从而 `FAN-00E` 整体关闭为 **PASS**。
+
+参考：Intel 官方设计指南的风扇电气性能表规定 PWM 风扇侧上拉推荐最高 `3.3 V`、绝对最高 `5.25 V`，且最大下拉电流 `5 mA`：<https://www.intel.com/content/dam/doc/design-guide/core-2-pentium-celeron-dual-core-guide.pdf>。
+
+### 18.15 FAN-00F 驱动决策（2026-10-12）
+
+ST 官方 `STM32F103x8/xB` 数据手册在针脚表中把 `PC7` 标为 `FT` 且列出复用功能 `TIM3_CH2`；`FT` 表示 5 V tolerant。电气表给出 FT 针脚输入绝对上限为 `VDD + 4.0 V`，并明确指出当外部电压高于 `VDD + 0.3 V` 时必须关闭内部上拉/下拉。以 Node A 正常 `VDD≈3.3 V` 供电计算，实测 `4.850 V` 在约 `7.3 V` 绝对上限内。
+
+据此，H3 受控实验阶段批准 `PC7/TIM3_CH2` 使用 **Alternate Function Open-Drain，内部 Pull-Up/Pull-Down 均关闭**，直接下拉风扇 PWM；不批准推挽输出。Intel 接口上限为最大 `5 mA` 下拉电流，ST 在标准输出条件下给出 GPIO 最大 `8 mA` 吸收/输出能力，因此当前接口族的下拉电流也在 PC7 能力内。该批准附带不可省略的电源时序：Node A 必须先上电，随后才允许开启风扇 12 V；关闭时先断风扇 12 V并确认残压 `<0.5 V`，再断 Node A 或拆 PWM。因为 FT 针脚绝对上限随 `VDD` 变化，Node A 未供电时不得让风扇的 `4.850 V` 上拉进入 PC7。若最终系统不能从硬件上保证该时序，则本直连方案不得作为最终装配，必须改用外部 NPN/NMOS 隔离。
+
+参考：ST 官方数据手册：<https://www.st.com/resource/en/datasheet/stm32f103rb.pdf>。
+
+`FAN-00F` 判定为 **PASS（受控实验直连方案与时序约束范围）**。下一步为 `FAN-01`：风扇及 12 V 仍完全不接，在 `PC7/D9` 与 Node A `3V3` 之间加一只外部 `10 kΩ` 上拉电阻，再用示波器以 Node A GND 为参考验证约 25 kHz / 50% 的开漏低压侧波形；通过前不得进行风扇公共地和 PWM 联调。
+
+## 19. FAN-01 PC7 开漏波形固件准备（2026-10-12）
+
+Node A 在 CubeMX 既有 `TIM3 Full Remap / TIM3_CH2 / PC7 / AF Open-Drain / ARR=2559 / PSC=0` 基础上新增以下最小逻辑：启动 `HAL_TIM_PWM_Start(&htim3, TIM_CHANNEL_2)`，把 `CCR2` 设为 `1280`，从而在 64 MHz TIM3 时钟下生成精确 `25 kHz / 50%` 的复用开漏输出。原 H2 CAN 任务、报文和日志保留，另增一行 `H3,A,FAN_PWM_PROBE,pin=PC7,timer=TIM3_CH2,freq_hz=25000,duty_pct=50,mode=af_od` 用于镜像/运行身份绑定。
+
+STM32CubeIDE 2.2.0 随附 GNU Tools for STM32 14.3.1 单线程构建成功，无编译警告或错误：`text/data/bss/dec=33692/96/14008/47796`；`node_a.elf` 大小 `1096932` bytes，SHA-256=`F3924691E9E3950200226378AD05B71410948F0627F4171017C626AA43B3D496`。构建产物依既定 `.gitignore` 不进入仓库。
+
+构建后只读列举结果为 `No ST-Link detected`，因此本节只证明源码与本地构建，**尚未刷写，不证明 PC7 实板波形**。定向刷写前必须由执行人确认：风扇适配器已断市电且残压 `<0.5 V`，风扇的 Power/PWM/Tach 全部与 Node A 隔离，只接 Node A USB。刷写后才允许用外部 `10 kΩ` 把 PC7/D9 上拉到同一块 Node A 的 `3V3`，然后以 Node A GND 为参考测量。

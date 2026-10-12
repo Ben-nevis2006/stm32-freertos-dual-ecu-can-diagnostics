@@ -119,6 +119,7 @@ static uint8_t H2_CanStart(void);
 static void H2_UartWrite(const char *text);
 static void H2_LogBoot(uint8_t start_result);
 static void H2_LogStatus(void);
+static void H3_LogFanPwmProbe(void);
 static void H2_SendFrame(uint8_t counter);
 static uint8_t H2_IsValidPeerFrame(const AppCanRxFrame_t *frame);
 static uint8_t H2_GetPeerCounter(const AppCanRxFrame_t *frame);
@@ -239,6 +240,23 @@ static void H2_LogStatus(void)
                     (unsigned long)HAL_CAN_GetTxMailboxesFreeLevel(&hcan),
                     (unsigned long)HAL_CAN_GetError(&hcan),
                     (unsigned long)hcan.Instance->ESR);
+
+  if (length > 0)
+  {
+    line[sizeof(line) - 1U] = '\0';
+    H2_UartWrite(line);
+  }
+}
+
+static void H3_LogFanPwmProbe(void)
+{
+  char line[160];
+  int length;
+
+  length = snprintf(line, sizeof(line),
+                    "H3,A,FAN_PWM_PROBE,pin=PC7,timer=TIM3_CH2,freq_hz=%lu,duty_pct=%u,mode=af_od\r\n",
+                    (unsigned long)H3_FAN_PWM_FREQUENCY_HZ,
+                    (unsigned int)H3_FAN_PWM_DUTY_PERCENT);
 
   if (length > 0)
   {
@@ -434,6 +452,7 @@ void StartAControlTask(void *argument)
     g_h2_can_ready = 1U;
   }
   H2_LogBoot(g_h2_can_start_result);
+  H3_LogFanPwmProbe();
 
   if (g_h2_can_start_result != 0U)
   {

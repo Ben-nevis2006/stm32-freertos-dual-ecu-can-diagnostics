@@ -102,3 +102,21 @@ Node、PWM、Tach、Heater、INA260 均保持隔离，仅通过已验证的 `F1/
 `FAN-00E-A` 判定为 **PASS（2026-10-12）**。结合此前电源针位和 PST 省略 Tach 的结构证据，完整映射冻结为 `F1=GND`、`F2=+12 V`、`F3=Tach`、`F4=PWM`。Tach 继续隔离。
 
 下一步只授权 `FAN-00E-B`：风扇保持独立供电，Node 和其余外设均不连接，以 `F1/GND` 为参考测量 `F4/PWM` 开路直流电压；PWM 不得接入 GPIO。
+
+## 11. FAN-00E-B PWM 开路电压与参考点纠正
+
+首次报告 `7.681～7.683 V` 后，执行人立即识别出黑表笔误放在 `+12 V`，该值是电源线与 PWM 线之间的电位差，不能作为 PWM 对地电压，判为 **INVALID**。重新以 `F1/GND` 为参考测量，`F4/PWM` 稳定为 `4.850 V`。
+
+有效值 `4.850 V` 低于 Intel 四线 PWM 风扇接口的 `5.25 V` 风扇侧上拉绝对上限，`FAN-00E-B` 判定为 **PASS（2026-10-12）**，`FAN-00E` 整体关闭为 **PASS**。这条证据同时保留了错误参考点被现场发现并纠正的过程，错误值不进入验收统计。
+
+官方接口依据：<https://www.intel.com/content/dam/doc/design-guide/core-2-pentium-celeron-dual-core-guide.pdf>。
+
+## 12. FAN-00F 驱动决策
+
+ST 官方数据手册确认 `PC7` 是 `FT`（5 V tolerant）并支持 `TIM3_CH2`；FT 输入绝对上限为 `VDD+4.0 V`，当外部电压超过 `VDD+0.3 V` 时内部上拉/下拉必须关闭。Node A 正常约 `3.3 V` 供电时，实测 `4.850 V` 满足输入范围。Intel 给出风扇 PWM 最大 `5 mA` 下拉电流，ST 给出标准 GPIO 最大 `8 mA` 吸收/输出能力，电流能力亦满足当前接口族约束。
+
+H3 受控实验阶段因此批准 `PC7/TIM3_CH2` 采用复用开漏、内部无上下拉的直连方案；Node A 必须先上电、风扇 12 V 后上电，关闭时顺序相反。Node A 未供电时不得让风扇 PWM 上拉进入 PC7；若最终系统无法硬件保证时序，则必须改用外部 NPN/NMOS 隔离。
+
+ST 官方依据：<https://www.st.com/resource/en/datasheet/stm32f103rb.pdf>。
+
+`FAN-00F` 判定为 **PASS（受控实验直连与时序约束范围）**。下一步只允许在风扇完全隔离时执行 `FAN-01` Node A `PC7/D9` 低压侧波形验证：用外部 `10 kΩ` 把 PC7 上拉到 Node A `3V3`，示波器以 Node A GND 为参考，预期约 25 kHz / 50%。
