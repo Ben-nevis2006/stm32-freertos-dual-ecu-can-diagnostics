@@ -6,11 +6,11 @@
 |---|---|
 | 版本 | v1.0（NTC 关闭；Fan PWM 分步准入进行中） |
 | 日期 | 2026-10-07～2026-10-12 |
-| 状态 | **IN PROGRESS；NTC 子项 H3-00～H3-05 PASS；FAN-00A～FAN-00F PASS；FAN-01 固件构建/定向刷写/运行身份 PASS，当前待 PC7 实板波形验证** |
+| 状态 | **IN PROGRESS；NTC 子项 H3-00～H3-05 PASS；FAN-00A～FAN-00F PASS；FAN-01 PC7 开漏空载波形 PASS；当前准备 FAN-02 单风扇 PWM 联调** |
 | 前序 Gate | Gate H0 CONDITIONAL PASS；Gate H1 PASS；Gate H2 PASS（2026-10-07） |
 | H3 开始时 Git HEAD | `b03c874 docs: organize active project records` |
 | 固件回退基线 | `bc19580 feat: close Gate H2 CAN bring-up` |
-| 当前准入范围 | Node B 的 3.3 V NTC 子项以及 Fan 的 `FAN-00A～FAN-00F` 已完成；Node A 已刷入 FAN-01 固定波形镜像并完成串口身份回读。当前只允许在风扇 12 V、PWM、Tach、Heater、INA260 全部隔离时，用外部 `10 kΩ` 上拉验证 `PC7/TIM3_CH2` 约 25 kHz / 50% 开漏波形；尚未授权风扇 PWM 联合接线 |
+| 当前准入范围 | Node B 3.3 V NTC 子项、Fan `FAN-00A～FAN-00F` 及 `FAN-01` 已完成。当前只允许进入 `FAN-02A` 固定 50% 单风扇联调：全断电后拆除 FAN-01 外部 `10 kΩ` 上拉，仅建立 Node A/风扇公共地和 `D9↔F4/PWM`，`F3/Tach`、Heater、INA260 继续隔离；必须按 Node A 先上电、风扇 12 V 后上电的时序执行 |
 | 远端策略 | H3 阶段内按真实日期在本地累计；Gate 完成后统一整合、提交并推送一次。统一推送不改变各动作的实际日期 |
 | 证据索引 | [`2026-10-07 搭建与照片`](../../evidence/hardware/H3/2026-10-07/README.md)；[`2026-10-08 硬件接线与电压预检`](../../evidence/hardware/H3/2026-10-08/README.md)；[`2026-10-08 H3-02、基线与 Run01`](../../evidence/software/H3/2026-10-08/README.md)；[`2026-10-09 Run02 与边界表征`](../../evidence/software/H3/2026-10-09/README.md)；[`2026-10-10 边界实现与验收`](../../evidence/software/H3/2026-10-10/README.md)；[`2026-10-10 FAN 身份/接口`](../../evidence/hardware/H3/2026-10-10/README.md)；[`2026-10-12 FAN 供电/接口实测`](../../evidence/hardware/H3/2026-10-12/README.md)；[`2026-10-12 FAN-01 固件预备`](../../evidence/software/H3/2026-10-12/README.md) |
 
@@ -595,4 +595,18 @@ H3,A,FAN_PWM_PROBE,pin=PC7,timer=TIM3_CH2,freq_hz=25000,duty_pct=50,mode=af_od
 H2,A,STAT,...,tx_fail=0,...,q_drop=0,...,hal_err=0x00000000,esr=0x00000000
 ```
 
-连续 4 条状态行的 `hal_err/esr` 均为 `0`，因此 `FAN-01` 的构建、目标身份、刷写校验与镜像运行身份判定为 **PASS**。波形电压、频率、占空比和稳定性仍待示波器实测，因此 `FAN-01` 整体仍为 **IN PROGRESS**。
+连续 4 条状态行的 `hal_err/esr` 均为 `0`，因此 `FAN-01` 的构建、目标身份、刷写校验与镜像运行身份判定为 **PASS**。截至该刷写检查时，波形电压、频率、占空比和稳定性尚待示波器实测，因此当时的 `FAN-01` 整体状态为 **IN PROGRESS**；后续关闭结果见第 20 节。
+
+## 20. FAN-01 PC7 开漏空载波形验收（2026-10-12）
+
+风扇、12 V、Tach、Heater 与 INA260 保持隔离。Node A 断电后，现场在 `D9/PC7` 与同一块 Node A `3V3` 之间接入外部 `10 kΩ` 上拉，示波器以 Node A GND 为参考。上电前报告 `D9—3V3=9.982 kΩ`，`3V3—GND` 和 `D9—GND` 均不蜂鸣，通过无源短路预检。
+
+执行人的 10 s 结构化报告为：
+
+> `FAN-01：D9-3V3=9.982kΩ；3V3-GND/D9-GND均不蜂鸣；Vmax=3.48V，Vmin=-40mV，频率=25.03kHz，周期=40.02µs，占空比=50%；10秒稳定。`
+
+同步原始示波器照片屏显捕获到 `25.01 kHz / 39.98 µs / Vmax=3.48 V / Vmin=-80 mV / Vavg=1.60 V`，波形为连续稳定方波。执行人说明自动测量数值在观察期间有几十毫伏量级的末位摆动，因此文字报告的 `-40 mV` 与照片瞬时屏显 `-80 mV` 分别保留，不将任一值改写成唯一常数。这些小幅差异与边沿过冲/欠冲、1X 探头接地回路和自动统计刷新的组合影响一致；当前没有出现平台漂移、周期结构丢失或 10 s 不稳定证据。
+
+以固件目标 `25.000 kHz / 40.000 µs / 50%` 计算，文字报告的频率误差约 `+0.12%`、周期误差约 `+0.05%`，占空比命中目标。电平满足 3.3 V 上拉与近地下拉的预期，且上拉电阻实测与标称一致。据此 `FAN-01` 判定为 **PASS（PC7 开漏空载波形范围）**。它证明 MCU 低压侧输出的引脚、模式、频率、占空比和短时稳定性；不证明风扇负载下的实际 PWM 电平、转速响应、Tach/PPR、EMC 或长期稳定性。
+
+原始照片、文件大小、SHA-256 和照片屏显/口述值边界见 [`2026-10-12 硬件证据`](../../evidence/hardware/H3/2026-10-12/README.md)。下一授权点为 `FAN-02A` 固定 50% 单风扇联调；全断电改线时必须先拆除 FAN-01 的外部 `10 kΩ` 上拉，风扇内部上拉将取代它。
