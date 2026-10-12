@@ -6,11 +6,11 @@
 |---|---|
 | 版本 | v1.0（NTC 关闭；Fan PWM 分步准入进行中） |
 | 日期 | 2026-10-07～2026-10-12 |
-| 状态 | **IN PROGRESS；NTC 子项 H3-00～H3-05 PASS；FAN-00A～FAN-00F 驱动决策已完成；当前准备 FAN-01 PC7 低压侧波形验证** |
+| 状态 | **IN PROGRESS；NTC 子项 H3-00～H3-05 PASS；FAN-00A～FAN-00F PASS；FAN-01 固件构建/定向刷写/运行身份 PASS，当前待 PC7 实板波形验证** |
 | 前序 Gate | Gate H0 CONDITIONAL PASS；Gate H1 PASS；Gate H2 PASS（2026-10-07） |
 | H3 开始时 Git HEAD | `b03c874 docs: organize active project records` |
 | 固件回退基线 | `bc19580 feat: close Gate H2 CAN bring-up` |
-| 当前准入范围 | Node B 的 3.3 V NTC 子项以及 Fan 的 `FAN-00A～FAN-00F` 已完成；当前只允许在风扇 12 V、PWM、Tach、Heater、INA260 全部隔离时，为 Node A 准备并验证 `PC7/TIM3_CH2` 约 25 kHz 开漏低压侧波形；尚未授权 PWM 联合接线 |
+| 当前准入范围 | Node B 的 3.3 V NTC 子项以及 Fan 的 `FAN-00A～FAN-00F` 已完成；Node A 已刷入 FAN-01 固定波形镜像并完成串口身份回读。当前只允许在风扇 12 V、PWM、Tach、Heater、INA260 全部隔离时，用外部 `10 kΩ` 上拉验证 `PC7/TIM3_CH2` 约 25 kHz / 50% 开漏波形；尚未授权风扇 PWM 联合接线 |
 | 远端策略 | H3 阶段内按真实日期在本地累计；Gate 完成后统一整合、提交并推送一次。统一推送不改变各动作的实际日期 |
 | 证据索引 | [`2026-10-07 搭建与照片`](../../evidence/hardware/H3/2026-10-07/README.md)；[`2026-10-08 硬件接线与电压预检`](../../evidence/hardware/H3/2026-10-08/README.md)；[`2026-10-08 H3-02、基线与 Run01`](../../evidence/software/H3/2026-10-08/README.md)；[`2026-10-09 Run02 与边界表征`](../../evidence/software/H3/2026-10-09/README.md)；[`2026-10-10 边界实现与验收`](../../evidence/software/H3/2026-10-10/README.md)；[`2026-10-10 FAN 身份/接口`](../../evidence/hardware/H3/2026-10-10/README.md)；[`2026-10-12 FAN 供电/接口实测`](../../evidence/hardware/H3/2026-10-12/README.md)；[`2026-10-12 FAN-01 固件预备`](../../evidence/software/H3/2026-10-12/README.md) |
 
@@ -584,3 +584,15 @@ Node A 在 CubeMX 既有 `TIM3 Full Remap / TIM3_CH2 / PC7 / AF Open-Drain / ARR
 STM32CubeIDE 2.2.0 随附 GNU Tools for STM32 14.3.1 单线程构建成功，无编译警告或错误：`text/data/bss/dec=33692/96/14008/47796`；`node_a.elf` 大小 `1096932` bytes，SHA-256=`F3924691E9E3950200226378AD05B71410948F0627F4171017C626AA43B3D496`。构建产物依既定 `.gitignore` 不进入仓库。
 
 构建后只读列举结果为 `No ST-Link detected`，因此本节只证明源码与本地构建，**尚未刷写，不证明 PC7 实板波形**。定向刷写前必须由执行人确认：风扇适配器已断市电且残压 `<0.5 V`，风扇的 Power/PWM/Tach 全部与 Node A 隔离，只接 Node A USB。刷写后才允许用外部 `10 kΩ` 把 PC7/D9 上拉到同一块 Node A 的 `3V3`，然后以 Node A GND 为参考测量。
+
+执行人随后确认刷写前状态已就绪：只接 Node A USB，风扇和 12 V 保持隔离。STM32CubeProgrammer 只读列举中只有冻结的 Node A ST-LINK 序列号 `066BFF575151676667043206`，VCP 为 `COM7`；连接后读得 `3.24 V / Device ID 0x410 / Rev X / 128 KiB / Cortex-M3`，与既有身份基线一致。
+
+按该序列号定向写入 SHA-256 为 `F3924691E9E3950200226378AD05B71410948F0627F4171017C626AA43B3D496` 的 `node_a.elf`，STM32CubeProgrammer 返回 `File download complete`、`Download verified successfully`，并完成软件复位。复位后以 `115200 8N1` 在 COM7 回读到：
+
+```text
+H2,A,BOOT,profile=formal_baseline,bitrate=500000,tx_id=0x180,tx_dlc=5,rx_id=0x100,rx_dlc=2,period_ms=100,start_delay_ms=10000
+H3,A,FAN_PWM_PROBE,pin=PC7,timer=TIM3_CH2,freq_hz=25000,duty_pct=50,mode=af_od
+H2,A,STAT,...,tx_fail=0,...,q_drop=0,...,hal_err=0x00000000,esr=0x00000000
+```
+
+连续 4 条状态行的 `hal_err/esr` 均为 `0`，因此 `FAN-01` 的构建、目标身份、刷写校验与镜像运行身份判定为 **PASS**。波形电压、频率、占空比和稳定性仍待示波器实测，因此 `FAN-01` 整体仍为 **IN PROGRESS**。
