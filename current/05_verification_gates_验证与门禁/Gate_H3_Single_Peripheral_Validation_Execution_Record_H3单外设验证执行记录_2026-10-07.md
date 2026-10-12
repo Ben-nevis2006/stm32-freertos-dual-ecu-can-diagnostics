@@ -6,11 +6,11 @@
 |---|---|
 | 版本 | v1.0（NTC 关闭；Fan PWM 分步准入进行中） |
 | 日期 | 2026-10-07～2026-10-12 |
-| 状态 | **IN PROGRESS；NTC 子项 H3-00～H3-05 PASS；FAN-00A、PSU-00B、FAN-00C、FAN-00D PASS；当前进行 FAN-00E PWM 开路电压验证** |
+| 状态 | **IN PROGRESS；NTC 子项 H3-00～H3-05 PASS；FAN-00A、PSU-00B、FAN-00C、FAN-00D、FAN-00E-A PASS；当前进行 FAN-00E-B PWM 开路电压测量** |
 | 前序 Gate | Gate H0 CONDITIONAL PASS；Gate H1 PASS；Gate H2 PASS（2026-10-07） |
 | H3 开始时 Git HEAD | `b03c874 docs: organize active project records` |
 | 固件回退基线 | `bc19580 feat: close Gate H2 CAN bring-up` |
-| 当前准入范围 | Node B 的 3.3 V NTC 子项以及 `FAN-00A`、`PSU-00B / D-04`、`FAN-00C`、`FAN-00D` 已通过；当前只允许先在全断电状态完成 `FAN-00E-A` PWM 物理孔位映射，再按单独授权测量 PWM 开路电压；Node、Tach、Heater、INA260 继续隔离 |
+| 当前准入范围 | Node B 的 3.3 V NTC 子项以及 `FAN-00A`、`PSU-00B / D-04`、`FAN-00C`、`FAN-00D`、`FAN-00E-A` 已通过；当前只允许风扇独立供电、以系统地为参考测量 `F4/PWM` 开路直流电压；Node、Tach、Heater、INA260 继续隔离 |
 | 远端策略 | H3 阶段内按真实日期在本地累计；Gate 完成后统一整合、提交并推送一次。统一推送不改变各动作的实际日期 |
 | 证据索引 | [`2026-10-07 搭建与照片`](../../evidence/hardware/H3/2026-10-07/README.md)；[`2026-10-08 硬件接线与电压预检`](../../evidence/hardware/H3/2026-10-08/README.md)；[`2026-10-08 H3-02、基线与 Run01`](../../evidence/software/H3/2026-10-08/README.md)；[`2026-10-09 Run02 与边界表征`](../../evidence/software/H3/2026-10-09/README.md)；[`2026-10-10 边界实现与验收`](../../evidence/software/H3/2026-10-10/README.md)；[`2026-10-10 FAN 身份/接口`](../../evidence/hardware/H3/2026-10-10/README.md)；[`2026-10-12 PSU 空载稳定性/残压`](../../evidence/hardware/H3/2026-10-12/README.md) |
 
@@ -548,3 +548,13 @@ FANEXT-01 Pin 3/Tach、Pin 4/PWM
 `FAN-00D-C` 判定为 **PASS**，因此 `FAN-00D` 整体关闭为 **PASS（短时独立上电范围）**。本结论不覆盖长期运行寿命、额定电流实测、堵转、PWM 控制、Tach/PPR 或系统联合运行。
 
 下一授权点为 `FAN-00E-A` 全断电 PWM 孔位映射：风扇主母座继续接延长线公头，适配器保持断电且残压 `<0.5 V`；从 PST 三针公头中与另外两针隔着空位的孤立触点出发，仅扫描延长线母座空置的 `F3/F4`，锁定唯一蜂鸣孔。此步骤不得上电。
+
+### 18.13 FAN-00E-A PWM 物理孔位映射（2026-10-12）
+
+适配器未上电且残压 `<0.5 V`，风扇四孔主母座保持与延长线公头连接。执行人以 PST 三针公头中与另外两针隔着空位的孤立 PWM 触点为参考，扫描延长线母座的 `F3/F4`，报告：
+
+> `FAN-00E-A：PST孤立针PWM→F4；另一孔不蜂鸣；电源未上电，残压<0.5V。`
+
+PWM 只在 `F4` 命中且 `F3` 不蜂鸣，因此 `FAN-00E-A` 判定为 **PASS**，冻结完整功能映射为 `F1=GND`、`F2=+12 V`、`F3=Tach`、`F4=PWM`。其中 `F3=Tach` 是结合标准四针顺序、PST 省略 Tach 的既有结构证据和唯一剩余孔位得出的闭环映射；Tach 在本子项继续保持不连接。
+
+下一授权点为 `FAN-00E-B`：Node、Tach、Heater、INA260 均隔离，只给风扇独立供电；以 `F1/GND`（可在 DC 端子负极取参考）为黑表笔参考，通过独立高阻测量引线读取 `F4/PWM` 相对地的开路直流电压及 10 s 范围。PWM 不得连接任何 MCU GPIO。
