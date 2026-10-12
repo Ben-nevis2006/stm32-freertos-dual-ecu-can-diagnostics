@@ -20,7 +20,7 @@
 | H0 硬件到货与身份 | CONDITIONAL PASS | CAN/H2 身份子项已关闭；其他外设随对应 Gate 继续验证 |
 | H1 NUCLEO USB Bring-up | PASS | 两板独立枚举、目标识别、Flash 访问与稳定性通过 |
 | H2 低压 CAN 物理链路 | **PASS（2026-10-07）** | 500 kbit/s；固定帧 3×80 s；正式 `0x100/0x180`；受控断线与恢复通过 |
-| H3 单外设验证 | **IN PROGRESS** | Node B NTC 子项 H3-00～H3-05 已于 2026-10-10 关闭；`FAN-00A` 与 `PSU-00B / D-04` 已通过，下一步仅执行 `FAN-00C` 延长线全断电无源映射，尚未放行 12 V 接入风扇 |
+| H3 单外设验证 | **IN PROGRESS** | Node B NTC 子项 H3-00～H3-05 已于 2026-10-10 关闭；`FAN-00A`、`PSU-00B / D-04`、`FAN-00C` 已通过，当前仅执行 `FAN-00D` 接电前针脚/接法确认，尚未放行 12 V 接入风扇 |
 
 H2 仅覆盖 USB/3.3 V 低压双节点链路。`12 V`、Fan、Heater、INA260、NTC、完整 timeout/fault 状态机、负载耐久与 EMC 尚未由 H2 证明。
 
