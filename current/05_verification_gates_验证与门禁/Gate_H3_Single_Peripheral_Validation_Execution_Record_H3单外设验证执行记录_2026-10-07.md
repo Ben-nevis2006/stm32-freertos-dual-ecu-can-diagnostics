@@ -5,8 +5,8 @@
 | 项目 | 内容 |
 |---|---|
 | 版本 | v1.0（NTC 关闭；Fan PWM 分步准入进行中） |
-| 日期 | 2026-10-07～2026-10-12 |
-| 状态 | **IN PROGRESS；NTC 子项 H3-00～H3-05 PASS；FAN-00A～FAN-00F、FAN-01、FAN-02A PASS；当前准备 FAN-02B 受控占空比响应验证** |
+| 日期 | 2026-10-07～2026-10-13 |
+| 状态 | **IN PROGRESS；NTC 子项 H3-00～H3-05 PASS；FAN-00A～FAN-00F、FAN-01、FAN-02A PASS；FAN-02B 镜像构建 PASS，待隔离刷写与实板验证** |
 | 前序 Gate | Gate H0 CONDITIONAL PASS；Gate H1 PASS；Gate H2 PASS（2026-10-07） |
 | H3 开始时 Git HEAD | `b03c874 docs: organize active project records` |
 | 固件回退基线 | `bc19580 feat: close Gate H2 CAN bring-up` |
@@ -624,3 +624,11 @@ H2,A,STAT,...,tx_fail=0,...,q_drop=0,...,hal_err=0x00000000,esr=0x00000000
 据此 `FAN-02A` 判定为 **PASS（固定 50% 单风扇短时电气/功能联调范围）**。它证明真实风扇负载下的公共地、PWM 直连、内部上拉、电平、频率、占空比、短时起转以及 USB 稳定性；不证明占空比变化与转速的方向性、低于 5% 的停转行为、Tach/PPR、转速绝对值、长期可靠性或最终线束时序保证。
 
 下一授权点为 `FAN-02B`。先在风扇和 12 V 完全隔离的状态下生成并定向刷写受控占空比测试镜像，再通过镜像身份和空载输出复核后，才允许按相同电源时序重新接入单只风扇；Tach、Heater、INA260 仍保持隔离。
+
+## 22. FAN-02B 受控占空比镜像准备（构建于 2026-10-12；续录于 2026-10-13）
+
+为避免靠随机改值或主观计时判断转速变化，Node A 新增一次性、按键触发的确定性测试序列。上电默认保持 `50%`；按一次蓝色 `B1 USER` 键后依次输出 `100%→50%→25%→0%→100%`，每档 `10 s`，结束自动恢复 `50%`。`ARR=2559` 下，各档 `CCR2` 分别为 `2560/1280/640/0/2560`。B1 中断只置位请求标志，`A_ControlTask` 负责档位切换和 `FAN_PWM_STEP` 日志；活动序列期间的按键抖动及额外按压被丢弃，不会重入测试。
+
+构建实际完成于 `2026-10-12 20:33:14`；本节于 `2026-10-13` 继续整理，因此保留日期差异。STM32CubeIDE 2.2.0 随附 GNU Tools for STM32 14.3.1 单线程 clean build 返回成功且无警告/错误：`text/data/bss/dec=34264/96/14008/48368`；ELF 大小 `1099336` bytes，SHA-256=`F499425FBF1D7931FF2BB6A8FDE3CF87A4D3BD8C2002BEA670C938D88CF0D2A1`。H2 `BOOT/STAT` 及 H3 `PROFILE/STEP/PROFILE_DONE` 字符串均在 ELF 中检出；`A_ControlTask` 的 2048-byte 配置栈相对新增路径的 248-byte 最大单函数静态记录保有明显余量。
+
+完整规范化摘要见 [`2026-10-12 软件证据`](../../evidence/software/H3/2026-10-12/README.md)。据此 `FAN-02B` 的 **源码实现与本地构建 PASS**，但尚未刷写、未运行，不能提前判定实板响应通过。下一动作严格限定为：确认风扇适配器断电且残压 `<0.5 V`，Power/PWM/Tach、Heater、INA260 全部与 Node A 隔离，只连接身份冻结的 Node A USB；随后按 ST-LINK 序列号定向刷写并回读镜像身份。

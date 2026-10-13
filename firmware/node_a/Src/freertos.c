@@ -27,6 +27,7 @@
 /* USER CODE BEGIN Includes */
 #include "app_ipc.h"
 #include "can.h"
+#include "tim.h"
 #include "usart.h"
 
 #include <stdio.h>
@@ -36,6 +37,12 @@
 
 /* Private typedef -----------------------------------------------------------*/
 /* USER CODE BEGIN PTD */
+
+typedef struct
+{
+  uint8_t duty_percent;
+  uint16_t compare;
+} H3_FanPwmStep_t;
 
 /* USER CODE END PTD */
 
@@ -73,6 +80,16 @@ static volatile uint32_t g_h2_rx_invalid;
 static volatile uint32_t g_h2_rx_sequence_errors;
 static volatile uint8_t g_h2_rx_seen;
 static volatile uint8_t g_h2_last_rx_counter;
+static volatile uint8_t g_h3_fan_profile_request;
+
+static const H3_FanPwmStep_t g_h3_fan_pwm_profile[] =
+{
+  {100U, H3_FAN_PWM_COMPARE_100_PERCENT},
+  { 50U, H3_FAN_PWM_COMPARE_50_PERCENT},
+  { 25U, H3_FAN_PWM_COMPARE_25_PERCENT},
+  {  0U, H3_FAN_PWM_COMPARE_0_PERCENT},
+  {100U, H3_FAN_PWM_COMPARE_100_PERCENT}
+};
 
 /* USER CODE END Variables */
 /* Definitions for A_ControlTask */
@@ -119,7 +136,9 @@ static uint8_t H2_CanStart(void);
 static void H2_UartWrite(const char *text);
 static void H2_LogBoot(uint8_t start_result);
 static void H2_LogStatus(void);
-static void H3_LogFanPwmProbe(void);
+static void H3_LogFanPwmProfile(void);
+static void H3_ApplyFanPwmStep(uint8_t profile_index);
+static void H3_LogFanPwmProfileDone(void);
 static void H2_SendFrame(uint8_t counter);
 static uint8_t H2_IsValidPeerFrame(const AppCanRxFrame_t *frame);
 static uint8_t H2_GetPeerCounter(const AppCanRxFrame_t *frame);
@@ -248,16 +267,62 @@ static void H2_LogStatus(void)
   }
 }
 
-static void H3_LogFanPwmProbe(void)
+static void H3_LogFanPwmProfile(void)
 {
-  char line[160];
+  char line[224];
   int length;
 
   length = snprintf(line, sizeof(line),
-                    "H3,A,FAN_PWM_PROBE,pin=PC7,timer=TIM3_CH2,freq_hz=%lu,duty_pct=%u,mode=af_od\r\n",
+                    "H3,A,FAN_PWM_PROFILE,pin=PC7,timer=TIM3_CH2,freq_hz=%lu,idle_pct=%u,sequence=100-50-25-0-100,hold_ms=%lu,trigger=B1,mode=af_od\r\n",
                     (unsigned long)H3_FAN_PWM_FREQUENCY_HZ,
-                    (unsigned int)H3_FAN_PWM_DUTY_PERCENT);
+                    (unsigned int)H3_FAN_PWM_IDLE_DUTY_PERCENT,
+                    (unsigned long)H3_FAN_PWM_PROFILE_HOLD_MS);
 
+  if (length > 0)
+  {
+    line[sizeof(line) - 1U] = '\0';
+    H2_UartWrite(line);
+  }
+}
+
+static void H3_ApplyFanPwmStep(uint8_t profile_index)
+{
+  char line[160];
+  int length;
+  const uint8_t profile_step_count =
+      (uint8_t)(sizeof(g_h3_fan_pwm_profile) / sizeof(g_h3_fan_pwm_profile[0]));
+
+  if (profile_index >= profile_step_count)
+  {
+    return;
+  }
+
+  __HAL_TIM_SET_COMPARE(&htim3,
+                        TIM_CHANNEL_2,
+                        g_h3_fan_pwm_profile[profile_index].compare);
+  length = snprintf(line, sizeof(line),
+                    "H3,A,FAN_PWM_STEP,index=%u,total=%u,duty_pct=%u,compare=%u,hold_ms=%lu\r\n",
+                    (unsigned int)(profile_index + 1U),
+                    (unsigned int)profile_step_count,
+                    (unsigned int)g_h3_fan_pwm_profile[profile_index].duty_percent,
+                    (unsigned int)g_h3_fan_pwm_profile[profile_index].compare,
+                    (unsigned long)H3_FAN_PWM_PROFILE_HOLD_MS);
+
+  if (length > 0)
+  {
+    line[sizeof(line) - 1U] = '\0';
+    H2_UartWrite(line);
+  }
+}
+
+static void H3_LogFanPwmProfileDone(void)
+{
+  char line[96];
+  int length;
+
+  length = snprintf(line, sizeof(line),
+                    "H3,A,FAN_PWM_PROFILE_DONE,final_pct=%u\r\n",
+                    (unsigned int)H3_FAN_PWM_IDLE_DUTY_PERCENT);
   if (length > 0)
   {
     line[sizeof(line) - 1U] = '\0';
@@ -354,6 +419,14 @@ void HAL_CAN_RxFifo0MsgPendingCallback(CAN_HandleTypeDef *can_handle)
   }
 }
 
+void HAL_GPIO_EXTI_Callback(uint16_t gpio_pin)
+{
+  if (gpio_pin == B1_Pin)
+  {
+    g_h3_fan_profile_request = 1U;
+  }
+}
+
 void vApplicationStackOverflowHook(xTaskHandle xTask, signed char *pcTaskName)
 {
    /* Run time stack overflow checking is performed if
@@ -445,6 +518,11 @@ void StartAControlTask(void *argument)
 {
   /* USER CODE BEGIN StartAControlTask */
   uint32_t half_second_count = 0U;
+  uint32_t profile_deadline = 0U;
+  uint8_t profile_active = 0U;
+  uint8_t profile_index = 0U;
+  const uint8_t profile_step_count =
+      (uint8_t)(sizeof(g_h3_fan_pwm_profile) / sizeof(g_h3_fan_pwm_profile[0]));
 
   g_h2_can_start_result = H2_CanStart();
   if (g_h2_can_start_result == 0U)
@@ -452,7 +530,7 @@ void StartAControlTask(void *argument)
     g_h2_can_ready = 1U;
   }
   H2_LogBoot(g_h2_can_start_result);
-  H3_LogFanPwmProbe();
+  H3_LogFanPwmProfile();
 
   if (g_h2_can_start_result != 0U)
   {
@@ -466,6 +544,39 @@ void StartAControlTask(void *argument)
   /* Infinite loop */
   for(;;)
   {
+    uint32_t now = HAL_GetTick();
+
+    if ((profile_active == 0U) && (g_h3_fan_profile_request != 0U))
+    {
+      g_h3_fan_profile_request = 0U;
+      profile_active = 1U;
+      profile_index = 0U;
+      H3_ApplyFanPwmStep(profile_index);
+      profile_deadline = now + H3_FAN_PWM_PROFILE_HOLD_MS;
+    }
+    else if (profile_active != 0U)
+    {
+      /* Discard button bounce or extra presses while a profile is active. */
+      g_h3_fan_profile_request = 0U;
+      if ((int32_t)(now - profile_deadline) >= 0)
+      {
+        profile_index++;
+        if (profile_index < profile_step_count)
+        {
+          H3_ApplyFanPwmStep(profile_index);
+          profile_deadline = now + H3_FAN_PWM_PROFILE_HOLD_MS;
+        }
+        else
+        {
+          __HAL_TIM_SET_COMPARE(&htim3,
+                                TIM_CHANNEL_2,
+                                H3_FAN_PWM_COMPARE_50_PERCENT);
+          profile_active = 0U;
+          H3_LogFanPwmProfileDone();
+        }
+      }
+    }
+
     HAL_GPIO_TogglePin(LD2_GPIO_Port, LD2_Pin);
     half_second_count++;
     if ((half_second_count % 2U) == 0U)

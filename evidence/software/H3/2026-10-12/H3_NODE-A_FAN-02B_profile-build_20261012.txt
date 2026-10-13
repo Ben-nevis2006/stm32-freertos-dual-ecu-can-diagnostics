@@ -1,0 +1,61 @@
+H3 Node A FAN-02B controlled-duty profile build summary
+Date: 2026-10-12 (Asia/Shanghai)
+Evidence type: normalized build summary; not a verbatim IDE console export
+
+Scope
+-----
+- Target: Node A / STM32F103RB
+- Output: PC7 / D9 / TIM3_CH2, alternate-function open-drain
+- PWM base frequency: 25,000 Hz
+- Idle output: 50 percent
+- Trigger: one press of B1 USER button
+- Single-run sequence: 100 -> 50 -> 25 -> 0 -> 100 percent
+- Hold time per step: 10,000 ms
+- Completion state: return to 50 percent
+- FAN/Tach/INA260/Heater hardware behavior is not proven by this build.
+
+Compare mapping (ARR=2559, timer counts=2560)
+------------------------------------------------
+- 0 percent   -> CCR2=0
+- 25 percent  -> CCR2=640
+- 50 percent  -> CCR2=1280
+- 100 percent -> CCR2=2560
+
+Runtime trace contract
+----------------------
+H3,A,FAN_PWM_PROFILE,pin=PC7,timer=TIM3_CH2,freq_hz=25000,idle_pct=50,sequence=100-50-25-0-100,hold_ms=10000,trigger=B1,mode=af_od
+H3,A,FAN_PWM_STEP,index=<1..5>,total=5,duty_pct=<100|50|25|0|100>,compare=<2560|1280|640|0|2560>,hold_ms=10000
+H3,A,FAN_PWM_PROFILE_DONE,final_pct=50
+
+Implementation boundary
+-----------------------
+- B1 EXTI only raises a volatile request flag.
+- A_ControlTask owns CCR2 changes and emits transition logs.
+- Button bounce or extra presses during an active profile are discarded.
+- H2 CAN RX/TX tasks and BOOT/STAT logging remain present.
+
+Build
+-----
+- Toolchain: STM32CubeIDE 2.2.0 bundled GNU Tools for STM32 14.3.rel1
+- Build action: single-thread clean build of firmware/node_a/Debug
+- Result: exit code 0; no compiler warnings or errors observed
+- text/data/bss/dec: 34264 / 96 / 14008 / 48368 bytes
+- ELF size: 1099336 bytes
+- ELF SHA-256: F499425FBF1D7931FF2BB6A8FDE3CF87A4D3BD8C2002BEA670C938D88CF0D2A1
+- Build artifact timestamp: 2026-10-12 20:33:14 (Asia/Shanghai)
+
+Static build outputs
+--------------------
+- H3_LogFanPwmProfile stack usage: 248 bytes; cyclomatic complexity: 2
+- H3_ApplyFanPwmStep stack usage: 208 bytes; cyclomatic complexity: 3
+- H3_LogFanPwmProfileDone stack usage: 112 bytes; cyclomatic complexity: 2
+- StartAControlTask local stack usage: 32 bytes; cyclomatic complexity: 9
+- A_ControlTask configured stack: 2048 bytes
+- Required H2 BOOT/STAT and H3 profile/step/done strings are present in the ELF.
+
+Admission boundary
+------------------
+This summary proves source compilation/linking and artifact identity only.
+The image has not yet been flashed or read back from Node A.
+It does not prove B1 triggering, timing, PWM waveforms, fan speed response,
+stop/restart behavior, Tach/PPR, USB stability under this image, or CAN runtime health.
