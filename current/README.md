@@ -54,8 +54,8 @@
 | H0 硬件到货与身份 | CONDITIONAL PASS | CAN/H2 身份子项已关闭；[原始证据](../evidence/hardware/H0/) |
 | H1 NUCLEO USB Bring-up | PASS | 两板独立枚举、目标识别、Flash 访问与稳定性通过；[原始证据](../evidence/hardware/H1/) |
 | H2 低压 CAN 物理链路 | **PASS（2026-10-07）** | 500 kbit/s、正式帧、受控断线与恢复通过；[2026-10-05 首次失败](../evidence/software/H2/2026-10-05/README.md)、[2026-10-07 修复与验收](../evidence/software/H2/2026-10-07/README.md) |
-| H3 单外设验证 | **IN PROGRESS** | Node B NTC 子项 H3-00～H3-05 已关闭；开路/旁路/恢复三态实测通过。`FAN-00A`、`PSU-00B / D-04`、`FAN-00C` 已通过，当前仅执行 `FAN-00D` 接电前针脚/接法确认，尚未放行 12 V 接入风扇；[执行记录](05_verification_gates_验证与门禁/Gate_H3_Single_Peripheral_Validation_Execution_Record_H3单外设验证执行记录_2026-10-07.md)、[10-08 硬件证据](../evidence/hardware/H3/2026-10-08/README.md)、[10-10 FAN 硬件证据](../evidence/hardware/H3/2026-10-10/README.md)、[10-12 PSU/FAN 无源证据](../evidence/hardware/H3/2026-10-12/README.md)、[10-08 软件证据](../evidence/software/H3/2026-10-08/README.md)、[10-09 Run02/表征](../evidence/software/H3/2026-10-09/README.md)、[10-10 边界验收](../evidence/software/H3/2026-10-10/README.md) |
+| H3 单外设验证 | **IN PROGRESS** | Node B NTC `H3-00～H3-05` 与 Node A Fan PWM `FAN-00A～FAN-02B` 均已关闭为 PASS；当前转入 Tach/PPR 独立准入，INA260 尚待验证。真实风扇已完成默认 50% 及 `100→50→25→0→100→最终50%` 响应，0% 停转、随后可重启，USB 无断连；[执行记录](05_verification_gates_验证与门禁/Gate_H3_Single_Peripheral_Validation_Execution_Record_H3单外设验证执行记录_2026-10-07.md)、[10-13 FAN 硬件证据](../evidence/hardware/H3/2026-10-13/README.md)、[10-13 软件证据](../evidence/software/H3/2026-10-13/README.md) |
 
 > Gate H2 采用“阶段内本地累计、Gate 完成后统一推送”策略。远端关闭提交汇总 2026-10-02～10-07 的连续推进，各记录保留真实发生日期；失败、修复和验收没有被压缩成同一天的一次操作。
 
-> Gate H3 延续同一策略。NTC 子项实际跨越 2026-10-07～10-10，本次只做本地关闭；Fan PWM、Tach/PPR 和 INA260 完成并关闭整个 H3 后，才统一推送远端。
+> Gate H3 延续同一策略。NTC 子项实际跨越 2026-10-07～10-10，Fan PWM 子项跨越 2026-10-10～10-13；当前都只做本地关闭。Tach/PPR 和 INA260 完成、整个 H3 关闭后，才按真实时间差异统一推送远端。
