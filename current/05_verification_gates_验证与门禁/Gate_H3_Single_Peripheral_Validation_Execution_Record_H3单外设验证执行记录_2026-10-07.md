@@ -6,13 +6,13 @@
 |---|---|
 | 版本 | v1.0（NTC 关闭；Fan PWM 分步准入进行中） |
 | 日期 | 2026-10-07～2026-10-13 |
-| 状态 | **IN PROGRESS；NTC 子项 H3-00～H3-05 PASS；FAN-00A～FAN-00F、FAN-01、FAN-02A PASS；FAN-02B 构建/定向刷写/运行身份 PASS，待动态波形与真实风扇响应** |
+| 状态 | **IN PROGRESS；NTC 子项 H3-00～H3-05 PASS；FAN-00A～FAN-00F、FAN-01、FAN-02A PASS；FAN-02B 构建/刷写/身份/低压动态波形 PASS，待真实风扇五档响应** |
 | 前序 Gate | Gate H0 CONDITIONAL PASS；Gate H1 PASS；Gate H2 PASS（2026-10-07） |
 | H3 开始时 Git HEAD | `b03c874 docs: organize active project records` |
 | 固件回退基线 | `bc19580 feat: close Gate H2 CAN bring-up` |
-| 当前准入范围 | Node B 3.3 V NTC 子项及 Fan `FAN-00A～FAN-02A` 已完成；`FAN-02B` 构建、定向刷写和运行身份已通过。当前只允许在风扇 12 V/PWM/Tach、Heater、INA260 全部与 Node A 隔离时，恢复 `D9/PC7→10 kΩ→3V3` 低压上拉并验证 B1 触发的完整动态波形；通过前不得接入风扇 |
+| 当前准入范围 | Node B 3.3 V NTC 子项及 Fan `FAN-00A～FAN-02A` 已完成；`FAN-02B` 构建、定向刷写、运行身份和低压动态波形已通过。下一步只允许拆除外部 `10 kΩ` 后接入单只风扇的 `GND/+12 V/PWM` 做五档响应；Tach、Heater、INA260 继续隔离，严格执行 Node A 先上电、风扇 12 V 后上电及相反断电顺序 |
 | 远端策略 | H3 阶段内按真实日期在本地累计；Gate 完成后统一整合、提交并推送一次。统一推送不改变各动作的实际日期 |
-| 证据索引 | [`2026-10-07 搭建与照片`](../../evidence/hardware/H3/2026-10-07/README.md)；[`2026-10-08 硬件接线与电压预检`](../../evidence/hardware/H3/2026-10-08/README.md)；[`2026-10-08 H3-02、基线与 Run01`](../../evidence/software/H3/2026-10-08/README.md)；[`2026-10-09 Run02 与边界表征`](../../evidence/software/H3/2026-10-09/README.md)；[`2026-10-10 边界实现与验收`](../../evidence/software/H3/2026-10-10/README.md)；[`2026-10-10 FAN 身份/接口`](../../evidence/hardware/H3/2026-10-10/README.md)；[`2026-10-12 FAN 供电/接口实测`](../../evidence/hardware/H3/2026-10-12/README.md)；[`2026-10-12 FAN-01/FAN-02B 构建`](../../evidence/software/H3/2026-10-12/README.md)；[`2026-10-13 FAN-02B 刷写与运行身份`](../../evidence/software/H3/2026-10-13/README.md) |
+| 证据索引 | [`2026-10-07 搭建与照片`](../../evidence/hardware/H3/2026-10-07/README.md)；[`2026-10-08 硬件接线与电压预检`](../../evidence/hardware/H3/2026-10-08/README.md)；[`2026-10-08 H3-02、基线与 Run01`](../../evidence/software/H3/2026-10-08/README.md)；[`2026-10-09 Run02 与边界表征`](../../evidence/software/H3/2026-10-09/README.md)；[`2026-10-10 边界实现与验收`](../../evidence/software/H3/2026-10-10/README.md)；[`2026-10-10 FAN 身份/接口`](../../evidence/hardware/H3/2026-10-10/README.md)；[`2026-10-12 FAN 供电/接口实测`](../../evidence/hardware/H3/2026-10-12/README.md)；[`2026-10-12 FAN-01/FAN-02B 构建`](../../evidence/software/H3/2026-10-12/README.md)；[`2026-10-13 FAN-02B 刷写与运行身份`](../../evidence/software/H3/2026-10-13/README.md)；[`2026-10-13 FAN-02B 低压动态波形`](../../evidence/hardware/H3/2026-10-13/README.md) |
 
 ## 2. Gate 目标与边界
 
@@ -650,3 +650,13 @@ H2,A,STAT,...,tx_fail=0,...,q_drop=0,...,hal_err=0x00000000,esr=0x00000000
 约 6 s 内捕获的 7 条空载 `STAT` 均为 `hal_err/esr=0`。据此 `FAN-02B` 的 **目标身份、镜像不可变性、刷写、读回校验、复位与运行身份 PASS**。规范化原始结果、日期差异及证据边界见 [`2026-10-13 软件证据`](../../evidence/software/H3/2026-10-13/README.md)。
 
 下一准入点为风扇隔离条件下的动态低压波形验证：Node A 断电后，在 `D9/PC7` 与同一块 Node A `3V3` 间恢复外部 `10 kΩ` 上拉，以 Node A GND 为示波器参考；上电默认 50%，按一次 B1 后验证 `100→50→25→0→100→最终50%`。在 100%/0% 恒定电平档不以示波器“频率”自动读数作为判定依据，而以平台电压、档位顺序和持续时间为准。该步骤通过前不接风扇 12 V/PWM/Tach。
+
+## 24. FAN-02B 低压动态波形与测试干扰隔离（2026-10-13）
+
+风扇 12 V/PWM/Tach、Heater 和 INA260 均保持隔离，既有 CAN 线束不动。Node A 断电后恢复 `D9/PC7→10 kΩ→3V3`，无源预检得到 `D9—3V3=9.985 kΩ`，`3V3—GND`、`D9—GND` 均不蜂鸣；重新上电后默认 `25 kHz / 50%` 稳定。
+
+第一次按 B1 时同时打开了 COM7 监听。现场先看到 100% 约 10 s、50% 约 10 s，随后 25% 仅约 1 s，0% 和后续 100% 均未出现，直接恢复 50%；该突变与外部监听进程异常结束处于同一时段。源码复核确认正常路径每次只允许 `profile_index` 加一并重建 10 s deadline，不存在从 25% 合法跳过两档进入完成态的路径，而 MCU 复位初始化会立即恢复 50%。因此第一次结果标记为 **INVALID / 测试工具干扰**，既不算通过，也不算固件失败。
+
+随后保持全部硬件、示波器设置和最终 50% 状态不变，不复位、不重新插拔 USB，完全取消 COM7/ST-Link 访问后再次只按一次 B1。执行人确认 `100%→50%→25%→0%→100%→最终50%` 每个档位均按顺序完整出现，没有提前跳档。人工观察支持每档约 10 s，不把该结果扩写为毫秒级定时精度。
+
+据此 `FAN-02B` 判定为 **PASS（低压动态波形范围）**：B1 单次触发、五档顺序、电平形态和结束恢复 50% 已通过。Run01/Run02 的差异作为测试工具会改变被测系统状态的实操证据完整保留。规范化记录与哈希见 [`2026-10-13 硬件证据`](../../evidence/hardware/H3/2026-10-13/README.md)。下一准入点为全断电拆除外部 10 kΩ 后的单风扇真实五档响应；Tach、Heater、INA260 继续隔离。
