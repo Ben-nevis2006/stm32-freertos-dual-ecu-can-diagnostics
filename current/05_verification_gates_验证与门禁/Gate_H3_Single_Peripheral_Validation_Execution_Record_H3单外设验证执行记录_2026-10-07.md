@@ -4,13 +4,13 @@
 
 | 项目 | 内容 |
 |---|---|
-| 版本 | v1.0（NTC 关闭；Fan PWM 分步准入进行中） |
+| 版本 | v1.0（NTC、Fan PWM 已关闭；Tach/PPR 准入待开始） |
 | 日期 | 2026-10-07～2026-10-13 |
-| 状态 | **IN PROGRESS；NTC 子项 H3-00～H3-05 PASS；FAN-00A～FAN-00F、FAN-01、FAN-02A PASS；FAN-02B 构建/刷写/身份/低压动态波形 PASS，待真实风扇五档响应** |
+| 状态 | **IN PROGRESS；NTC 子项 H3-00～H3-05 PASS；Fan PWM 子项 FAN-00A～FAN-02B PASS；Tach/PPR 与 INA260 尚待独立验证** |
 | 前序 Gate | Gate H0 CONDITIONAL PASS；Gate H1 PASS；Gate H2 PASS（2026-10-07） |
 | H3 开始时 Git HEAD | `b03c874 docs: organize active project records` |
 | 固件回退基线 | `bc19580 feat: close Gate H2 CAN bring-up` |
-| 当前准入范围 | Node B 3.3 V NTC 子项及 Fan `FAN-00A～FAN-02A` 已完成；`FAN-02B` 构建、定向刷写、运行身份和低压动态波形已通过。下一步只允许拆除外部 `10 kΩ` 后接入单只风扇的 `GND/+12 V/PWM` 做五档响应；Tach、Heater、INA260 继续隔离，严格执行 Node A 先上电、风扇 12 V 后上电及相反断电顺序 |
+| 当前准入范围 | Node B 3.3 V NTC 与 Fan PWM 子项均已完成。下一步只允许开展 Tach/PPR 的文档审计、针位复核和全断电无源准入；在确认 Tach 开路电压、输出类型、目标 GPIO 耐压及上拉方案前，不得把 F3/Tach 接入 MCU。Heater、INA260 继续隔离 |
 | 远端策略 | H3 阶段内按真实日期在本地累计；Gate 完成后统一整合、提交并推送一次。统一推送不改变各动作的实际日期 |
 | 证据索引 | [`2026-10-07 搭建与照片`](../../evidence/hardware/H3/2026-10-07/README.md)；[`2026-10-08 硬件接线与电压预检`](../../evidence/hardware/H3/2026-10-08/README.md)；[`2026-10-08 H3-02、基线与 Run01`](../../evidence/software/H3/2026-10-08/README.md)；[`2026-10-09 Run02 与边界表征`](../../evidence/software/H3/2026-10-09/README.md)；[`2026-10-10 边界实现与验收`](../../evidence/software/H3/2026-10-10/README.md)；[`2026-10-10 FAN 身份/接口`](../../evidence/hardware/H3/2026-10-10/README.md)；[`2026-10-12 FAN 供电/接口实测`](../../evidence/hardware/H3/2026-10-12/README.md)；[`2026-10-12 FAN-01/FAN-02B 构建`](../../evidence/software/H3/2026-10-12/README.md)；[`2026-10-13 FAN-02B 刷写与运行身份`](../../evidence/software/H3/2026-10-13/README.md)；[`2026-10-13 FAN-02B 低压动态波形`](../../evidence/hardware/H3/2026-10-13/README.md) |
 
@@ -660,3 +660,15 @@ H2,A,STAT,...,tx_fail=0,...,q_drop=0,...,hal_err=0x00000000,esr=0x00000000
 随后保持全部硬件、示波器设置和最终 50% 状态不变，不复位、不重新插拔 USB，完全取消 COM7/ST-Link 访问后再次只按一次 B1。执行人确认 `100%→50%→25%→0%→100%→最终50%` 每个档位均按顺序完整出现，没有提前跳档。人工观察支持每档约 10 s，不把该结果扩写为毫秒级定时精度。
 
 据此 `FAN-02B` 判定为 **PASS（低压动态波形范围）**：B1 单次触发、五档顺序、电平形态和结束恢复 50% 已通过。Run01/Run02 的差异作为测试工具会改变被测系统状态的实操证据完整保留。规范化记录与哈希见 [`2026-10-13 硬件证据`](../../evidence/hardware/H3/2026-10-13/README.md)。下一准入点为全断电拆除外部 10 kΩ 后的单风扇真实五档响应；Tach、Heater、INA260 继续隔离。
+
+## 25. FAN-02B 单只真实风扇五档响应（2026-10-13）
+
+全断电接线前，现场确认外部 `10 kΩ` 已拆、PSU 残压为 `0 V`，公共 GND 链路、`D9↔F4/PWM`、`PSU+↔F2/+12 V` 均稳定蜂鸣，`PSU+↔GND` 不蜂鸣，`F3/Tach` 和 PST 分支空置。执行中严格采用 Node A USB 先上电、风扇 12 V 后上电；完成后先断风扇 12 V、确认残压，再断 Node A USB。为避免复现第 24 节 Run01 的测量干扰，本次不打开 COM7、不访问 ST-Link。
+
+执行人结构化报告为：
+
+> `FAN-02B真实风扇：默认50%=通过；100%=稳定；50%=稳定；25%=稳定；0%=稳定停转；再次100%=稳定；最终50%=稳定；PWM约25kHz，高/低电平5.04V/-160mV；USB是否断连=否；异常=无；已逆序断电，残压=0.04V。`
+
+结果证明同一只真实风扇在 100%、50%、25% 档具有方向正确且稳定的相对响应，0% 可稳定停转，随后 100% 可重新起转，序列结束能恢复 50%。真实负载下 PWM 高电平 `5.04 V` 低于既定 `5.25 V` 上限；低电平 `-160 mV` 作为边沿/探测回路相关的小幅负向欠冲原样保留，其量级远低于 `0.8 V` 低电平上限，且没有伴随 USB 断连、平台异常或功能失效。结束残压 `0.04 V < 0.5 V`。
+
+据此 `FAN-02B` 判定为 **PASS（单只真实风扇五档短时响应范围）**，Fan PWM 子项 `FAN-00A～FAN-02B` 整体关闭为 **PASS**。完整结构化记录及哈希见 [`2026-10-13 硬件证据`](../../evidence/hardware/H3/2026-10-13/README.md)。该结论不证明 Tach/PPR、绝对 RPM、长期耐久、最终线束或温控闭环；下一步转入 Tach/PPR 独立准入，接入任何 MCU 引脚前必须先确认 F3 的开路电气特性和上拉边界。
