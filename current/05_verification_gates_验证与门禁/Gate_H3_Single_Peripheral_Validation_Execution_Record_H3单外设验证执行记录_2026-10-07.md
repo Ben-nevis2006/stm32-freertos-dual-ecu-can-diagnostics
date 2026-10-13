@@ -6,13 +6,13 @@
 |---|---|
 | 版本 | v1.0（NTC 关闭；Fan PWM 分步准入进行中） |
 | 日期 | 2026-10-07～2026-10-13 |
-| 状态 | **IN PROGRESS；NTC 子项 H3-00～H3-05 PASS；FAN-00A～FAN-00F、FAN-01、FAN-02A PASS；FAN-02B 镜像构建 PASS，待隔离刷写与实板验证** |
+| 状态 | **IN PROGRESS；NTC 子项 H3-00～H3-05 PASS；FAN-00A～FAN-00F、FAN-01、FAN-02A PASS；FAN-02B 构建/定向刷写/运行身份 PASS，待动态波形与真实风扇响应** |
 | 前序 Gate | Gate H0 CONDITIONAL PASS；Gate H1 PASS；Gate H2 PASS（2026-10-07） |
 | H3 开始时 Git HEAD | `b03c874 docs: organize active project records` |
 | 固件回退基线 | `bc19580 feat: close Gate H2 CAN bring-up` |
-| 当前准入范围 | Node B 3.3 V NTC 子项及 Fan `FAN-00A～FAN-02A` 已完成。当前只允许在风扇 12 V、PWM、Tach、Heater、INA260 全部与 Node A 隔离时准备并定向刷写 `FAN-02B` 受控占空比测试镜像；重新联调前仍须单独复核镜像身份和空载输出，不得直接接入风扇 |
+| 当前准入范围 | Node B 3.3 V NTC 子项及 Fan `FAN-00A～FAN-02A` 已完成；`FAN-02B` 构建、定向刷写和运行身份已通过。当前只允许在风扇 12 V/PWM/Tach、Heater、INA260 全部与 Node A 隔离时，恢复 `D9/PC7→10 kΩ→3V3` 低压上拉并验证 B1 触发的完整动态波形；通过前不得接入风扇 |
 | 远端策略 | H3 阶段内按真实日期在本地累计；Gate 完成后统一整合、提交并推送一次。统一推送不改变各动作的实际日期 |
-| 证据索引 | [`2026-10-07 搭建与照片`](../../evidence/hardware/H3/2026-10-07/README.md)；[`2026-10-08 硬件接线与电压预检`](../../evidence/hardware/H3/2026-10-08/README.md)；[`2026-10-08 H3-02、基线与 Run01`](../../evidence/software/H3/2026-10-08/README.md)；[`2026-10-09 Run02 与边界表征`](../../evidence/software/H3/2026-10-09/README.md)；[`2026-10-10 边界实现与验收`](../../evidence/software/H3/2026-10-10/README.md)；[`2026-10-10 FAN 身份/接口`](../../evidence/hardware/H3/2026-10-10/README.md)；[`2026-10-12 FAN 供电/接口实测`](../../evidence/hardware/H3/2026-10-12/README.md)；[`2026-10-12 FAN-01 固件预备`](../../evidence/software/H3/2026-10-12/README.md) |
+| 证据索引 | [`2026-10-07 搭建与照片`](../../evidence/hardware/H3/2026-10-07/README.md)；[`2026-10-08 硬件接线与电压预检`](../../evidence/hardware/H3/2026-10-08/README.md)；[`2026-10-08 H3-02、基线与 Run01`](../../evidence/software/H3/2026-10-08/README.md)；[`2026-10-09 Run02 与边界表征`](../../evidence/software/H3/2026-10-09/README.md)；[`2026-10-10 边界实现与验收`](../../evidence/software/H3/2026-10-10/README.md)；[`2026-10-10 FAN 身份/接口`](../../evidence/hardware/H3/2026-10-10/README.md)；[`2026-10-12 FAN 供电/接口实测`](../../evidence/hardware/H3/2026-10-12/README.md)；[`2026-10-12 FAN-01/FAN-02B 构建`](../../evidence/software/H3/2026-10-12/README.md)；[`2026-10-13 FAN-02B 刷写与运行身份`](../../evidence/software/H3/2026-10-13/README.md) |
 
 ## 2. Gate 目标与边界
 
@@ -631,4 +631,22 @@ H2,A,STAT,...,tx_fail=0,...,q_drop=0,...,hal_err=0x00000000,esr=0x00000000
 
 构建实际完成于 `2026-10-12 20:33:14`；本节于 `2026-10-13` 继续整理，因此保留日期差异。STM32CubeIDE 2.2.0 随附 GNU Tools for STM32 14.3.1 单线程 clean build 返回成功且无警告/错误：`text/data/bss/dec=34264/96/14008/48368`；ELF 大小 `1099336` bytes，SHA-256=`F499425FBF1D7931FF2BB6A8FDE3CF87A4D3BD8C2002BEA670C938D88CF0D2A1`。H2 `BOOT/STAT` 及 H3 `PROFILE/STEP/PROFILE_DONE` 字符串均在 ELF 中检出；`A_ControlTask` 的 2048-byte 配置栈相对新增路径的 248-byte 最大单函数静态记录保有明显余量。
 
-完整规范化摘要见 [`2026-10-12 软件证据`](../../evidence/software/H3/2026-10-12/README.md)。据此 `FAN-02B` 的 **源码实现与本地构建 PASS**，但尚未刷写、未运行，不能提前判定实板响应通过。下一动作严格限定为：确认风扇适配器断电且残压 `<0.5 V`，Power/PWM/Tach、Heater、INA260 全部与 Node A 隔离，只连接身份冻结的 Node A USB；随后按 ST-LINK 序列号定向刷写并回读镜像身份。
+完整规范化摘要见 [`2026-10-12 软件证据`](../../evidence/software/H3/2026-10-12/README.md)。据此 `FAN-02B` 在 2026-10-12 构建时点的 **源码实现与本地构建 PASS**，但该时点尚未刷写、未运行，不能提前判定实板响应通过。后续定向刷写和运行身份结果见第 23 节。
+
+## 23. FAN-02B 定向刷写与运行身份（2026-10-13）
+
+现场确认仅 Node A USB 上电，风扇 12 V、PWM、Tach、Heater 和 INA260 均隔离；既有 CAN 线束保持原样，避免为本测试反复扰动已通过 H2 的接线。受限执行环境内的 CubeProgrammer 最初无法打开 WinUSB，虽返回 `No ST-Link detected / DEV_CONNECT_ERR`，Windows PnP 同时显示 `ST-Link Debug / WinUSB 2.2.0.0 / Started / ProblemCode=0 / COM7`。改为在受限环境外只读枚举后只发现冻结的 Node A 序列号 `066BFF575151676667043206`，因此前述失败归为执行环境访问边界，不作为硬件断连；失败尝试没有写入。
+
+刷写前 ELF 再次核验为 `1099336` bytes、SHA-256=`F499425FBF1D7931FF2BB6A8FDE3CF87A4D3BD8C2002BEA670C938D88CF0D2A1`，与 2026-10-12 构建证据一致，Git 工作区为空。按精确序列号连接回读 `3.23 V / Device ID 0x410 / Rev X / 128 KiB / Cortex-M3`；定向写入后 CubeProgrammer 返回 `File download complete`、`Download verified successfully`、软件复位和退出码 `0`。
+
+随后先打开同一探针的 `COM7 @ 115200 8N1`，再按同一序列号触发一次软件复位。运行身份命中：
+
+```text
+H2,A,BOOT,profile=formal_baseline,bitrate=500000,tx_id=0x180,tx_dlc=5,rx_id=0x100,rx_dlc=2,period_ms=100,start_delay_ms=10000
+H3,A,FAN_PWM_PROFILE,pin=PC7,timer=TIM3_CH2,freq_hz=25000,idle_pct=50,sequence=100-50-25-0-100,hold_ms=10000,trigger=B1,mode=af_od
+H2,A,STAT,...,tx_fail=0,...,q_drop=0,...,hal_err=0x00000000,esr=0x00000000
+```
+
+约 6 s 内捕获的 7 条空载 `STAT` 均为 `hal_err/esr=0`。据此 `FAN-02B` 的 **目标身份、镜像不可变性、刷写、读回校验、复位与运行身份 PASS**。规范化原始结果、日期差异及证据边界见 [`2026-10-13 软件证据`](../../evidence/software/H3/2026-10-13/README.md)。
+
+下一准入点为风扇隔离条件下的动态低压波形验证：Node A 断电后，在 `D9/PC7` 与同一块 Node A `3V3` 间恢复外部 `10 kΩ` 上拉，以 Node A GND 为示波器参考；上电默认 50%，按一次 B1 后验证 `100→50→25→0→100→最终50%`。在 100%/0% 恒定电平档不以示波器“频率”自动读数作为判定依据，而以平台电压、档位顺序和持续时间为准。该步骤通过前不接风扇 12 V/PWM/Tach。

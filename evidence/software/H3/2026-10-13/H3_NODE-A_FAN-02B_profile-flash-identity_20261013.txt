@@ -1,0 +1,85 @@
+H3 / FAN-02B Node A 受控占空比镜像定向刷写与运行身份证据
+================================================================
+
+记录日期：2026-10-13（Asia/Shanghai）
+刷写与回读时段：约 19:00～19:11
+构建产物实际生成时间：2026-10-12 20:33:14（跨日推进，日期不合并）
+
+1. 现场边界
+-----------
+
+执行人确认：FAN-02B 刷写前仅 Node A USB 上电；风扇 12 V、PWM、Tach、Heater、
+INA260 均不接。既有 CAN 线束保持原样，不为本次刷写反复拆装；Node B USB 未上电。
+刷写和身份回读期间未按 B1，未启动占空比序列。
+
+2. ST-Link 访问边界与目标身份
+-----------------------------
+
+受限执行环境内的 STM32CubeProgrammer 最初返回 `No ST-Link detected` / `DEV_CONNECT_ERR`，
+但 Windows PnP 同时显示 `ST-Link Debug`、WinUSB 2.2.0.0、状态 Started、ProblemCode=0，
+且同一设备的 VCP 为 COM7。随后在受限环境外只读枚举成功，因此前述现象归因于
+执行环境不能打开 WinUSB，而不是板卡断连或目标身份变化；失败尝试没有发生写入。
+
+受限环境外只读枚举只发现一只 ST-Link：
+
+  ST-LINK SN : 066BFF575151676667043206
+  ST-LINK FW : V2J46M32
+  VCP        : COM7
+
+定向连接回读：
+
+  Target voltage : 3.23 V（刷写）；3.24 V（身份抓取复位）
+  SWD frequency  : 4000 kHz
+  Device ID      : 0x410
+  Revision ID    : Rev X
+  Device         : STM32F101/F102/F103 Medium-density
+  Flash / CPU    : 128 KiB / Cortex-M3
+
+3. 镜像不可变性复核
+-------------------
+
+文件：firmware/node_a/Debug/node_a.elf
+大小：1099336 bytes
+LastWriteTime：2026-10-12 20:33:14
+SHA-256：F499425FBF1D7931FF2BB6A8FDE3CF87A4D3BD8C2002BEA670C938D88CF0D2A1
+
+该哈希与 2026-10-12 FAN-02B clean build 证据完全一致，刷写前 Git 工作区为空。
+
+4. 定向下载、校验与复位
+-----------------------
+
+按冻结序列号 `066BFF575151676667043206` 定向写入上述 ELF。STM32CubeProgrammer
+2.19.0 返回：
+
+  File          : node_a.elf
+  Size          : 33.56 KB
+  Address       : 0x08000000
+  File download complete
+  Download verified successfully
+  MCU Reset
+  Software reset is performed
+  Exit code     : 0
+
+5. COM7 运行身份回读（115200 8N1）
+----------------------------------
+
+打开 COM7 后按同一 ST-Link 序列号触发一次软件复位，约 6 s 捕获：
+
+H2,A,BOOT,profile=formal_baseline,bitrate=500000,tx_id=0x180,tx_dlc=5,rx_id=0x100,rx_dlc=2,period_ms=100,start_delay_ms=10000
+H3,A,FAN_PWM_PROFILE,pin=PC7,timer=TIM3_CH2,freq_hz=25000,idle_pct=50,sequence=100-50-25-0-100,hold_ms=10000,trigger=B1,mode=af_od
+H2,A,STAT,tick=525,tx_try=0,tx_q=0,tx_fail=0,rx_irq=0,rx=0,rx_bad=0,seq_err=0,q_drop=0,seen=0,last=0,mb_free=3,hal_err=0x00000000,esr=0x00000000
+H2,A,STAT,tick=1538,tx_try=0,tx_q=0,tx_fail=0,rx_irq=0,rx=0,rx_bad=0,seq_err=0,q_drop=0,seen=0,last=0,mb_free=3,hal_err=0x00000000,esr=0x00000000
+H2,A,STAT,tick=2551,tx_try=0,tx_q=0,tx_fail=0,rx_irq=0,rx=0,rx_bad=0,seq_err=0,q_drop=0,seen=0,last=0,mb_free=3,hal_err=0x00000000,esr=0x00000000
+H2,A,STAT,tick=3564,tx_try=0,tx_q=0,tx_fail=0,rx_irq=0,rx=0,rx_bad=0,seq_err=0,q_drop=0,seen=0,last=0,mb_free=3,hal_err=0x00000000,esr=0x00000000
+H2,A,STAT,tick=4577,tx_try=0,tx_q=0,tx_fail=0,rx_irq=0,rx=0,rx_bad=0,seq_err=0,q_drop=0,seen=0,last=0,mb_free=3,hal_err=0x00000000,esr=0x00000000
+H2,A,STAT,tick=5590,tx_try=0,tx_q=0,tx_fail=0,rx_irq=0,rx=0,rx_bad=0,seq_err=0,q_drop=0,seen=0,last=0,mb_free=3,hal_err=0x00000000,esr=0x00000000
+H2,A,STAT,tick=6603,tx_try=0,tx_q=0,tx_fail=0,rx_irq=0,rx=0,rx_bad=0,seq_err=0,q_drop=0,seen=0,last=0,mb_free=3,hal_err=0x00000000,esr=0x00000000
+
+6. 判定与剩余边界
+-----------------
+
+PASS：目标序列号、镜像哈希、下载、读回校验、复位、运行身份和空载短时错误寄存器均通过。
+
+本证据尚不证明 B1 触发、五档实际波形、每档 10 s 定时、结束恢复 50%、真实风扇
+减速/停转/重启、Tach/PPR 或长期稳定性。下一门禁是在风扇仍隔离的条件下，通过外部
+10 kΩ 把 D9/PC7 上拉到 Node A 3V3，以示波器验证完整动态序列。

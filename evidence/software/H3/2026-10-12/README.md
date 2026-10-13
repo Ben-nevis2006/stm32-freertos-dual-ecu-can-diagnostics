@@ -104,4 +104,6 @@ STM32CubeIDE 2.2.0 随附 GNU Tools for STM32 14.3.1 单线程 clean build 成�
 
 规范化构建摘要为 [`H3_NODE-A_FAN-02B_profile-build_20261012.txt`](H3_NODE-A_FAN-02B_profile-build_20261012.txt)，大小 `2622` bytes，SHA-256=`DF9BD0A79B57D7EB7EF73D2BAA0428B22D56ACA9F7DFE1E7F75AF9D59B0BD265`。该摘要明确不是原始 IDE 控制台转储。
 
-本节只关闭 **源码实现 + 本地构建**，状态为 **PASS（build-only）**。镜像尚未刷入 Node A；不证明 B1 触发、各档实际波形、风扇减速/停转/重启、USB 稳定性或 CAN 运行健康。刷写前仍要求风扇 12 V、PWM、Tach、Heater 和 INA260 全部与 Node A 隔离，仅接 Node A USB。
+本节只关闭 **源码实现 + 本地构建**，在 2026-10-12 构建时点的状态为 **PASS（build-only）**。该时点镜像尚未刷入 Node A；不证明 B1 触发、各档实际波形、风扇减速/停转/重启、USB 稳定性或 CAN 运行健康。刷写前仍要求风扇 12 V、PWM、Tach、Heater 和 INA260 全部与 Node A 隔离，仅接 Node A USB。
+
+跨日续接结果：目标身份、镜像哈希、定向下载、读回校验、复位和 COM7 运行身份已于 2026-10-13 通过，详见 [`../2026-10-13/README.md`](../2026-10-13/README.md)。动态波形和真实风扇响应仍不由本构建证据代替。
