@@ -10,7 +10,7 @@
 | 前序 Gate | Gate H0 CONDITIONAL PASS；Gate H1 PASS；Gate H2 PASS（2026-10-07） |
 | H3 开始时 Git HEAD | `b03c874 docs: organize active project records` |
 | 固件回退基线 | `bc19580 feat: close Gate H2 CAN bring-up` |
-| 当前准入范围 | Node B 3.3 V NTC 与 Fan PWM 子项均已完成。Tach 的 `10 kΩ + 10 nF` RC 已在 PA0 隔离和 PA0 接入两种状态下消除可见 25 kHz 额外阈值穿越，Tach 接入 MCU 前的低压电气门禁已关闭；下一步只放行受控 TIM2 捕获固件验证，PPR 与 RPM 仍保持 TBD。Heater、INA260 继续隔离 |
+| 当前准入范围 | Node B 3.3 V NTC 与 Fan PWM 子项均已完成。Tach 的 `10 kΩ + 10 nF` RC 已在 PA0 隔离和 PA0 接入两种状态下消除可见 25 kHz 额外阈值穿越，Tach 接入 MCU 前的低压电气门禁已关闭；最小 TIM2 原始捕获镜像已离线构建，下一步只放行定向刷写和无 12 V/默认 50% 两段实板日志，PPR 与 RPM 仍保持 TBD。Heater、INA260 继续隔离 |
 | 远端策略 | H3 阶段内按真实日期在本地累计；Gate 完成后统一整合、提交并推送一次。统一推送不改变各动作的实际日期 |
 | 证据索引 | [`2026-10-07 搭建与照片`](../../evidence/hardware/H3/2026-10-07/README.md)；[`2026-10-08 硬件接线与电压预检`](../../evidence/hardware/H3/2026-10-08/README.md)；[`2026-10-08 H3-02、基线与 Run01`](../../evidence/software/H3/2026-10-08/README.md)；[`2026-10-09 Run02 与边界表征`](../../evidence/software/H3/2026-10-09/README.md)；[`2026-10-10 边界实现与验收`](../../evidence/software/H3/2026-10-10/README.md)；[`2026-10-10 FAN 身份/接口`](../../evidence/hardware/H3/2026-10-10/README.md)；[`2026-10-12 FAN 供电/接口实测`](../../evidence/hardware/H3/2026-10-12/README.md)；[`2026-10-12 FAN-01/FAN-02B 构建`](../../evidence/software/H3/2026-10-12/README.md)；[`2026-10-13 FAN-02B 刷写与运行身份`](../../evidence/software/H3/2026-10-13/README.md)；[`2026-10-13 FAN-02B 低压动态波形`](../../evidence/hardware/H3/2026-10-13/README.md)；[`2026-10-14 Tach 电气表征与 PWM 耦合隔离`](../../evidence/hardware/H3/2026-10-14/README.md) |
 
@@ -819,3 +819,23 @@ Vavg=1.67 V` 的连续规则方波。25 us/div Peak Detect 照片显示单调 RC
 异常，逆序断电后残压安全。`TACH-00G` 判定为 **PASS（RC 后 PA0 高阻输入负载与短时
 电气波形范围）**。至此 Tach 接入 MCU 前的低压电气准入关闭，可进入受控 TIM2 输入
 捕获固件验证；TIM2 捕获、数字滤波、PPR、绝对 RPM 和长期运行尚未由本轮证明。
+
+## 33. TACH-01A 原始输入捕获镜像离线准备（2026-10-14）
+
+以 `4095e38` 为代码基线，在 TACH-00G 通过后只增加 TIM2_CH1 下降沿中断捕获和每秒
+原始证据日志。TIM2 继续使用 `PSC=639 / ARR=65535 / 100 kHz / 10 us per tick`；
+硬件 RC 保持 `10 kΩ + 10 nF`，本轮 `ICFilter=0`，以便先独立验证 RC 后进入 PA0 的
+真实捕获结果。ISR 只保存捕获值、模 65536 周期差、窗口最小/最大值和计数；串口输出
+留在 A_ControlTask，且所有日志明确写入 `ppr=TBD / rpm=INVALID`。
+
+STM32CubeIDE 2.2.0 随附 GNU Tools for STM32 14.3.1 单线程 clean build 成功，无编译或
+链接警告/错误：`text/data/bss/dec=36128/100/14036/50264`。`node_a.elf` 大小
+`1102084` bytes，SHA-256=`0ED42C02BBE2AC79CF08589F5560ECE0C612A4D2869642B473C4FC7C7FFA954C`；
+三个新增符号及 `TACH_CAPTURE_PROFILE / TACH_RAW / ppr=TBD / rpm=INVALID` 字符串均在
+ELF 中检出。最大新增单函数静态栈记录为 `456` bytes，相对 A_ControlTask 的
+`2048`-byte 配置栈保有余量。
+
+本节只关闭 **TACH-01A 离线构建门禁**，尚未刷写。下一步在风扇 12 V 断开、RC/A0
+保持不变时按 Node A 冻结序列号定向刷写，先证明无供电风扇不会产生伪边沿，再加入
+12 V，以默认 50% 对比 UART 原始周期与示波器 `21.85 ms / 45.77 Hz`。详细构建记录见
+[`2026-10-14 软件证据`](../../evidence/software/H3/2026-10-14/README.md)。

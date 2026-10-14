@@ -54,7 +54,7 @@
 | H0 硬件到货与身份 | CONDITIONAL PASS | CAN/H2 身份子项已关闭；[原始证据](../evidence/hardware/H0/) |
 | H1 NUCLEO USB Bring-up | PASS | 两板独立枚举、目标识别、Flash 访问与稳定性通过；[原始证据](../evidence/hardware/H1/) |
 | H2 低压 CAN 物理链路 | **PASS（2026-10-07）** | 500 kbit/s、正式帧、受控断线与恢复通过；[2026-10-05 首次失败](../evidence/software/H2/2026-10-05/README.md)、[2026-10-07 修复与验收](../evidence/software/H2/2026-10-07/README.md) |
-| H3 单外设验证 | **IN PROGRESS** | Node B NTC `H3-00～H3-05` 与 Node A Fan PWM `FAN-00A～FAN-02B` 均已关闭为 PASS；Tach 的 `10 kΩ + 10 nF` RC 已在 PA0 隔离和 PA0 接入状态下消除可见 25 kHz 额外阈值穿越，接入 MCU 前的低压电气门禁已关闭；下一步为受控 TIM2 捕获固件验证，PPR/RPM 与 INA260 尚待验证。[执行记录](05_verification_gates_验证与门禁/Gate_H3_Single_Peripheral_Validation_Execution_Record_H3单外设验证执行记录_2026-10-07.md)、[10-14 Tach 硬件证据](../evidence/hardware/H3/2026-10-14/README.md)、[10-13 FAN 硬件证据](../evidence/hardware/H3/2026-10-13/README.md)、[10-13 软件证据](../evidence/software/H3/2026-10-13/README.md) |
+| H3 单外设验证 | **IN PROGRESS** | Node B NTC `H3-00～H3-05` 与 Node A Fan PWM `FAN-00A～FAN-02B` 均已关闭为 PASS；Tach 的 `10 kΩ + 10 nF` RC 已在 PA0 隔离和 PA0 接入状态下消除可见 25 kHz 额外阈值穿越，接入 MCU 前的低压电气门禁已关闭；最小 TIM2 原始捕获镜像已离线构建，下一步为定向刷写及两段实板日志，PPR/RPM 与 INA260 尚待验证。[执行记录](05_verification_gates_验证与门禁/Gate_H3_Single_Peripheral_Validation_Execution_Record_H3单外设验证执行记录_2026-10-07.md)、[10-14 Tach 硬件证据](../evidence/hardware/H3/2026-10-14/README.md)、[10-14 软件证据](../evidence/software/H3/2026-10-14/README.md)、[10-13 FAN 硬件证据](../evidence/hardware/H3/2026-10-13/README.md)、[10-13 软件证据](../evidence/software/H3/2026-10-13/README.md) |
 
 > Gate H2 采用“阶段内本地累计、Gate 完成后统一推送”策略。远端关闭提交汇总 2026-10-02～10-07 的连续推进，各记录保留真实发生日期；失败、修复和验收没有被压缩成同一天的一次操作。
 

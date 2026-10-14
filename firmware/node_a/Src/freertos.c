@@ -44,6 +44,19 @@ typedef struct
   uint16_t compare;
 } H3_FanPwmStep_t;
 
+typedef struct
+{
+  uint32_t edge_total;
+  uint32_t sample_total;
+  uint32_t zero_delta_total;
+  uint32_t window_samples;
+  uint32_t last_edge_tick_ms;
+  uint16_t last_period_ticks;
+  uint16_t window_min_ticks;
+  uint16_t window_max_ticks;
+  uint8_t capture_seen;
+} H3_TachSnapshot_t;
+
 /* USER CODE END PTD */
 
 /* Private define ------------------------------------------------------------*/
@@ -81,6 +94,16 @@ static volatile uint32_t g_h2_rx_sequence_errors;
 static volatile uint8_t g_h2_rx_seen;
 static volatile uint8_t g_h2_last_rx_counter;
 static volatile uint8_t g_h3_fan_profile_request;
+static volatile uint32_t g_h3_tach_edge_count;
+static volatile uint32_t g_h3_tach_period_sample_count;
+static volatile uint32_t g_h3_tach_zero_delta_count;
+static volatile uint32_t g_h3_tach_window_sample_count;
+static volatile uint32_t g_h3_tach_last_edge_tick_ms;
+static volatile uint16_t g_h3_tach_last_capture;
+static volatile uint16_t g_h3_tach_last_period_ticks;
+static volatile uint16_t g_h3_tach_window_min_ticks = UINT16_MAX;
+static volatile uint16_t g_h3_tach_window_max_ticks;
+static volatile uint8_t g_h3_tach_capture_seen;
 
 static const H3_FanPwmStep_t g_h3_fan_pwm_profile[] =
 {
@@ -139,6 +162,8 @@ static void H2_LogStatus(void);
 static void H3_LogFanPwmProfile(void);
 static void H3_ApplyFanPwmStep(uint8_t profile_index);
 static void H3_LogFanPwmProfileDone(void);
+static void H3_LogTachCaptureProfile(void);
+static void H3_LogTachRaw(void);
 static void H2_SendFrame(uint8_t counter);
 static uint8_t H2_IsValidPeerFrame(const AppCanRxFrame_t *frame);
 static uint8_t H2_GetPeerCounter(const AppCanRxFrame_t *frame);
@@ -330,6 +355,96 @@ static void H3_LogFanPwmProfileDone(void)
   }
 }
 
+static void H3_LogTachCaptureProfile(void)
+{
+  char line[224];
+  int length;
+
+  length = snprintf(line, sizeof(line),
+                    "H3,A,TACH_CAPTURE_PROFILE,pin=PA0,timer=TIM2_CH1,edge=falling,timer_hz=%lu,tick_us=%lu,ic_filter=%u,rc=10k_series_10nF_gnd,ppr=TBD,rpm=INVALID\r\n",
+                    (unsigned long)H3_TACH_TIMER_FREQUENCY_HZ,
+                    (unsigned long)H3_TACH_TIMER_TICK_US,
+                    (unsigned int)H3_TACH_INPUT_FILTER);
+
+  if (length > 0)
+  {
+    line[sizeof(line) - 1U] = '\0';
+    H2_UartWrite(line);
+  }
+}
+
+static void H3_LogTachRaw(void)
+{
+  H3_TachSnapshot_t snapshot;
+  uint32_t now;
+  uint32_t age_ms;
+  uint32_t period_us;
+  uint32_t frequency_millihz;
+  const char *state;
+  char line[320];
+  int length;
+
+  taskENTER_CRITICAL();
+  snapshot.edge_total = g_h3_tach_edge_count;
+  snapshot.sample_total = g_h3_tach_period_sample_count;
+  snapshot.zero_delta_total = g_h3_tach_zero_delta_count;
+  snapshot.window_samples = g_h3_tach_window_sample_count;
+  snapshot.last_edge_tick_ms = g_h3_tach_last_edge_tick_ms;
+  snapshot.last_period_ticks = g_h3_tach_last_period_ticks;
+  snapshot.window_min_ticks = (g_h3_tach_window_sample_count != 0U) ?
+                              g_h3_tach_window_min_ticks : 0U;
+  snapshot.window_max_ticks = (g_h3_tach_window_sample_count != 0U) ?
+                              g_h3_tach_window_max_ticks : 0U;
+  snapshot.capture_seen = g_h3_tach_capture_seen;
+  g_h3_tach_window_sample_count = 0U;
+  g_h3_tach_window_min_ticks = UINT16_MAX;
+  g_h3_tach_window_max_ticks = 0U;
+  taskEXIT_CRITICAL();
+
+  now = HAL_GetTick();
+  if (snapshot.capture_seen == 0U)
+  {
+    state = "WAIT_FIRST_EDGE";
+    age_ms = UINT32_MAX;
+  }
+  else if (snapshot.sample_total == 0U)
+  {
+    state = "WAIT_SECOND_EDGE";
+    age_ms = now - snapshot.last_edge_tick_ms;
+  }
+  else
+  {
+    state = "PERIOD_VALID";
+    age_ms = now - snapshot.last_edge_tick_ms;
+  }
+
+  period_us = (uint32_t)snapshot.last_period_ticks * H3_TACH_TIMER_TICK_US;
+  frequency_millihz = (snapshot.last_period_ticks != 0U) ?
+      ((H3_TACH_TIMER_FREQUENCY_HZ * 1000U) /
+       (uint32_t)snapshot.last_period_ticks) : 0U;
+
+  length = snprintf(line, sizeof(line),
+                    "H3,A,TACH_RAW,tick=%lu,state=%s,edge_total=%lu,sample_total=%lu,window_samples=%lu,last_ticks=%u,last_us=%lu,freq_mHz=%lu,window_min_ticks=%u,window_max_ticks=%u,zero_delta=%lu,age_ms=%lu,ppr=TBD,rpm=INVALID\r\n",
+                    (unsigned long)now,
+                    state,
+                    (unsigned long)snapshot.edge_total,
+                    (unsigned long)snapshot.sample_total,
+                    (unsigned long)snapshot.window_samples,
+                    (unsigned int)snapshot.last_period_ticks,
+                    (unsigned long)period_us,
+                    (unsigned long)frequency_millihz,
+                    (unsigned int)snapshot.window_min_ticks,
+                    (unsigned int)snapshot.window_max_ticks,
+                    (unsigned long)snapshot.zero_delta_total,
+                    (unsigned long)age_ms);
+
+  if (length > 0)
+  {
+    line[sizeof(line) - 1U] = '\0';
+    H2_UartWrite(line);
+  }
+}
+
 static void H2_SendFrame(uint8_t counter)
 {
   CAN_TxHeaderTypeDef header = {0};
@@ -425,6 +540,52 @@ void HAL_GPIO_EXTI_Callback(uint16_t gpio_pin)
   {
     g_h3_fan_profile_request = 1U;
   }
+}
+
+void HAL_TIM_IC_CaptureCallback(TIM_HandleTypeDef *tim_handle)
+{
+  uint16_t capture;
+  uint16_t period_ticks;
+
+  if ((tim_handle == NULL) ||
+      (tim_handle->Instance != TIM2) ||
+      (tim_handle->Channel != HAL_TIM_ACTIVE_CHANNEL_1))
+  {
+    return;
+  }
+
+  capture = (uint16_t)HAL_TIM_ReadCapturedValue(tim_handle, TIM_CHANNEL_1);
+  g_h3_tach_edge_count++;
+  g_h3_tach_last_edge_tick_ms = HAL_GetTick();
+
+  if (g_h3_tach_capture_seen != 0U)
+  {
+    period_ticks = (uint16_t)(capture - g_h3_tach_last_capture);
+    if (period_ticks == 0U)
+    {
+      g_h3_tach_zero_delta_count++;
+    }
+    else
+    {
+      g_h3_tach_last_period_ticks = period_ticks;
+      g_h3_tach_period_sample_count++;
+      g_h3_tach_window_sample_count++;
+      if (period_ticks < g_h3_tach_window_min_ticks)
+      {
+        g_h3_tach_window_min_ticks = period_ticks;
+      }
+      if (period_ticks > g_h3_tach_window_max_ticks)
+      {
+        g_h3_tach_window_max_ticks = period_ticks;
+      }
+    }
+  }
+  else
+  {
+    g_h3_tach_capture_seen = 1U;
+  }
+
+  g_h3_tach_last_capture = capture;
 }
 
 void vApplicationStackOverflowHook(xTaskHandle xTask, signed char *pcTaskName)
@@ -531,6 +692,7 @@ void StartAControlTask(void *argument)
   }
   H2_LogBoot(g_h2_can_start_result);
   H3_LogFanPwmProfile();
+  H3_LogTachCaptureProfile();
 
   if (g_h2_can_start_result != 0U)
   {
@@ -582,6 +744,7 @@ void StartAControlTask(void *argument)
     if ((half_second_count % 2U) == 0U)
     {
       H2_LogStatus();
+      H3_LogTachRaw();
     }
     osDelay(500U);
   }
