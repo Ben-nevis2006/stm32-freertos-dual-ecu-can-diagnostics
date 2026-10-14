@@ -10,7 +10,7 @@
 | 前序 Gate | Gate H0 CONDITIONAL PASS；Gate H1 PASS；Gate H2 PASS（2026-10-07） |
 | H3 开始时 Git HEAD | `b03c874 docs: organize active project records` |
 | 固件回退基线 | `bc19580 feat: close Gate H2 CAN bring-up` |
-| 当前准入范围 | Node B 3.3 V NTC 与 Fan PWM 子项均已完成。Tach 已完成 F3 隔离表征并确认 25 kHz 尖脉冲来自 F4/PWM 接通路径；下一步只允许在 PA0 继续断开的条件下验证无破坏布线/滤波措施，正常 F4 接法的尖脉冲受控后才可接入 PA0。Heater、INA260 继续隔离 |
+| 当前准入范围 | Node B 3.3 V NTC 与 Fan PWM 子项均已完成。Tach 已完成 F3 隔离表征并确认 25 kHz 尖脉冲来自 F4/PWM 接通路径；外露布线分离无效，下一步只允许在 PA0 继续断开的条件下验证可拆卸 `10 kΩ + 10 nF` RC 输入滤波，尖脉冲受控后才可接入 PA0。Heater、INA260 继续隔离 |
 | 远端策略 | H3 阶段内按真实日期在本地累计；Gate 完成后统一整合、提交并推送一次。统一推送不改变各动作的实际日期 |
 | 证据索引 | [`2026-10-07 搭建与照片`](../../evidence/hardware/H3/2026-10-07/README.md)；[`2026-10-08 硬件接线与电压预检`](../../evidence/hardware/H3/2026-10-08/README.md)；[`2026-10-08 H3-02、基线与 Run01`](../../evidence/software/H3/2026-10-08/README.md)；[`2026-10-09 Run02 与边界表征`](../../evidence/software/H3/2026-10-09/README.md)；[`2026-10-10 边界实现与验收`](../../evidence/software/H3/2026-10-10/README.md)；[`2026-10-10 FAN 身份/接口`](../../evidence/hardware/H3/2026-10-10/README.md)；[`2026-10-12 FAN 供电/接口实测`](../../evidence/hardware/H3/2026-10-12/README.md)；[`2026-10-12 FAN-01/FAN-02B 构建`](../../evidence/software/H3/2026-10-12/README.md)；[`2026-10-13 FAN-02B 刷写与运行身份`](../../evidence/software/H3/2026-10-13/README.md)；[`2026-10-13 FAN-02B 低压动态波形`](../../evidence/hardware/H3/2026-10-13/README.md)；[`2026-10-14 Tach 电气表征与 PWM 耦合隔离`](../../evidence/hardware/H3/2026-10-14/README.md) |
 
@@ -727,3 +727,40 @@ RPM。`TACH-00D` 判定为 **PASS（F4/PWM 来源隔离与真实 Tach 识别范�
 先以无破坏方式分离 F3 与 F4 的外部跳线/探测回路并复测；若尖脉冲仍越过阈值，再冻结
 具体 RC 输入滤波和 TIM2 数字滤波方案。不得剪断原装风扇线或完整延长线。原始照片、
 逐屏读数与文件哈希见 [`2026-10-14 硬件证据`](../../evidence/hardware/H3/2026-10-14/README.md)。
+
+## 30. TACH-00E 外部布线分离无效（2026-10-14）
+
+F4/PWM 恢复正常接线，A0/PA0 继续隔离。执行人完成四项无源检查后，把可接触的
+F3/Tach 与 F4/PWM 外露跳线尽量拉开，探测回路也远离 F4；Node A USB 和风扇 12 V
+按既定顺序上电。USB 无断连，无其他异常，完成后逆序断电，A0 始终未接。
+
+5 ms/div 的 Peak Detect 照片同时显示低频 Tach 平台和密集尖脉冲，屏幕读数为
+`43.18 Hz / 23.16 ms / Vmax=3.72 V / Vmin=-2.16 V`。25 us/div 照片把尖脉冲
+解析为 `24.98 kHz / 40.02 us`，该帧为 `Vmax=3.72 V / Vmin=-1.68 V`。因此本轮
+最差组合极值记录为 `3.72 V / -2.16 V`，真实 Tach 记录为 `43.18 Hz / 23.16 ms`。
+
+高平台约 3.3 V，而重复负向尖脉冲下降至 1.6 V 以下，所以每个尖脉冲都可能产生额外
+下降阈值穿越；对当前 `TIM2 falling edge + ICFilter=0` 配置属于明确的假计数风险。
+据此，`TACH-00E` 在受控诊断执行范围为 PASS，但“仅靠外露布线分离”作为抑制措施判定
+为 **NOT EFFECTIVE**，PA0 接入继续 **HOLD**。该结果说明主要耦合不只来自可分开的
+外露并行跳线，但仍不足以在完整延长线、风扇内部与其他不可分离路径之间指定唯一位置。
+
+下一门禁不再反复调线，而是在 PA0 前搭建可拆卸 RC 测试节点，PA0 本身仍不连接：
+
+```text
+原上拉：Node A 3V3 ---- 4.7 kΩ ---- F3 raw
+
+F3 raw ---- 10 kΩ series ----+---- filtered test point（暂不接 PA0）
+                              |
+                             10 nF
+                              |
+                             GND
+```
+
+串联输入支路名义 `10 kΩ×10 nF=100 us`、截止频率约 `1.59 kHz`；开集电极释放后的
+上升过程还包含原 4.7 kΩ 上拉，名义上升时间常数约 `147 us`。这些时间尺度远短于当前
+约 `43～92 Hz` 的真实 Tach 周期，同时比 25 kHz 干扰周期更适合做低通抑制；但是否
+足够必须由正常 F4 接法下的 Peak Detect 实测确认，不能只凭计算放行。通过条件至少包括：
+滤波点无额外 1.6 V 阈值穿越，极值回到 PA0 安全域，真实 Tach 周期仍可稳定识别，USB
+无断连。详细照片和逐屏判读见
+[`2026-10-14 硬件证据`](../../evidence/hardware/H3/2026-10-14/README.md)。

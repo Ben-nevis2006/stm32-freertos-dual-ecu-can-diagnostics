@@ -16,6 +16,9 @@
 | [`H3_NODE-A_TACH-00D_F4-open-clean-edge_20261014_01.jpg`](H3_NODE-A_TACH-00D_F4-open-clean-edge_20261014_01.jpg) | `177024` bytes | `73CC12641D9D9F46CC3853F9A5811139B7100673B0FFEAE6714610AECAC0F89B` | F4 完全断开后，25 us/div 下无 25 kHz 尖脉冲的单个真实 Tach 上升沿 |
 | [`H3_NODE-A_TACH-00D_F4-open-fullspeed-waveform_20261014_02.jpg`](H3_NODE-A_TACH-00D_F4-open-fullspeed-waveform_20261014_02.jpg) | `185822` bytes | `7CB5536F7010CDE91A06580A62E4A41870FFBB472D78BFB390C77666A3C5D9A8` | F4 完全断开、风扇 12 V 上电时 91.58 Hz / 10.92 ms 的连续真实 Tach 方波 |
 | [`H3_NODE-A_TACH-00D_F4-source-isolation_20261014.txt`](H3_NODE-A_TACH-00D_F4-source-isolation_20261014.txt) | `3417` bytes | `28E4420438FBA8B6AF767A9E75C32334AAA23BDA937D9FBEC9F84FC1E7F8BF85` | 三态原始报告、两张照片逐屏读数、F4/PWM 来源定位、PASS 边界及 PA0 继续 HOLD 的原因 |
+| [`H3_NODE-A_TACH-00E_routing-separated-peakdetect_20261014_01.jpg`](H3_NODE-A_TACH-00E_routing-separated-peakdetect_20261014_01.jpg) | `199563` bytes | `0CA20BB88210244755D13C85BAC180508B65383605F9932247074058D488C1AA` | 外露布线分离后，5 ms/div 下真实 43.18 Hz Tach 与密集 25 kHz Peak Detect 包络并存 |
+| [`H3_NODE-A_TACH-00E_routing-separated-pwm-coupling_20261014_02.jpg`](H3_NODE-A_TACH-00E_routing-separated-pwm-coupling_20261014_02.jpg) | `186884` bytes | `5EBE0DE8166172ABF3F1EEDB791A7921B15A08F22E59948716AE833906A16C28` | 25 us/div 下 24.98 kHz / 40.02 us 尖脉冲及额外阈值穿越 |
+| [`H3_NODE-A_TACH-00E_routing-separation-ineffective_20261014.txt`](H3_NODE-A_TACH-00E_routing-separation-ineffective_20261014.txt) | `3433` bytes | `54406DEC36D5859343EFC12BD7ABCCE4FD3C944AFA846AEA8E35BD18C3CC57A8` | 照片代填读数、最差极值、1.6 V 阈值判读、布线措施无效结论与 RC 候选拓扑 |
 
 ## 3. 当前结论
 
@@ -33,5 +36,9 @@
   `91.58 Hz / 10.92 ms` 的规则方波，因此判定为 **PASS（F4/PWM 来源隔离范围）**；
 - `OBS-TACH-01` 已从“未知来源”收敛为“F4/PWM 接通路径造成的耦合”，但具体物理耦合点
   尚未确定；
-- F4 已恢复而正常接法尚未加入抑制措施，故 PA0/A0 仍未放行，PPR 与 RPM 仍为 TBD。
+- TACH-00E 在恢复 F4 后尝试分离外露 F3/F4 跳线和探测回路，但仍测得
+  `24.98 kHz / 40.02 us` 尖脉冲、最差 `3.72 V / -2.16 V`，高平台负向尖脉冲会
+  额外穿越 `1.6 V`；真实 Tach 为 `43.18 Hz / 23.16 ms`；
+- 外部布线分离判定为 **NOT EFFECTIVE**，不再继续反复调线；PA0/A0 仍未放行，下一步
+  转入可拆卸 RC 滤波测试，PPR 与 RPM 仍为 TBD。
 
