@@ -21,6 +21,9 @@
 | [`H3_NODE-A_TACH-00E_routing-separation-ineffective_20261014.txt`](H3_NODE-A_TACH-00E_routing-separation-ineffective_20261014.txt) | `3433` bytes | `54406DEC36D5859343EFC12BD7ABCCE4FD3C944AFA846AEA8E35BD18C3CC57A8` | 照片代填读数、最差极值、1.6 V 阈值判读、布线措施无效结论与 RC 候选拓扑 |
 | [`H3_NODE-A_TACH-00F_RC-filtered-waveform_20261014_01.jpg`](H3_NODE-A_TACH-00F_RC-filtered-waveform_20261014_01.jpg) | `189594` bytes | `B54DCEB70C7F5D2FE67C7DA4C6363FC70FFB5A7A5A1F032C3C4B1E51969978BA` | `10 kΩ + 10 nF` 滤波点的 47.97 Hz / 20.85 ms 干净方波及完整逻辑摆幅 |
 | [`H3_NODE-A_TACH-00F_RC-filter-pass_20261014.txt`](H3_NODE-A_TACH-00F_RC-filter-pass_20261014.txt) | `3591` bytes | `5D27B596B62BDC784515B82BCD06C62E3E17753767594E0BE248EFF7EAB913D6` | 无源检查、口述/照片读数边界、1.6 V 阈值解释、RC PASS 与 PA0 接入前的剩余门禁 |
+| [`H3_NODE-A_TACH-00G_PA0-loaded-waveform_20261014_01.jpg`](H3_NODE-A_TACH-00G_PA0-loaded-waveform_20261014_01.jpg) | `216544` bytes | `07F7A090C64C9562ADD64E558A8815013C5CA77299CE5A3A071DBCE9C04CE7EE` | PA0 接入后的 45.77 Hz / 21.85 ms 完整 Tach 方波与 -80 mV～3.44 V 逻辑摆幅 |
+| [`H3_NODE-A_TACH-00G_PA0-loaded-edge_20261014_02.jpg`](H3_NODE-A_TACH-00G_PA0-loaded-edge_20261014_02.jpg) | `181949` bytes | `042B616F6C548783D325B1CC6C804F3C575787D401B4F213C794C755E090FFE8` | 25 us/div 下单调 RC 上升沿，无可见 25 kHz 凹口或额外 1.6 V 穿越 |
+| [`H3_NODE-A_TACH-00G_PA0-load-pass_20261014.txt`](H3_NODE-A_TACH-00G_PA0-load-pass_20261014.txt) | `4169` bytes | `7476C053D4B7A5A2B81F3C2E958107055ED89D21C16C1B48BE88063D2C5AB27E` | PA0 接入、在路方向性阻值解释、两张照片判读、TACH-00G PASS 及固件捕获前边界 |
 
 ## 3. 当前结论
 
@@ -47,5 +50,10 @@
   接法下 25 kHz 残余消失，完整周期照片为 `3.40 V / -40 mV / 47.97 Hz /
   20.85 ms`，跨采集状态最差负向极值为 `-120 mV`；
 - 滤波后每个真实边沿只穿越 1.6 V 一次，TACH-00F 判定为 **PASS（PA0 隔离的电气
-  滤波范围）**；下一步只放行 PA0 高阻输入负载复测，TIM2 捕获、PPR 与 RPM 仍为 TBD。
+  滤波范围）**；
+- TACH-00G 将滤波点接入 CN8/A0（PA0）后，静态电压为 `3.234 V`，运行波形为
+  `45.77 Hz / 21.85 ms / 3.44 V / -80 mV`，Peak Detect 最差负向极值 `-120 mV`；
+- 25 us/div 下只看到单调 RC 边沿，无可见 25 kHz 残余或额外 1.6 V 穿越；TACH-00G
+  判定为 **PASS（PA0 高阻输入负载与短时电气波形范围）**。Tach 接入 MCU 前的低压
+  电气门禁已关闭，下一步允许受控启动 TIM2 捕获；PPR 与 RPM 仍为 TBD。
 

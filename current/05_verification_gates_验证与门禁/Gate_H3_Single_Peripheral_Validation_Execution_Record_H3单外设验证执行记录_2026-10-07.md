@@ -10,7 +10,7 @@
 | 前序 Gate | Gate H0 CONDITIONAL PASS；Gate H1 PASS；Gate H2 PASS（2026-10-07） |
 | H3 开始时 Git HEAD | `b03c874 docs: organize active project records` |
 | 固件回退基线 | `bc19580 feat: close Gate H2 CAN bring-up` |
-| 当前准入范围 | Node B 3.3 V NTC 与 Fan PWM 子项均已完成。Tach 的外露布线分离无效，但可拆卸 `10 kΩ + 10 nF` RC 已在 PA0 隔离条件下消除可见 25 kHz 额外阈值穿越；下一步只放行 filtered test point 并接 PA0 后的高阻输入负载复测，固件捕获、PPR 与 RPM 仍未放行。Heater、INA260 继续隔离 |
+| 当前准入范围 | Node B 3.3 V NTC 与 Fan PWM 子项均已完成。Tach 的 `10 kΩ + 10 nF` RC 已在 PA0 隔离和 PA0 接入两种状态下消除可见 25 kHz 额外阈值穿越，Tach 接入 MCU 前的低压电气门禁已关闭；下一步只放行受控 TIM2 捕获固件验证，PPR 与 RPM 仍保持 TBD。Heater、INA260 继续隔离 |
 | 远端策略 | H3 阶段内按真实日期在本地累计；Gate 完成后统一整合、提交并推送一次。统一推送不改变各动作的实际日期 |
 | 证据索引 | [`2026-10-07 搭建与照片`](../../evidence/hardware/H3/2026-10-07/README.md)；[`2026-10-08 硬件接线与电压预检`](../../evidence/hardware/H3/2026-10-08/README.md)；[`2026-10-08 H3-02、基线与 Run01`](../../evidence/software/H3/2026-10-08/README.md)；[`2026-10-09 Run02 与边界表征`](../../evidence/software/H3/2026-10-09/README.md)；[`2026-10-10 边界实现与验收`](../../evidence/software/H3/2026-10-10/README.md)；[`2026-10-10 FAN 身份/接口`](../../evidence/hardware/H3/2026-10-10/README.md)；[`2026-10-12 FAN 供电/接口实测`](../../evidence/hardware/H3/2026-10-12/README.md)；[`2026-10-12 FAN-01/FAN-02B 构建`](../../evidence/software/H3/2026-10-12/README.md)；[`2026-10-13 FAN-02B 刷写与运行身份`](../../evidence/software/H3/2026-10-13/README.md)；[`2026-10-13 FAN-02B 低压动态波形`](../../evidence/hardware/H3/2026-10-13/README.md)；[`2026-10-14 Tach 电气表征与 PWM 耦合隔离`](../../evidence/hardware/H3/2026-10-14/README.md) |
 
@@ -794,3 +794,28 @@ TIM2 捕获、数字滤波、PPR、RPM 或长期运行。
 下一门禁为 TACH-00G：全断电后只把 filtered test point 并接 Node A A0/PA0，保持
 现有固件尚未启动 TIM2 捕获，在同一点复测静态电压、完整方波与 Peak Detect。通过前
 不得修改或刷写 Tach 捕获固件。
+
+## 32. TACH-00G PA0 高阻输入负载复测通过（2026-10-14）
+
+全断电后，现场只把 RC filtered test point 接入 Node A CN8/A0（PA0），F3 raw、
+4.7 kΩ 上拉、`10 kΩ + 10 nF` RC 和 F4/PWM 均保持 TACH-00F 的状态。断电检查中，
+filtered→A0 蜂鸣，A0→GND、3V3→GND、A0→F4 均不蜂鸣；仅 Node A 上电时 A0 为
+`3.234 V`。
+
+接入 A0 后从 F3 raw 到 A0 的电阻档得到红黑 `7.016 kΩ`、黑红约 `4.65 kΩ` 且缓慢
+下降。这不是对孤立 10 kΩ 元件的重复测量：测试电流同时进入 4.7 kΩ 上拉、未上电
+3V3 网络、PA0 输入保护结构以及 RC/板载电容充电路径，所以出现方向性和时间变化。
+串联元件本身继续以 TACH-00F 隔离实测 `9.997 kΩ` 为准；其他节点不蜂鸣、上电静态
+电平和运行波形均正常，因此没有低阻短路或异常输入负载证据。
+
+5 ms/div 照片显示 `45.77 Hz / 21.85 ms / Vmax=3.44 V / Vmin=-80 mV /
+Vavg=1.67 V` 的连续规则方波。25 us/div Peak Detect 照片显示单调 RC 上升曲线，
+窗口内 `Vmax=2.12 V / Vmin=-120 mV`；2.12 V 只是尚未走完整个高平台的局部边沿值。
+画面没有每 40 us 重复的尖脉冲或凹口，曲线只通过 1.6 V 一次，故照片代填为
+`25 kHz 残余=无、额外穿越 1.6 V=无`。RC 圆滑边沿是约 147 us 名义释放时间常数的
+预期表现，不是新的故障。
+
+完整摆幅和跨采集最差负向极值均位于临时准入范围 `-0.3～3.6 V`，USB 无断连且无
+异常，逆序断电后残压安全。`TACH-00G` 判定为 **PASS（RC 后 PA0 高阻输入负载与短时
+电气波形范围）**。至此 Tach 接入 MCU 前的低压电气准入关闭，可进入受控 TIM2 输入
+捕获固件验证；TIM2 捕获、数字滤波、PPR、绝对 RPM 和长期运行尚未由本轮证明。
