@@ -4,15 +4,15 @@
 
 | 项目 | 内容 |
 |---|---|
-| 版本 | v1.0（NTC、Fan PWM 已关闭；Tach/PPR 准入待开始） |
-| 日期 | 2026-10-07～2026-10-13 |
-| 状态 | **IN PROGRESS；NTC 子项 H3-00～H3-05 PASS；Fan PWM 子项 FAN-00A～FAN-02B PASS；Tach/PPR 与 INA260 尚待独立验证** |
+| 版本 | v1.1（NTC、Fan PWM 已关闭；Tach/PPR 正在执行） |
+| 日期 | 2026-10-07～2026-10-14 |
+| 状态 | **IN PROGRESS；NTC 子项 H3-00～H3-05 PASS；Fan PWM 子项 FAN-00A～FAN-02B PASS；Tach 已完成隔离电气表征并定位 PWM 耦合，PA0 接入仍 HOLD；INA260 尚待独立验证** |
 | 前序 Gate | Gate H0 CONDITIONAL PASS；Gate H1 PASS；Gate H2 PASS（2026-10-07） |
 | H3 开始时 Git HEAD | `b03c874 docs: organize active project records` |
 | 固件回退基线 | `bc19580 feat: close Gate H2 CAN bring-up` |
-| 当前准入范围 | Node B 3.3 V NTC 与 Fan PWM 子项均已完成。下一步只允许开展 Tach/PPR 的文档审计、针位复核和全断电无源准入；在确认 Tach 开路电压、输出类型、目标 GPIO 耐压及上拉方案前，不得把 F3/Tach 接入 MCU。Heater、INA260 继续隔离 |
+| 当前准入范围 | Node B 3.3 V NTC 与 Fan PWM 子项均已完成。Tach 已完成 F3 隔离表征并确认 25 kHz 尖脉冲来自 F4/PWM 接通路径；下一步只允许在 PA0 继续断开的条件下验证无破坏布线/滤波措施，正常 F4 接法的尖脉冲受控后才可接入 PA0。Heater、INA260 继续隔离 |
 | 远端策略 | H3 阶段内按真实日期在本地累计；Gate 完成后统一整合、提交并推送一次。统一推送不改变各动作的实际日期 |
-| 证据索引 | [`2026-10-07 搭建与照片`](../../evidence/hardware/H3/2026-10-07/README.md)；[`2026-10-08 硬件接线与电压预检`](../../evidence/hardware/H3/2026-10-08/README.md)；[`2026-10-08 H3-02、基线与 Run01`](../../evidence/software/H3/2026-10-08/README.md)；[`2026-10-09 Run02 与边界表征`](../../evidence/software/H3/2026-10-09/README.md)；[`2026-10-10 边界实现与验收`](../../evidence/software/H3/2026-10-10/README.md)；[`2026-10-10 FAN 身份/接口`](../../evidence/hardware/H3/2026-10-10/README.md)；[`2026-10-12 FAN 供电/接口实测`](../../evidence/hardware/H3/2026-10-12/README.md)；[`2026-10-12 FAN-01/FAN-02B 构建`](../../evidence/software/H3/2026-10-12/README.md)；[`2026-10-13 FAN-02B 刷写与运行身份`](../../evidence/software/H3/2026-10-13/README.md)；[`2026-10-13 FAN-02B 低压动态波形`](../../evidence/hardware/H3/2026-10-13/README.md) |
+| 证据索引 | [`2026-10-07 搭建与照片`](../../evidence/hardware/H3/2026-10-07/README.md)；[`2026-10-08 硬件接线与电压预检`](../../evidence/hardware/H3/2026-10-08/README.md)；[`2026-10-08 H3-02、基线与 Run01`](../../evidence/software/H3/2026-10-08/README.md)；[`2026-10-09 Run02 与边界表征`](../../evidence/software/H3/2026-10-09/README.md)；[`2026-10-10 边界实现与验收`](../../evidence/software/H3/2026-10-10/README.md)；[`2026-10-10 FAN 身份/接口`](../../evidence/hardware/H3/2026-10-10/README.md)；[`2026-10-12 FAN 供电/接口实测`](../../evidence/hardware/H3/2026-10-12/README.md)；[`2026-10-12 FAN-01/FAN-02B 构建`](../../evidence/software/H3/2026-10-12/README.md)；[`2026-10-13 FAN-02B 刷写与运行身份`](../../evidence/software/H3/2026-10-13/README.md)；[`2026-10-13 FAN-02B 低压动态波形`](../../evidence/hardware/H3/2026-10-13/README.md)；[`2026-10-14 Tach 电气表征与 PWM 耦合隔离`](../../evidence/hardware/H3/2026-10-14/README.md) |
 
 ## 2. Gate 目标与边界
 
@@ -698,3 +698,32 @@ H2,A,STAT,...,tx_fail=0,...,q_drop=0,...,hal_err=0x00000000,esr=0x00000000
 照片复核发现，在 `25 us/div` 下屏幕重复结构的自动测量不是约 46 Hz Tach，而是约 `24.97～25.00 kHz / 40.00～40.05 us`，与已验证的风扇 PWM 完全同量级。由于全屏仅约 250 us，不可能显示多个 `21.56 ms` Tach 周期；画面实际是 Tach 高/低平台上叠加的 PWM 同频尖脉冲，示波器触发和自动频率已锁定该尖脉冲。因此本轮无法判断真正 Tach 上升/下降沿是否二次穿越 1.6 V，也不得把闪出的 kHz 数字解释为 RPM。
 
 据此 `TACH-00C` 标记为 **HOLD（需源头隔离，不是风扇故障结论）**。报告的 `3.88 V / -2.16 V` 可能是探头地回路、F3/F4 线间耦合、公共地噪声或真实窄毛刺；在完成隔离前不放行 PA0，尤其当前 TIM2 `ICFilter=0`，即使窄毛刺不造成永久电气损伤也可能被误计为捕获边沿。下一步用相同探头设置按“F4 接通/断开、风扇 12 V 关闭/开启”的受控矩阵定位 25 kHz 成分来源，每次改变接线前均完全断电。详细逐屏读数、原始图片哈希和证据边界见 [`2026-10-14 硬件证据`](../../evidence/hardware/H3/2026-10-14/README.md)。
+
+## 29. TACH-00D F4/PWM 源头隔离（2026-10-14）
+
+执行人全断电后保持 F3 的 `4.7 kΩ→3V3` 上拉和 A0/PA0 隔离，完全断开 F4/PWM。
+无源复核报告中，F3 测量点对 F3、F4 的结果均记为“正常”；因未另报蜂鸣状态或阻值，
+本记录不把该用语扩写为额外定量结果。
+
+只有 Node A USB 上电时，F3 平台为 `3.26 V`，观察范围 `3.16～3.36 V`，此前每约
+`40 us` 重复的 25 kHz 尖脉冲消失。随后给风扇 12 V 上电、F4 仍断开，尖脉冲仍未
+复现；执行人报告总体范围 `-0.12～3.48 V`。25 us/div 原始照片显示一个干净的真实
+Tach 上升沿，没有 PWM 同频重复脉冲；5 ms/div 照片显示多个规则周期，屏幕读数为
+`91.58 Hz / 10.92 ms / -80 mV～3.36 V`。文字报告与不同照片采集帧的瞬时极值均
+原样保留，不合并成虚假的唯一常数。USB 无断连，无其他异常；完成后逆序断电并恢复
+F4，残压由执行人报告为正常，但未给出定量值。
+
+该 A/B 对照把 `OBS-TACH-01` 的 25 kHz 成分定位到 **F4/PWM 接通路径造成的耦合**：
+它不是 Tach 的真实脉冲频率，且在 F4 断开、风扇 12 V 仍开启时消失，不支持把电机或
+公共地噪声视为主要来源。当前证据还不能区分耦合发生在风扇内部、四芯线/延长线、
+外部跳线并行段还是探测布线，因此不宣称具体物理耦合点已经确定。
+
+F4 断开后的 `91.58 Hz` 相对默认 50% PWM 时的 `46.38 Hz` 为约 `1.974` 倍，与
+控制输入撤除后的转速提高相符；但 PPR 尚未由独立证据确认，不能据此换算或宣称绝对
+RPM。`TACH-00D` 判定为 **PASS（F4/PWM 来源隔离与真实 Tach 识别范围）**。
+
+正常系统必须恢复 F4；而 F4 恢复后尚未加入抑制措施，TACH-00C 的 `3.88 V / -2.16 V`
+瞬态和阈值误穿越风险仍然成立。因此 PA0/A0 继续 HOLD。下一步只允许保持 PA0 断开，
+先以无破坏方式分离 F3 与 F4 的外部跳线/探测回路并复测；若尖脉冲仍越过阈值，再冻结
+具体 RC 输入滤波和 TIM2 数字滤波方案。不得剪断原装风扇线或完整延长线。原始照片、
+逐屏读数与文件哈希见 [`2026-10-14 硬件证据`](../../evidence/hardware/H3/2026-10-14/README.md)。
