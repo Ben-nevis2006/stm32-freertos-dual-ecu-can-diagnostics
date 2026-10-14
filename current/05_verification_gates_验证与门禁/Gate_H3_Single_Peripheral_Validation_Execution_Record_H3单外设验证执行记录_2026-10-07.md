@@ -10,7 +10,7 @@
 | 前序 Gate | Gate H0 CONDITIONAL PASS；Gate H1 PASS；Gate H2 PASS（2026-10-07） |
 | H3 开始时 Git HEAD | `b03c874 docs: organize active project records` |
 | 固件回退基线 | `bc19580 feat: close Gate H2 CAN bring-up` |
-| 当前准入范围 | Node B 3.3 V NTC 与 Fan PWM 子项均已完成。Tach 已完成 F3 隔离表征并确认 25 kHz 尖脉冲来自 F4/PWM 接通路径；外露布线分离无效，下一步只允许在 PA0 继续断开的条件下验证可拆卸 `10 kΩ + 10 nF` RC 输入滤波，尖脉冲受控后才可接入 PA0。Heater、INA260 继续隔离 |
+| 当前准入范围 | Node B 3.3 V NTC 与 Fan PWM 子项均已完成。Tach 的外露布线分离无效，但可拆卸 `10 kΩ + 10 nF` RC 已在 PA0 隔离条件下消除可见 25 kHz 额外阈值穿越；下一步只放行 filtered test point 并接 PA0 后的高阻输入负载复测，固件捕获、PPR 与 RPM 仍未放行。Heater、INA260 继续隔离 |
 | 远端策略 | H3 阶段内按真实日期在本地累计；Gate 完成后统一整合、提交并推送一次。统一推送不改变各动作的实际日期 |
 | 证据索引 | [`2026-10-07 搭建与照片`](../../evidence/hardware/H3/2026-10-07/README.md)；[`2026-10-08 硬件接线与电压预检`](../../evidence/hardware/H3/2026-10-08/README.md)；[`2026-10-08 H3-02、基线与 Run01`](../../evidence/software/H3/2026-10-08/README.md)；[`2026-10-09 Run02 与边界表征`](../../evidence/software/H3/2026-10-09/README.md)；[`2026-10-10 边界实现与验收`](../../evidence/software/H3/2026-10-10/README.md)；[`2026-10-10 FAN 身份/接口`](../../evidence/hardware/H3/2026-10-10/README.md)；[`2026-10-12 FAN 供电/接口实测`](../../evidence/hardware/H3/2026-10-12/README.md)；[`2026-10-12 FAN-01/FAN-02B 构建`](../../evidence/software/H3/2026-10-12/README.md)；[`2026-10-13 FAN-02B 刷写与运行身份`](../../evidence/software/H3/2026-10-13/README.md)；[`2026-10-13 FAN-02B 低压动态波形`](../../evidence/hardware/H3/2026-10-13/README.md)；[`2026-10-14 Tach 电气表征与 PWM 耦合隔离`](../../evidence/hardware/H3/2026-10-14/README.md) |
 
@@ -764,3 +764,33 @@ F3 raw ---- 10 kΩ series ----+---- filtered test point（暂不接 PA0）
 滤波点无额外 1.6 V 阈值穿越，极值回到 PA0 安全域，真实 Tach 周期仍可稳定识别，USB
 无断连。详细照片和逐屏判读见
 [`2026-10-14 硬件证据`](../../evidence/hardware/H3/2026-10-14/README.md)。
+
+## 31. TACH-00F 可拆卸 RC 滤波通过（2026-10-14）
+
+PA0/A0 继续断开，正常 F4/PWM 接法保持不变。现场在原 `3V3→4.7 kΩ→F3 raw`
+上拉之后增加 `F3 raw→10 kΩ→filtered test point`，并从 filtered test point 接
+`10 nF` 到公共 GND。该节点只接示波器，不接 MCU。
+
+断电检查得到 `F3 raw→filtered=9.997 kΩ`，filtered→GND、3V3→GND、F3 raw→F4
+均不蜂鸣。只有 Node A USB 上电时，filtered test point 为 `3.214 V`。正常顺序加入
+风扇 12 V 后，执行人报告 Peak Detect 的另一短时窗口为 `Vmax=2.00 V / Vmin=-120 mV`，
+25 kHz 残余不可见；完整 5 ms/div 照片则显示 `47.97 Hz / 20.85 ms /
+Vmax=3.40 V / Vmin=-40 mV / Vavg=1.67 V` 的规则方波。短时窗口的 2.00 V 没有覆盖
+完整高平台，因此不代替照片中的 3.40 V 逻辑高电平；跨采集状态最差负向极值保留
+`-120 mV`。
+
+1.6 V 判读使用波形几何而不是示波器触发电平：正常方波每周期应在上升沿和下降沿各
+通过中间阈值一次；此前 25 kHz 负向尖脉冲会在高平台反复从阈值上方冲到下方，形成
+额外下降穿越。本轮照片中边沿单调、平台无反弹，结合 25 kHz 残余不可见，判定为
+**没有额外穿越 1.6 V**。屏幕右下角约 `557 mV` 是当时的示波器触发设置，不是 MCU
+输入阈值。
+
+本轮完整逻辑摆幅和跨采集最差负向极值均在临时准入范围 `-0.3～3.6 V` 内，真实 Tach
+频率/周期互为倒数，USB 无断连且无其他异常。`TACH-00F` 判定为 **PASS（PA0 隔离条件
+下的 RC 电气滤波范围）**。这证明 `10 kΩ series + 10 nF to GND` 在当前实物接法下
+能够保留真实 Tach 并消除可见的 PWM 同频额外阈值穿越，但不提前证明 PA0 负载影响、
+TIM2 捕获、数字滤波、PPR、RPM 或长期运行。
+
+下一门禁为 TACH-00G：全断电后只把 filtered test point 并接 Node A A0/PA0，保持
+现有固件尚未启动 TIM2 捕获，在同一点复测静态电压、完整方波与 Peak Detect。通过前
+不得修改或刷写 Tach 捕获固件。

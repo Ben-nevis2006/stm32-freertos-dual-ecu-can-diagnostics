@@ -19,6 +19,8 @@
 | [`H3_NODE-A_TACH-00E_routing-separated-peakdetect_20261014_01.jpg`](H3_NODE-A_TACH-00E_routing-separated-peakdetect_20261014_01.jpg) | `199563` bytes | `0CA20BB88210244755D13C85BAC180508B65383605F9932247074058D488C1AA` | 外露布线分离后，5 ms/div 下真实 43.18 Hz Tach 与密集 25 kHz Peak Detect 包络并存 |
 | [`H3_NODE-A_TACH-00E_routing-separated-pwm-coupling_20261014_02.jpg`](H3_NODE-A_TACH-00E_routing-separated-pwm-coupling_20261014_02.jpg) | `186884` bytes | `5EBE0DE8166172ABF3F1EEDB791A7921B15A08F22E59948716AE833906A16C28` | 25 us/div 下 24.98 kHz / 40.02 us 尖脉冲及额外阈值穿越 |
 | [`H3_NODE-A_TACH-00E_routing-separation-ineffective_20261014.txt`](H3_NODE-A_TACH-00E_routing-separation-ineffective_20261014.txt) | `3433` bytes | `54406DEC36D5859343EFC12BD7ABCCE4FD3C944AFA846AEA8E35BD18C3CC57A8` | 照片代填读数、最差极值、1.6 V 阈值判读、布线措施无效结论与 RC 候选拓扑 |
+| [`H3_NODE-A_TACH-00F_RC-filtered-waveform_20261014_01.jpg`](H3_NODE-A_TACH-00F_RC-filtered-waveform_20261014_01.jpg) | `189594` bytes | `B54DCEB70C7F5D2FE67C7DA4C6363FC70FFB5A7A5A1F032C3C4B1E51969978BA` | `10 kΩ + 10 nF` 滤波点的 47.97 Hz / 20.85 ms 干净方波及完整逻辑摆幅 |
+| [`H3_NODE-A_TACH-00F_RC-filter-pass_20261014.txt`](H3_NODE-A_TACH-00F_RC-filter-pass_20261014.txt) | `3591` bytes | `5D27B596B62BDC784515B82BCD06C62E3E17753767594E0BE248EFF7EAB913D6` | 无源检查、口述/照片读数边界、1.6 V 阈值解释、RC PASS 与 PA0 接入前的剩余门禁 |
 
 ## 3. 当前结论
 
@@ -40,5 +42,10 @@
   `24.98 kHz / 40.02 us` 尖脉冲、最差 `3.72 V / -2.16 V`，高平台负向尖脉冲会
   额外穿越 `1.6 V`；真实 Tach 为 `43.18 Hz / 23.16 ms`；
 - 外部布线分离判定为 **NOT EFFECTIVE**，不再继续反复调线；PA0/A0 仍未放行，下一步
-  转入可拆卸 RC 滤波测试，PPR 与 RPM 仍为 TBD。
+  转入可拆卸 RC 滤波测试；
+- TACH-00F 新增 `10 kΩ series + 10 nF to GND`，实测串联电阻 `9.997 kΩ`；正常 F4
+  接法下 25 kHz 残余消失，完整周期照片为 `3.40 V / -40 mV / 47.97 Hz /
+  20.85 ms`，跨采集状态最差负向极值为 `-120 mV`；
+- 滤波后每个真实边沿只穿越 1.6 V 一次，TACH-00F 判定为 **PASS（PA0 隔离的电气
+  滤波范围）**；下一步只放行 PA0 高阻输入负载复测，TIM2 捕获、PPR 与 RPM 仍为 TBD。
 
