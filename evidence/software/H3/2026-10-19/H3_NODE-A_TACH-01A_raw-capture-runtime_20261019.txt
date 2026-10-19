@@ -1,0 +1,89 @@
+H3 / TACH-01A Node A 原始 Tach 输入捕获实板记录
+==================================================
+
+执行日期：2026-10-19（Asia/Shanghai）
+构建日期：2026-10-14（详见 evidence/software/H3/2026-10-14）
+对象：Node A / TIM2_CH1 / PA0 / ARCTIC P8 PWM PST FAN-01
+拓扑：F3 raw -> 10 kΩ -> PA0 filtered node；filtered node -> 10 nF -> GND
+边界：默认 50% PWM；TIM2 falling edge；ICFilter=0；ppr=TBD；rpm=INVALID
+
+1. 刷写前身份门禁
+-----------------
+
+- Windows 只枚举 COM7：STMicroelectronics STLink Virtual COM Port；
+- 冻结 Node A ST-Link 序列号：066BFF575151676667043206；
+- 目标 ELF：firmware/node_a/Debug/node_a.elf；
+- ELF 大小：1102084 bytes；
+- ELF SHA-256：0ED42C02BBE2AC79CF08589F5560ECE0C612A4D2869642B473C4FC7C7FFA954C；
+- STM32CubeProgrammer 2.23.0 识别 STM32F101/F102/F103 Medium-density，目标电压 3.23 V；
+- 35.38 KiB 下载完成，Download verified successfully，随后 Software reset 成功。
+
+刷写时风扇 12 V 断开，RC/A0 保持，未按 B1；没有操作 Node B。
+
+2. 无风扇 12 V 基线
+-------------------
+
+复位后在只有 Node A USB 上电的条件下监听约 12 s。连续 12 个 TACH_RAW 窗口均满足：
+
+  state=WAIT_FIRST_EDGE
+  edge_total=0
+  sample_total=0
+  window_samples=0
+  last_ticks=0
+  window_min_ticks=0
+  window_max_ticks=0
+  zero_delta=0
+  age_ms=4294967295
+
+代表首尾记录：
+
+  H3,A,TACH_RAW,tick=9839,state=WAIT_FIRST_EDGE,edge_total=0,sample_total=0,window_samples=0,last_ticks=0,last_us=0,freq_mHz=0,window_min_ticks=0,window_max_ticks=0,zero_delta=0,age_ms=4294967295,ppr=TBD,rpm=INVALID
+  H3,A,TACH_RAW,tick=21191,state=WAIT_FIRST_EDGE,edge_total=0,sample_total=0,window_samples=0,last_ticks=0,last_us=0,freq_mHz=0,window_min_ticks=0,window_max_ticks=0,zero_delta=0,age_ms=4294967295,ppr=TBD,rpm=INVALID
+
+判定：PASS（无 12 V 静态零边沿基线）。没有启动瞬态或持续伪边沿。
+
+同一时段 H2 CAN 日志出现 tx_fail、ESR=0x00800033，是 Node B 未上电、总线无人 ACK 的
+预期孤立节点状态；H2 任务日志持续，不能把该状态写成 Tach 或 USB 故障。
+
+3. 默认 50% 风扇稳定段
+----------------------
+
+给风扇 12 V 上电并稳定后，COM7 仍保持枚举，重新打开电脑侧监听而不复位 MCU。15 个
+连续窗口从 tick=95575 到 tick=110044，代表记录如下：
+
+  H3,A,TACH_RAW,tick=95575,state=PERIOD_VALID,edge_total=28414,sample_total=25267,window_samples=327,last_ticks=1,last_us=10,freq_mHz=100000000,window_min_ticks=1,window_max_ticks=1244,zero_delta=3146,age_ms=6,ppr=TBD,rpm=INVALID
+  H3,A,TACH_RAW,tick=97641,state=PERIOD_VALID,edge_total=29134,sample_total=25908,window_samples=328,last_ticks=1,last_us=10,freq_mHz=100000000,window_min_ticks=1,window_max_ticks=1247,zero_delta=3225,age_ms=4,ppr=TBD,rpm=INVALID
+  H3,A,TACH_RAW,tick=99707,state=PERIOD_VALID,edge_total=29872,sample_total=26564,window_samples=339,last_ticks=2,last_us=20,freq_mHz=50000000,window_min_ticks=1,window_max_ticks=1242,zero_delta=3307,age_ms=5,ppr=TBD,rpm=INVALID
+  H3,A,TACH_RAW,tick=102809,state=PERIOD_VALID,edge_total=30966,sample_total=27558,window_samples=342,last_ticks=3,last_us=30,freq_mHz=33333333,window_min_ticks=1,window_max_ticks=1240,zero_delta=3407,age_ms=1,ppr=TBD,rpm=INVALID
+  H3,A,TACH_RAW,tick=106943,state=PERIOD_VALID,edge_total=32417,sample_total=28866,window_samples=320,last_ticks=1,last_us=10,freq_mHz=100000000,window_min_ticks=1,window_max_ticks=2449,zero_delta=3550,age_ms=5,ppr=TBD,rpm=INVALID
+  H3,A,TACH_RAW,tick=110044,state=PERIOD_VALID,edge_total=33509,sample_total=29847,window_samples=336,last_ticks=1,last_us=10,freq_mHz=100000000,window_min_ticks=1,window_max_ticks=1235,zero_delta=3661,age_ms=1,ppr=TBD,rpm=INVALID
+
+冻结区间统计：
+
+- 区间时长：(110044 - 95575) ms = 14.469 s；
+- 捕获边沿增量：33509 - 28414 = 5095，平均 352.13 edge/s；
+- 非零周期样本增量：29847 - 25267 = 4580，平均 316.54 sample/s；
+- 零差值增量：3661 - 3146 = 515，平均 35.59 zero-delta/s；
+- 各约 1.03 s 窗口得到 310～342 个非零周期样本；
+- 最小非零周期反复为 1 tick=10 us，最后周期常为 1～4 tick=10～40 us；
+- 窗口最大周期通常约 1235～1247 tick=12.35～12.47 ms，另有 2449 tick=24.49 ms；
+- 参考示波器 TACH-00G 为 45.77 Hz / 21.85 ms；捕获边沿率约为其 7.69 倍。
+
+4. 判定与责任边界
+-----------------
+
+TACH-01A 判定为 FAIL（ICFilter=0 的原始 MCU 捕获准入）。无风扇时零边沿、风扇运行后
+出现大量 0～40 us 重复触发，证明错误与运行边沿/阈值区有关，不是静态浮空噪声。
+
+静态源码复核确认只有 TIM2_CH1 启动中断；捕获回调同时检查 TIM2 实例与
+HAL_TIM_ACTIVE_CHANNEL_1，且每次只读取 CCR1 一次。未发现第二通道、重复启动或其他回调
+路径能够解释每秒数百次计数。因此现有证据更符合 PA0 数字输入在 RC 缓边沿/残余耦合
+附近发生重复阈值触发；示波器 5 ms/div 和 25 us/div 的可见平滑波形不能替代 MCU 自身
+数字门限的实捕获结果。
+
+本失败不推翻 TACH-00F/00G 在其既定“低压电气安全、可见波形、PA0 负载”范围内的
+PASS，也不证明风扇损坏。它明确否决“10 kΩ + 10 nF RC + ICFilter=0 可直接用于 RPM”。
+
+下一步 TACH-01B 只把 TIM2 输入数字滤波从 0 改为 15，保持 CKD=DIV1、PSC、ARR、极性、
+RC、PWM 和日志结构不变。先重复无 12 V 零边沿基线，再在默认 50% 下比较边沿率、周期
+窗口和 zero_delta。PPR/RPM 继续保持 TBD/INVALID；通过前不接入故障判定或控制闭环。
