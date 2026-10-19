@@ -10,6 +10,7 @@
 | 文件 | 大小 | SHA-256 | 内容 |
 |---|---:|---|---|
 | [`H3_NODE-A_TACH-01A_raw-capture-runtime_20261019.txt`](H3_NODE-A_TACH-01A_raw-capture-runtime_20261019.txt) | `5668` bytes | `A518F40FB8CF582A8E958E98FE1580D232F6A3B7CDC56E3F17675F9BFACA81F1` | 定向刷写身份、无 12 V 零边沿基线、默认 50% 风扇运行统计、判定与下一隔离变量 |
+| [`H3_NODE-A_TACH-01B_filter15-build_20261019.txt`](H3_NODE-A_TACH-01B_filter15-build_20261019.txt) | `3262` bytes | `C3585160553C3423DAD0366E3E47164475C8D12840B5455E809D84A7D846F705` | `ICFilter=15` 单变量变更、滤波语义、clean build、ELF 身份与实板门禁 |
 
 ## 3. 当前结论
 
@@ -19,4 +20,5 @@
   参考仅约 `45.77 Hz`；同时出现 `0～40 us` 级重复触发；
 - `TACH-01A` 因此判定为 **FAIL（原始捕获准入）**，但该失败不是风扇、PA0 电压域或
   RC 连通性故障结论；它证明仅靠当前 RC 加无数字滤波不能形成可信的 MCU 计数；
-- 下一步只改变 TIM2 输入数字滤波参数，PPR 与 RPM 继续保持 `TBD / INVALID`。
+- 只改变 TIM2 输入数字滤波为 15 的 `TACH-01B` 已 clean build，下一步重复同一两段
+  实板门禁；PPR 与 RPM 继续保持 `TBD / INVALID`。

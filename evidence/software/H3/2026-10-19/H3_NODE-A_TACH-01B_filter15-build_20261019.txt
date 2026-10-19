@@ -1,0 +1,86 @@
+H3 / TACH-01B Node A TIM2 最大数字滤波构建记录
+===============================================
+
+准备日期：2026-10-19（Asia/Shanghai）
+前序实板结论：TACH-01A / ICFilter=0 在无 12 V 时零边沿基线通过，但风扇运行时原始
+捕获边沿约 352.13 edge/s，相对示波器约 45.77 Hz 出现数量级重复触发，准入失败。
+
+1. 本轮唯一变量
+---------------
+
+只修改：
+
+  firmware/node_a/Inc/main.h
+  H3_TACH_INPUT_FILTER: 0U -> 15U
+
+保持不变：
+
+- TIM2_CH1 / PA0 / falling edge；
+- TIM2 PSC=639、ARR=65535、100 kHz、10 us/tick；
+- TIM2 ClockDivision=DIV1；
+- F3 raw 后 10 kΩ 串联、PA0 节点 10 nF 对地；
+- 风扇默认 PWM 50%；
+- 捕获 ISR、窗口统计、串口格式、PPR/RPM 边界；
+- H2 CAN 与 FreeRTOS 任务结构。
+
+本 HAL 接口允许 ICFilter 取 0～15。项目随附 LL 定义将 15 描述为
+fSAMPLING=fDTS/32、N=8。当前 TIM2 fDTS=64 MHz、CKD=DIV1，因此采样频率名义约 2 MHz，
+要求约 8 个连续一致采样，名义稳定时间约 4 us。该时间远短于约 21.85 ms 的真实 Tach
+周期；这里只把它作为待实测的数字去毛刺参数，不提前宣称有效。
+
+2. 构建与静态复核
+-----------------
+
+工具链：STM32CubeIDE 2.2.0 bundled GNU Tools for STM32 14.3.rel1
+构建方式：生成的 Debug Makefile，单线程 clean + all
+构建结果：退出码 0；所有源文件重新编译，链接成功，未观察到编译器/链接器 warning/error
+
+Windows 下生成 Makefile 的 clean 规则调用 rm 时打印若干 `Error -1 (ignored)`；随后输出
+明确显示全部工程源文件逐一重新编译并成功链接，因此该兼容性提示不等于增量构建或
+编译失败。
+
+arm-none-eabi-size：
+
+  text=36128
+  data=100
+  bss=14036
+  dec=50264
+
+ELF：
+
+  path=firmware/node_a/Debug/node_a.elf
+  size=1102084 bytes
+  sha256=30F937CECAC891A0F5A85BEB9662E198825036CAC55A3C57FB40D5CCBEBBEEAB
+
+静态栈记录与 TACH-01A 相同：
+
+  H3_LogTachCaptureProfile=248 bytes
+  H3_LogTachRaw=456 bytes
+  HAL_TIM_IC_CaptureCallback=24 bytes
+  StartAControlTask=32 bytes
+
+源代码交叉引用确认：
+
+- tim.c 把 H3_TACH_INPUT_FILTER 写入 TIM2 CH1 ICFilter；
+- 启动身份行使用同一宏输出 ic_filter；
+- main.h 当前宏值为 15U；
+- git diff 除该宏的一行变化外没有其他固件改动。
+
+3. 下一实板门禁
+---------------
+
+刷写前必须先断风扇 12 V 并确认残压安全，RC/A0 保持原样，只保留 Node A USB。按冻结
+Node A 序列号和上述 ELF 哈希定向刷写、校验与复位。先监听至少 10 s，要求无 12 V 时
+edge_total/sample_total/zero_delta 均保持 0；随后给风扇 12 V 上电，在默认 50% 稳定段
+监听至少 15 s。
+
+通过条件：
+
+- 每个约 1 s 窗口的有效周期样本与约 45～48 Hz 参考一致，而不是数百次；
+- last/window 周期集中在约 20～23 ms，不出现 0～40 us 数量级短周期；
+- zero_delta 不增长；
+- COM7/USB 不断连，H2 与 H3 周期日志继续；
+- 仍只报告原始频率，ppr=TBD、rpm=INVALID。
+
+若 ICFilter=15 / CKD=DIV1 仍不能通过，不立即引入 RPM 或软件平均值掩盖错误，而是继续
+用单变量门禁评估更长数字稳定时间或边沿限定策略。

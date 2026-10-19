@@ -863,3 +863,23 @@ ELF 中检出。最大新增单函数静态栈记录为 `456` bytes，相对 A_C
 下一步 `TACH-01B` 只把 TIM2 `ICFilter` 从 0 改为 15，保持 CKD=DIV1、RC、下降沿、
 100 kHz 计时和默认 PWM 不变，再重复同一两段门禁。PPR/RPM 继续为 TBD/INVALID。
 完整原始记录见 [`2026-10-19 软件证据`](../../evidence/software/H3/2026-10-19/README.md)。
+
+## 35. TACH-01B TIM2 最大数字滤波镜像离线准备（2026-10-19）
+
+在 TACH-01A 实板否决后，本轮只把 `H3_TACH_INPUT_FILTER` 从 0 改为 15；TIM2 通道、
+下降沿、`PSC=639 / ARR=65535 / 100 kHz / 10 us`、CKD=DIV1、硬件 RC、默认 50% PWM、
+ISR 和日志格式全部保持不变。项目随附 HAL/LL 定义中，滤波值 15 对应
+`fSAMPLING=fDTS/32、N=8`；当前名义采样频率约 2 MHz、连续稳定时间约 4 us。该计算只
+说明参数含义，不能代替实板通过结论。
+
+同一工具链完成单线程 clean build；Windows clean 规则的 `rm` 兼容提示被 Makefile 标为
+ignored，随后所有源文件均重新编译并成功链接。尺寸仍为
+`text/data/bss/dec=36128/100/14036/50264`；新 ELF 大小 `1102084` bytes，SHA-256
+`30F937CECAC891A0F5A85BEB9662E198825036CAC55A3C57FB40D5CCBEBBEEAB`。静态栈结果与
+TACH-01A 相同，Git 固件差异只有上述宏的一行。
+
+本节只关闭 `TACH-01B` 离线构建门禁。实板顺序仍为：先断风扇 12 V、保持 RC/A0、
+定向刷写并证明无供电零边沿，再加入风扇 12 V，在默认 50% 下要求每秒捕获数回到约
+45～48、周期回到约 20～23 ms、`zero_delta` 不增长且不出现微秒级短周期。PPR/RPM
+继续为 TBD/INVALID。构建详情见
+[`2026-10-19 软件证据`](../../evidence/software/H3/2026-10-19/README.md)。

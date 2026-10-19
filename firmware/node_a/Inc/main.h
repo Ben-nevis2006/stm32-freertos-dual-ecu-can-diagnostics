@@ -91,7 +91,7 @@ void Error_Handler(void);
 #define H3_FAN_PWM_COMPARE_100_PERCENT    H3_FAN_PWM_TIMER_COUNTS
 #define H3_TACH_TIMER_FREQUENCY_HZ        100000U
 #define H3_TACH_TIMER_TICK_US             10U
-#define H3_TACH_INPUT_FILTER              0U
+#define H3_TACH_INPUT_FILTER              15U
 
 /* USER CODE END Private defines */
 
