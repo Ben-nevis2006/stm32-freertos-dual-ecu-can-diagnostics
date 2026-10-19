@@ -924,3 +924,29 @@ MX_TIM2_Init 把 `0x200`（DIV4）写入 ClockDivision，ELF 身份串含 `ckd_d
 至少 10 s 无供电零边沿基线、至少 20 个默认 50% 连续窗口。通过必须同时满足平均率、
 完整周期、最短周期和 zero_delta，不能只看平均频率。构建详情见
 [`2026-10-20 软件证据`](../../evidence/software/H3/2026-10-20/README.md)。
+
+## 38. TACH-01C 原始 Tach 捕获完整性通过（2026-10-20）
+
+现场确认风扇 12 V 断开、Node A USB 单独上电、RC/A0 保持后，软件侧复核唯一 Probe 为
+冻结 Node A SN `066BFF575151676667043206`、COM7、工作区为空及 TACH-01C ELF 哈希
+`A0440CEECD3C0999210A3ABDF20B04D1315E3BA0E9A388BFCA44F9D5203E9DFE`。现场残压只报告
+“正常”而非具体伏值，记录保留原话，不补写虚构数值。首次预检因同一 SN 同时出现在
+Probe 与 UART 区块而在写入前安全停止；改为只统计 Probe 条目后确认 probes=1，随后
+定向下载、校验和软件复位均成功，目标电压 3.24 V、Device ID 0x410。COM7 已打开时
+再次复位，回读启动身份明确包含 `ic_filter=15,ckd_div=4,ppr=TBD,rpm=INVALID`。
+
+同一次启动的无风扇段从 tick=552 到 15000，共 15 个窗口/14.448 s，始终为
+`WAIT_FIRST_EDGE`，edge/sample/window/zero_delta 均为 0，零边沿基线通过。随后用户给
+风扇 12 V 上电并确认稳定，PWM 仍为默认 50%；连续 25 个窗口从 tick=286741 到 311557，
+24.816 s 内累计增加 1054 个边沿，即 `42.472598 edge/s`，每窗 43～45 个样本。
+
+25 个窗口全部为 `PERIOD_VALID`；last_ticks 为 `2346～2372`，合并 window_min/max 为
+`2333～2375 ticks`，即所有观测周期都在 `23.33～23.75 ms` 的同一完整周期带；即时频率
+为 `42.158～42.625 Hz`。`zero_delta=0`，约 11.5 ms 半周期和 10 us/微秒级极短周期均为
+0/25。相比 TACH-01B 的 17/20 个污染窗口，CKD=DIV4 在不改变 RC、ICFilter、边沿、
+计数 tick 或 PWM 的情况下关闭了逐周期重复触发。
+
+`TACH-01C` 判定为 **PASS（默认 50% 稳态下的原始 Tach 捕获完整性）**。该结论不外推
+为 PPR、绝对 RPM、全 PWM 量程、停转/断线阈值或长期运行通过；PPR 仍为 TBD、RPM 仍为
+INVALID。完整 25 窗口和主机操作边界见
+[`2026-10-20 软件证据`](../../evidence/software/H3/2026-10-20/README.md)。
