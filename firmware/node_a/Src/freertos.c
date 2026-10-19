@@ -361,10 +361,11 @@ static void H3_LogTachCaptureProfile(void)
   int length;
 
   length = snprintf(line, sizeof(line),
-                    "H3,A,TACH_CAPTURE_PROFILE,pin=PA0,timer=TIM2_CH1,edge=falling,timer_hz=%lu,tick_us=%lu,ic_filter=%u,rc=10k_series_10nF_gnd,ppr=TBD,rpm=INVALID\r\n",
+                    "H3,A,TACH_CAPTURE_PROFILE,pin=PA0,timer=TIM2_CH1,edge=falling,timer_hz=%lu,tick_us=%lu,ic_filter=%u,ckd_div=%u,rc=10k_series_10nF_gnd,ppr=TBD,rpm=INVALID\r\n",
                     (unsigned long)H3_TACH_TIMER_FREQUENCY_HZ,
                     (unsigned long)H3_TACH_TIMER_TICK_US,
-                    (unsigned int)H3_TACH_INPUT_FILTER);
+                    (unsigned int)H3_TACH_INPUT_FILTER,
+                    (unsigned int)H3_TACH_CLOCK_DIVISION_VALUE);
 
   if (length > 0)
   {

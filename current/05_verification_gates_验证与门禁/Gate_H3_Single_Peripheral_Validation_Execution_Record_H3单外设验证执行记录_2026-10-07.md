@@ -904,3 +904,23 @@ Node B 未上电造成的 CAN 无 ACK 日志属于已知旁路现象，不计入
 PWM 和日志算法不变，使滤波 15 的名义稳定时间由约 4 us 延长到约 16 us，再重复同一
 两段实板门禁。完整窗口见
 [`2026-10-19 软件证据`](../../evidence/software/H3/2026-10-19/README.md)。
+
+## 37. TACH-01C 延长 TIM2 数字滤波窗口镜像准备（2026-10-20）
+
+承接 10 月 19 日 TACH-01B 的周期完整性失败，本轮唯一功能变量是把 TIM2 CKD 从 DIV1
+改为 DIV4；`ICFilter=15`、PA0/TIM2_CH1、下降沿、`PSC=639 / ARR=65535`、硬件 RC、
+默认 50% PWM、ISR 和原始统计均保持不变。CubeMX `.ioc` 同步保存 DIV4，启动身份新增
+`ckd_div=4`，用于避免镜像混淆。计数器仍为 `100 kHz / 10 us`；滤波 15 的采样变为
+`fDTS/32=500 kHz、N=8`，名义连续稳定时间由约 4 us 延长为 16 us。
+
+2026-10-20 使用同一随附工具链单线程 clean build 成功，尺寸为
+`text/data/bss/dec=36144/100/14036/50280`。ELF 大小 `1102172` bytes，SHA-256 为
+`A0440CEECD3C0999210A3ABDF20B04D1315E3BA0E9A388BFCA44F9D5203E9DFE`。反汇编确认
+MX_TIM2_Init 把 `0x200`（DIV4）写入 ClockDivision，ELF 身份串含 `ckd_div`；最大相关
+静态栈仍为 H3_LogTachRaw 的 456 bytes。
+
+本节只关闭 TACH-01C 离线构建门禁，尚未刷写。实板当前仍为 TACH-01B。下一步必须先
+断风扇 12 V、确认残压 `<0.5 V`，保持 RC/A0 与 Node A USB，再定向刷写并依次执行
+至少 10 s 无供电零边沿基线、至少 20 个默认 50% 连续窗口。通过必须同时满足平均率、
+完整周期、最短周期和 zero_delta，不能只看平均频率。构建详情见
+[`2026-10-20 软件证据`](../../evidence/software/H3/2026-10-20/README.md)。

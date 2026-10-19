@@ -1,0 +1,106 @@
+H3 / TACH-01C Node A ICFilter=15 + CKD=DIV4 构建记录
+====================================================
+
+准备日期：2026-10-20（Asia/Shanghai）
+前序实板结论：2026-10-19 的 TACH-01B / ICFilter=15 / CKD=DIV1 已把平均捕获率从
+TACH-01A 的约 352.13 edge/s 降到 44.56 edge/s，证明数字滤波方向有效；但连续 20 个
+窗口中 15 个仍出现 11.42～11.56 ms 半周期，另有 2 个出现 10 us 极短周期，故逐周期
+完整性仍失败，不能进入 PPR/RPM。
+
+1. 本轮受控变量
+-----------------
+
+唯一功能变量：
+
+  TIM2 ClockDivision: DIV1 -> DIV4
+
+保持不变：
+
+- TIM2_CH1 / PA0 / falling edge；
+- TIM2 PSC=639、ARR=65535、计数频率 100 kHz、10 us/tick；
+- TIM2 ICFilter=15；
+- F3 raw 后 10 kΩ 串联、PA0 节点 10 nF 对地；
+- 风扇默认 PWM 50%；
+- 捕获 ISR、窗口统计与异常判据；
+- PPR=TBD、RPM=INVALID；
+- H2 CAN 与 FreeRTOS 任务结构。
+
+为保证配置可追溯，本轮同时完成两项非功能性同步：
+
+- node_a.ioc 写入 TIM2.ClockDivision=TIM_CLOCKDIVISION_DIV4，避免 CubeMX 再生成时退回；
+- 启动身份增加 ckd_div=4，并让 tim.c 与日志共享 H3_TACH_CLOCK_DIVISION 配置宏。
+
+项目随附 HAL 定义明确：DIV4 令 tDTS=4*tCK_INT；LL 定义明确滤波值 15 为
+fSAMPLING=fDTS/32、N=8。TIM2 内核时钟为 64 MHz，因此：
+
+  fDTS = 64 MHz / 4 = 16 MHz
+  fSAMPLING = 16 MHz / 32 = 500 kHz
+  nominal stable time = 8 / 500 kHz = 16 us
+
+CKD 只改变数字滤波/死区使用的 tDTS，不改变计数器的 PSC 分频链；故 TIM2 计数仍为
+64 MHz / (639+1) = 100 kHz，即 10 us/tick。16 us 仍远小于约 20～23 ms 的真实 Tach
+周期，本轮只把它作为待实板验证的去毛刺窗口，不提前宣称通过。
+
+2. 构建与静态复核
+-----------------
+
+工具链：STM32CubeIDE 2.2.0 bundled GNU Tools for STM32 14.3.rel1
+构建方式：生成的 Debug Makefile，单线程 clean + all
+构建结果：clean 退出码 0，build 退出码 0；全部工程源文件重新编译并链接成功，未观察到
+编译器或链接器 warning/error。
+
+Windows 下 Makefile clean 规则调用 rm 时仍打印 `Error -1 (ignored)`；其后输出逐一重新
+编译全部源文件并成功链接，因此该兼容性提示不代表 clean/build 失败。
+
+arm-none-eabi-size：
+
+  text=36144
+  data=100
+  bss=14036
+  dec=50280
+
+ELF：
+
+  path=firmware/node_a/Debug/node_a.elf
+  size=1102172 bytes
+  sha256=A0440CEECD3C0999210A3ABDF20B04D1315E3BA0E9A388BFCA44F9D5203E9DFE
+
+静态栈记录：
+
+  H3_LogTachCaptureProfile=256 bytes
+  H3_LogTachRaw=456 bytes
+  HAL_TIM_IC_CaptureCallback=24 bytes
+  StartAControlTask=32 bytes
+
+相对 TACH-01B，启动身份多一个参数使 profile 函数静态栈由 248 增至 256 bytes；最大
+H3_LogTachRaw 仍为 456 bytes，A_ControlTask 配置栈仍为 2048 bytes，保有既有余量。
+
+交叉核验：
+
+- ELF strings 含 `ic_filter=%u,ckd_div=%u,...ppr=TBD,rpm=INVALID`；
+- MX_TIM2_Init 反汇编把立即数 512（0x200，即 TIM_CR1_CKD_1 / DIV4）写入
+  htim2.Init.ClockDivision；
+- tim.c 的 TIM2 使用 H3_TACH_CLOCK_DIVISION，TIM3 PWM 仍为 DIV1；
+- node_a.ioc 同步保存 TIM2 ClockDivision=DIV4；
+- ICFilter 仍由 H3_TACH_INPUT_FILTER=15 写入 TIM2_CH1；
+- PSC=639、ARR=65535 未变。
+
+3. 实板门禁（尚未执行）
+-----------------------
+
+当前实板仍运行上一版 TACH-01B，构建本身没有改写 MCU。刷写 TACH-01C 前必须先断开风扇
+12 V，并确认供电残压 <0.5 V；RC/A0 保持原样，只保留 Node A USB。然后按冻结 Node A
+序列号和上述 ELF 哈希定向刷写、校验、复位并回读含 ckd_div=4 的启动身份。
+
+第一段无 12 V 基线至少 10 s，要求 edge_total/sample_total/zero_delta 均保持 0。第二段
+给风扇 12 V 上电、默认 50% 稳定后至少记录 20 个连续窗口。通过条件必须同时满足：
+
+- 每窗边沿率与约 43～48 Hz 的实测 Tach 参考一致；
+- last/window_min/window_max 均处于完整约 20～24 ms 周期带，不再出现约 11.5 ms
+  半周期或 10 us 极短周期；
+- zero_delta 不增长；
+- COM7/USB 无断连重连；
+- 仍只输出原始频率，PPR=TBD、RPM=INVALID。
+
+若仍失败，不用软件平均值隐藏坏周期，也不直接启用 RPM；保留原始失败证据后再选择下一
+个单变量。Gate H3 完成前只做本地提交，不推送远端。
