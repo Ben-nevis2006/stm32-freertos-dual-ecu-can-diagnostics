@@ -357,15 +357,17 @@ static void H3_LogFanPwmProfileDone(void)
 
 static void H3_LogTachCaptureProfile(void)
 {
-  char line[224];
+  char line[256];
   int length;
 
   length = snprintf(line, sizeof(line),
-                    "H3,A,TACH_CAPTURE_PROFILE,pin=PA0,timer=TIM2_CH1,edge=falling,timer_hz=%lu,tick_us=%lu,ic_filter=%u,ckd_div=%u,rc=10k_series_10nF_gnd,ppr=TBD,rpm=INVALID\r\n",
+                    "H3,A,TACH_CAPTURE_PROFILE,pin=PA0,timer=TIM2_CH1,edge=falling,timer_hz=%lu,tick_us=%lu,ic_filter=%u,ckd_div=%u,rc=10k_series_10nF_gnd,ppr=%u,rpm=enabled,stale_ms=%lu\r\n",
                     (unsigned long)H3_TACH_TIMER_FREQUENCY_HZ,
                     (unsigned long)H3_TACH_TIMER_TICK_US,
                     (unsigned int)H3_TACH_INPUT_FILTER,
-                    (unsigned int)H3_TACH_CLOCK_DIVISION_VALUE);
+                    (unsigned int)H3_TACH_CLOCK_DIVISION_VALUE,
+                    (unsigned int)H3_TACH_PULSES_PER_REVOLUTION,
+                    (unsigned long)H3_TACH_STALE_TIMEOUT_MS);
 
   if (length > 0)
   {
@@ -381,8 +383,13 @@ static void H3_LogTachRaw(void)
   uint32_t age_ms;
   uint32_t period_us;
   uint32_t frequency_millihz;
+  uint32_t rpm;
+  uint32_t rpm_denominator;
+  uint32_t rpm_numerator;
+  uint8_t rpm_valid;
   const char *state;
-  char line[320];
+  char rpm_text[16];
+  char line[352];
   int length;
 
   taskENTER_CRITICAL();
@@ -415,17 +422,33 @@ static void H3_LogTachRaw(void)
   }
   else
   {
-    state = "PERIOD_VALID";
     age_ms = now - snapshot.last_edge_tick_ms;
+    state = (age_ms > H3_TACH_STALE_TIMEOUT_MS) ?
+            "STALE" : "PERIOD_VALID";
   }
 
   period_us = (uint32_t)snapshot.last_period_ticks * H3_TACH_TIMER_TICK_US;
   frequency_millihz = (snapshot.last_period_ticks != 0U) ?
       ((H3_TACH_TIMER_FREQUENCY_HZ * 1000U) /
        (uint32_t)snapshot.last_period_ticks) : 0U;
+  rpm_valid = ((snapshot.sample_total != 0U) &&
+               (snapshot.last_period_ticks != 0U) &&
+               (age_ms <= H3_TACH_STALE_TIMEOUT_MS)) ? 1U : 0U;
+  if (rpm_valid != 0U)
+  {
+    rpm_denominator = (uint32_t)H3_TACH_PULSES_PER_REVOLUTION *
+                      (uint32_t)snapshot.last_period_ticks;
+    rpm_numerator = H3_TACH_TIMER_FREQUENCY_HZ * 60U;
+    rpm = (rpm_numerator + (rpm_denominator / 2U)) / rpm_denominator;
+    (void)snprintf(rpm_text, sizeof(rpm_text), "%lu", (unsigned long)rpm);
+  }
+  else
+  {
+    (void)snprintf(rpm_text, sizeof(rpm_text), "INVALID");
+  }
 
   length = snprintf(line, sizeof(line),
-                    "H3,A,TACH_RAW,tick=%lu,state=%s,edge_total=%lu,sample_total=%lu,window_samples=%lu,last_ticks=%u,last_us=%lu,freq_mHz=%lu,window_min_ticks=%u,window_max_ticks=%u,zero_delta=%lu,age_ms=%lu,ppr=TBD,rpm=INVALID\r\n",
+                    "H3,A,TACH_RAW,tick=%lu,state=%s,edge_total=%lu,sample_total=%lu,window_samples=%lu,last_ticks=%u,last_us=%lu,freq_mHz=%lu,window_min_ticks=%u,window_max_ticks=%u,zero_delta=%lu,age_ms=%lu,ppr=%u,rpm=%s,rpm_valid=%u\r\n",
                     (unsigned long)now,
                     state,
                     (unsigned long)snapshot.edge_total,
@@ -437,7 +460,10 @@ static void H3_LogTachRaw(void)
                     (unsigned int)snapshot.window_min_ticks,
                     (unsigned int)snapshot.window_max_ticks,
                     (unsigned long)snapshot.zero_delta_total,
-                    (unsigned long)age_ms);
+                    (unsigned long)age_ms,
+                    (unsigned int)H3_TACH_PULSES_PER_REVOLUTION,
+                    rpm_text,
+                    (unsigned int)rpm_valid);
 
   if (length > 0)
   {
@@ -459,7 +485,7 @@ static void H2_SendFrame(uint8_t counter)
   header.DLC = H2_CAN_TX_DLC;
   header.TransmitGlobalTime = DISABLE;
 
-  /* 0x180 Actuator_Status: FULL, IDLE_OFF, no fault, RPM invalid. */
+  /* Keep 0x180 RPM invalid until the separate CAN integration gate. */
   data[0] = 0x00U;
   data[1] = 0x00U;
   data[2] = (uint8_t)(counter & 0x0FU);

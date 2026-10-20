@@ -976,3 +976,28 @@ TACH-01C 在 0% 无新边沿时仍沿用最后周期并报告 PERIOD_VALID，这
 度门限；该门限约为本轮最慢正常周期 51.51 ms 的 9.7 倍，只用于阻止历史 RPM 冒充
 当前值，不提前等同为 Stall/断线故障阈值。完整档位原始证据、来源 URL 和代表性窗口见
 [`2026-10-20 软件证据`](../../evidence/software/H3/2026-10-20/README.md)。
+
+## 40. TACH-02B RPM 与数据新鲜度镜像准备（2026-10-20）
+
+承接 TACH-02A 发现的“0% 停转后仍沿用历史周期”语义缺口，本轮不改引脚、定时器、RC、
+PWM、捕获 ISR 或 CubeMX 配置，只新增 `PPR=2`、500 ms 新鲜度和整数 RPM。状态冻结为
+`WAIT_FIRST_EDGE / WAIT_SECOND_EDGE / PERIOD_VALID / STALE`；仅 PERIOD_VALID 输出
+数值 RPM 和 `rpm_valid=1`，其余状态均输出 `rpm=INVALID,rpm_valid=0`。STALE 时仍保留
+最后原始周期/频率供取证，但不再把它声明为当前转速。
+
+500 ms 约为本轮实测最慢正常周期 51.51 ms 的 9.7 倍；按厂商最低 200 RPM、2 PPR
+计算也容纳约 3.3 个周期。它只定义测量值何时过期，不提前等同于最终 Stall/断线确认
+时间。CAN 0x180 的 RPM 字节仍保持 `FF FF`，故本轮不会越过单外设门禁偷接系统报文。
+
+最终版本使用有界 32-bit 舍入除法，2026-10-20 由随附工具链单线程 clean build 通过，
+无 warning/error；尺寸为 `text/data/bss/dec=36372/100/14036/50508`。ELF 大小
+`1102472` bytes，SHA-256 为
+`7A8B655F02A9F6F6EDA528C1C923BEC495516A09C36480AA775F427EFFA13F1E`。ELF strings、
+公式代表向量、最坏日志长度、静态栈和 H2_SendFrame 反汇编均已交叉核验；
+H3_LogTachRaw 静态栈为 528 bytes，任务配置栈仍为 2048 bytes。
+
+本节只关闭离线实现与构建门禁，尚未刷写。实板下一步必须先断风扇 12 V并确认残压
+`<0.5 V`，Node A USB 与 RC/A0 保持；定向刷写后依次做无 12 V 零边沿/INVALID 基线、
+默认 50% 数值 RPM，以及 B1 五档中 0% 进入 STALE、再 100% 恢复 PERIOD_VALID 的动态
+验收。完整构建身份与通过条件见
+[`2026-10-20 软件证据`](../../evidence/software/H3/2026-10-20/README.md)。

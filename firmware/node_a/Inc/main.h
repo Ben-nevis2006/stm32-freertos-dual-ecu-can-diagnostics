@@ -94,6 +94,8 @@ void Error_Handler(void);
 #define H3_TACH_INPUT_FILTER              15U
 #define H3_TACH_CLOCK_DIVISION            TIM_CLOCKDIVISION_DIV4
 #define H3_TACH_CLOCK_DIVISION_VALUE      4U
+#define H3_TACH_PULSES_PER_REVOLUTION     2U
+#define H3_TACH_STALE_TIMEOUT_MS          500U
 
 /* USER CODE END Private defines */
 

@@ -1,0 +1,146 @@
+H3 / TACH-02B Node A PPR=2、整数 RPM 与数据新鲜度构建记录
+=============================================================
+
+构建日期：2026-10-20（Asia/Shanghai）
+代码基线：9560e82 test: validate H3 tach PPR and duty range
+前序结论：TACH-02A 已以接口规范、厂商额定范围和同一实物全速数据把 PPR 冻结为 2，
+并通过 100/50/25/0/100% 原始 Tach 量程。TACH-01C 在 0% 无新边沿后仍沿用最后周期并
+报告 PERIOD_VALID，故历史频率会冒充当前测量值；这是本轮唯一需要关闭的软件语义缺口。
+
+1. 受控修改与边界
+-------------------
+
+新增公共常量：
+
+  H3_TACH_PULSES_PER_REVOLUTION = 2
+  H3_TACH_STALE_TIMEOUT_MS = 500
+
+串口原始状态扩展为：
+
+- 尚无边沿：WAIT_FIRST_EDGE，rpm=INVALID，rpm_valid=0；
+- 只有首个边沿：WAIT_SECOND_EDGE，rpm=INVALID，rpm_valid=0；
+- 已有完整周期且 age_ms <= 500：PERIOD_VALID，输出舍入后的整数 RPM，rpm_valid=1；
+- 已有历史周期但 age_ms > 500：STALE，rpm=INVALID，rpm_valid=0。
+
+原始 last_ticks、last_us 与 freq_mHz 在 STALE 时继续保留，目的是留下最后一次有效周期供
+取证；下游必须以 state/rpm_valid 判断它是否仍代表当前转速。这样既不会抹掉故障前数据，
+也不会让旧周期继续伪装成当前 RPM。
+
+500 ms 是“测量值新鲜度”门限，不是最终 Stall/断线故障确认时间。它约为 TACH-02A
+实测最慢正常周期 51.51 ms 的 9.7 倍；按 ARCTIC 官方最低 200 RPM、2 PPR 计算，最低
+额定转速周期为 150 ms，500 ms 仍容纳约 3.3 个最低额定周期。最终故障去抖和 CAN 故障
+位继续保持后续独立门禁，不在本轮偷跑。
+
+整数换算使用：
+
+  denominator = PPR * last_period_ticks
+  numerator   = timer_hz * 60 = 6,000,000
+  RPM         = (numerator + denominator / 2) / denominator
+
+只有 PERIOD_VALID 才进入除法，故 denominator 不为 0。当前 16-bit period 最大使
+denominator <= 131,070，加入舍入项后的最大分子 6,065,535，明确低于 uint32_t 上限；
+因此使用 32-bit 整数除法，不引入 Cortex-M3 不必要的 64-bit 除法支持。
+
+本轮保持不变：
+
+- PA0/TIM2_CH1、falling edge、100 kHz/10 us、ICFilter=15、CKD=DIV4；
+- F3 raw 的 4.7 kOhm 上拉及 10 kOhm + 10 nF RC/A0；
+- PC7/TIM3_CH2、25 kHz PWM 和 B1 五档序列；
+- TIM2 捕获 ISR、窗口 min/max/zero_delta 统计；
+- CubeMX `.ioc`、tim.c 与全部引脚/外设配置；
+- CAN 0x180 的 data[3]/data[4] 继续为 0xFF/0xFF，RPM 尚未接入 CAN。
+
+2. Clean build
+--------------
+
+工具链：
+
+  STM32CubeIDE 2.2.0 bundled GNU Tools for STM32 14.3.rel1
+  arm-none-eabi-gcc 14.3.1 20250623
+  GNU Make 4.4.1_st_20260330-0700
+
+构建方式：生成的 Debug Makefile，单线程 clean + all。
+结果：clean 退出码 0；build 退出码 0；全部源文件重新编译并链接成功；`-Wall` 未观察到
+compiler/linker warning 或 error。
+
+arm-none-eabi-size：
+
+  text=36372
+  data=100
+  bss=14036
+  dec=50508
+
+相对 TACH-01C 的 text=36144、dec=50280，本轮只增加 228 bytes。初版曾使用 64-bit
+除法，clean build 的 text 会增至 37216；静态检查确认当前有界 32-bit 公式后已删除该
+实现并再次 clean build，最终 ELF 中不存在 `__aeabi_uldivmod`。
+
+ELF：
+
+  path=firmware/node_a/Debug/node_a.elf
+  size=1102472 bytes
+  sha256=7A8B655F02A9F6F6EDA528C1C923BEC495516A09C36480AA775F427EFFA13F1E
+  mtime=2026-10-20 08:30:27 +08:00
+
+参与修改的源码哈希：
+
+  firmware/node_a/Inc/main.h
+    9BF938D4D6A5BF8383B38CB87ECC2C91C053E3EB76A4255A47BC6786C215829F
+  firmware/node_a/Src/freertos.c
+    5030721C7C057D7A06037B80B9C1152EEF41AA00481E28F6DF28366B8E89E2C5
+
+3. 构建后交叉核验
+-----------------
+
+ELF strings 确认镜像包含：
+
+  TACH_CAPTURE_PROFILE ... ppr=%u,rpm=enabled,stale_ms=%lu
+  WAIT_FIRST_EDGE
+  WAIT_SECOND_EDGE
+  PERIOD_VALID
+  STALE
+  TACH_RAW ... ppr=%u,rpm=%s,rpm_valid=%u
+
+公式代表向量：
+
+  last_ticks=1085 -> 2765 RPM
+  last_ticks=2206 -> 1360 RPM
+  last_ticks=5145 -> 583 RPM
+  age_ms=500      -> PERIOD_VALID / rpm_valid=1
+  age_ms=501      -> STALE / rpm_valid=0
+
+按所有整数取最大显示宽度生成的 TACH_RAW 最坏行长为 301 bytes（含 CRLF），缓冲区为
+352 bytes；启动身份行长 167 bytes（含 CRLF），缓冲区为 256 bytes，均不会因本轮新增
+字段而截断。
+
+静态栈记录：
+
+  H3_LogTachCaptureProfile=296 bytes
+  H3_LogTachRaw=528 bytes
+  HAL_TIM_IC_CaptureCallback=24 bytes
+  StartAControlTask=32 bytes
+
+A_ControlTask 配置栈仍为 2048 bytes。H3_LogTachRaw 相比 TACH-01C 的 456 bytes 增加
+72 bytes，未改变 ISR 栈帧；后续实板仍必须观察 USB/复位稳定性，构建检查不替代运行时
+验收。
+
+node_a.list 的 H2_SendFrame 反汇编确认 data[3] 与 data[4] 各自仍以立即数 255 写入，
+即 CAN Actuator_Status 的 RPM 保持 0xFFFF。此次只验证本地测量语义，不改变 H2 报文。
+
+4. 实板门禁（尚未执行）
+-----------------------
+
+当前 MCU 仍运行 TACH-01C；本记录只证明 TACH-02B 镜像可构建且静态语义一致，不能提前
+判为运行通过。刷写前必须先断开风扇 12 V、确认残压 <0.5 V；Node A USB 与 RC/A0
+保持。随后只按冻结 Node A ST-Link 序列号定向刷写上述 ELF，并完成三段观察：
+
+1. 无风扇 12 V 启动基线：profile 必须回读 ppr=2/stale_ms=500；至少 10 s 保持
+   WAIT_FIRST_EDGE、rpm=INVALID、rpm_valid=0、edge/sample/zero_delta=0；
+2. 风扇默认 50%：必须进入 PERIOD_VALID，RPM 稳定在 TACH-02A 已建立的约 1360 RPM
+   区间，rpm_valid=1，完整周期和 zero_delta 继续正常；
+3. B1 五档序列：100/50/25% 应分别约为 2760/1360/586 RPM；0% 后必须在 age_ms>500
+   时进入 STALE、rpm=INVALID/rpm_valid=0；再次 100% 必须恢复 PERIOD_VALID 和有效
+   RPM，最终自动回到 50%。
+
+全程还要求 COM7/USB 不断连、不复位，风扇无机械/电气异常。TACH-02B 实板通过后，只能
+关闭“RPM 换算 + 数据新鲜度语义”；最终 Stall/断线策略、CAN RPM 接入和 INA260 仍需
+后续独立门禁。Gate H3 完成前继续只做本地提交，不推送远端。

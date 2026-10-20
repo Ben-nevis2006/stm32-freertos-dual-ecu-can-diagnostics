@@ -3,8 +3,8 @@
 ## 1. 范围与时间边界
 
 本目录承接 2026-10-19 的 TACH-01B 实板周期完整性失败，记录 2026-10-20 构建和实测的
-TACH-01C，以及随后不改线、不刷写完成的 TACH-02A PPR/全档位量程。两天的记录按真实
-推进顺序分目录保留；不把构建日期回填成上一轮日期。
+TACH-01C、随后不改线不刷写完成的 TACH-02A PPR/全档位量程，以及据此构建的 TACH-02B
+RPM/新鲜度镜像。两天的记录按真实推进顺序分目录保留；不把构建日期回填成上一轮日期。
 
 ## 2. 文件与完整性
 
@@ -13,6 +13,7 @@ TACH-01C，以及随后不改线、不刷写完成的 TACH-02A PPR/全档位量�
 | [`H3_NODE-A_TACH-01C_filter15-ckd4-build_20261020.txt`](H3_NODE-A_TACH-01C_filter15-ckd4-build_20261020.txt) | `4406` bytes | `B9EB7E1913A9BF86C524C185612A7A64EE00279978E92DCF2190651C9AAF8C53` | CKD 单变量、CubeMX 同步、clean build、ELF 身份、静态交叉核验与实板门禁 |
 | [`H3_NODE-A_TACH-01C_filter15-ckd4-runtime_20261020.txt`](H3_NODE-A_TACH-01C_filter15-ckd4-runtime_20261020.txt) | `7108` bytes | `AE025C503C0C874912DF1A0CCAA65934B402F4ECC7A71F2AC06DC9E17454AF37` | 定向刷写、可观察启动、15 窗口零边沿基线、25 窗口实风扇周期完整性验收 |
 | [`H3_NODE-A_TACH-02A_ppr2-duty-range-runtime_20261020.txt`](H3_NODE-A_TACH-02A_ppr2-duty-range-runtime_20261020.txt) | `5997` bytes | `B00F692890159DF88836FF9CDFCC9E1EA4950A1CDF22BC3AB9256104CD07D6B7` | PPR 一手来源与实物交叉证明、五档 Tach/RPM 量程、停转/重启及 stale 语义缺口 |
+| [`H3_NODE-A_TACH-02B_ppr2-rpm-stale-build_20261020.txt`](H3_NODE-A_TACH-02B_ppr2-rpm-stale-build_20261020.txt) | `6251` bytes | `423DE7A2D22172763AD8BBBAE94D7456DFBFFFE2A96CDB7A00EFA1F040649A05` | PPR=2 整数 RPM、500 ms 新鲜度状态、clean build、ELF 身份、栈/长度/CAN 占位交叉核验与实板门禁 |
 
 ## 3. 当前结论
 
@@ -27,5 +28,7 @@ TACH-01C，以及随后不改线、不刷写完成的 TACH-02A PPR/全档位量�
 - 100/50/25% 稳态约为 `2760 / 1360 / 586 RPM`，0% 停转、再次 100% 重启和最终 50%
   恢复均通过，所有窗口 zero_delta=0；
 - `TACH-02A` 判定为 **PASS（PPR=2 + 原始全档位量程）**；
-- TACH-01C 在无新边沿时仍沿用旧周期，故固件 RPM 输出仍未关闭为 PASS；下一步
-  TACH-02B 增加 500 ms 新鲜度判定和 rpm_valid。Stall/断线故障阈值与 INA260 仍待验证。
+- TACH-02B 已完成 PPR=2 整数 RPM、500 ms 新鲜度、STALE/rpm_valid 语义和 clean build；
+  最终 ELF SHA-256 为 `7A8B655F02A9F6F6EDA528C1C923BEC495516A09C36480AA775F427EFFA13F1E`；
+- TACH-02B 尚未刷写，固件 RPM/STALE 仍须无风扇基线、默认 50% 和 B1 全档位实板关闭；
+  Stall/断线故障阈值、CAN RPM 接入与 INA260 仍待后续独立验证。
