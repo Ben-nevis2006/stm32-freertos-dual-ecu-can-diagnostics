@@ -4,15 +4,15 @@
 
 | 项目 | 内容 |
 |---|---|
-| 版本 | v1.2（NTC、Fan PWM、Tach/PPR/RPM 已关闭；INA260 待执行） |
+| 版本 | v1.3（NTC、Fan PWM、Tach/PPR/RPM 已关闭；INA260 已完成身份/无源准入与只读镜像构建） |
 | 日期 | 2026-10-07～2026-10-20 |
-| 状态 | **IN PROGRESS；NTC 子项 H3-00～H3-05 PASS；Fan PWM 子项 FAN-00A～FAN-02B PASS；Tach 子项 TACH-00B～TACH-02B PASS；H3 仅余 INA260 独立验证** |
+| 状态 | **IN PROGRESS；NTC 子项 H3-00～H3-05 PASS；Fan PWM 子项 FAN-00A～FAN-02B PASS；Tach 子项 TACH-00B～TACH-02B PASS；INA-00A/00B 与 INA-01 离线构建 PASS，待 I2C/高边实板验证** |
 | 前序 Gate | Gate H0 CONDITIONAL PASS；Gate H1 PASS；Gate H2 PASS（2026-10-07） |
 | H3 开始时 Git HEAD | `b03c874 docs: organize active project records` |
 | 固件回退基线 | `bc19580 feat: close Gate H2 CAN bring-up` |
-| 当前准入范围 | Node B NTC、Node A Fan PWM 与 Tach/PPR/RPM/新鲜度子项均已完成。下一步只进入 INA260 的实物身份、3.3 V I2C 准入、设备识别和 voltage/current 独立读取；Heater 继续隔离。CAN 0x180 正常链路属于 H5，FA-01/02/03 故障与恢复属于 H6，二者不作为 H3 关闭前置项 |
+| 当前准入范围 | Node B NTC、Node A Fan PWM 与 Tach/PPR/RPM/新鲜度子项均已完成；INA260 实物身份、无源筛查和 Node A 只读镜像构建已完成。下一步只允许先在 INA260 完全未接时定向刷写，再执行四线 3.3 V I2C 识别/空载采样；通过后另行进入 12 V 高边 voltage/current 独立读取。Heater 继续隔离。CAN 0x180 正常链路属于 H5，FA-01/02/03 故障与恢复属于 H6，二者不作为 H3 关闭前置项 |
 | 远端策略 | H3 阶段内按真实日期在本地累计；Gate 完成后统一整合、提交并推送一次。统一推送不改变各动作的实际日期 |
-| 证据索引 | [`2026-10-07 搭建与照片`](../../evidence/hardware/H3/2026-10-07/README.md)；[`2026-10-08 硬件接线与电压预检`](../../evidence/hardware/H3/2026-10-08/README.md)；[`2026-10-08 H3-02、基线与 Run01`](../../evidence/software/H3/2026-10-08/README.md)；[`2026-10-09 Run02 与边界表征`](../../evidence/software/H3/2026-10-09/README.md)；[`2026-10-10 边界实现与验收`](../../evidence/software/H3/2026-10-10/README.md)；[`2026-10-10 FAN 身份/接口`](../../evidence/hardware/H3/2026-10-10/README.md)；[`2026-10-12 FAN 供电/接口实测`](../../evidence/hardware/H3/2026-10-12/README.md)；[`2026-10-12 FAN-01/FAN-02B 构建`](../../evidence/software/H3/2026-10-12/README.md)；[`2026-10-13 FAN-02B 刷写与运行身份`](../../evidence/software/H3/2026-10-13/README.md)；[`2026-10-13 FAN-02B 低压动态波形`](../../evidence/hardware/H3/2026-10-13/README.md)；[`2026-10-14 Tach 电气表征与 PWM 耦合隔离`](../../evidence/hardware/H3/2026-10-14/README.md)；[`2026-10-19 Tach 捕获失败证据`](../../evidence/software/H3/2026-10-19/README.md)；[`2026-10-20 Tach 捕获/PPR/RPM/新鲜度关闭证据`](../../evidence/software/H3/2026-10-20/README.md) |
+| 证据索引 | [`2026-10-07 搭建与照片`](../../evidence/hardware/H3/2026-10-07/README.md)；[`2026-10-08 硬件接线与电压预检`](../../evidence/hardware/H3/2026-10-08/README.md)；[`2026-10-08 H3-02、基线与 Run01`](../../evidence/software/H3/2026-10-08/README.md)；[`2026-10-09 Run02 与边界表征`](../../evidence/software/H3/2026-10-09/README.md)；[`2026-10-10 边界实现与验收`](../../evidence/software/H3/2026-10-10/README.md)；[`2026-10-10 FAN 身份/接口`](../../evidence/hardware/H3/2026-10-10/README.md)；[`2026-10-12 FAN 供电/接口实测`](../../evidence/hardware/H3/2026-10-12/README.md)；[`2026-10-12 FAN-01/FAN-02B 构建`](../../evidence/software/H3/2026-10-12/README.md)；[`2026-10-13 FAN-02B 刷写与运行身份`](../../evidence/software/H3/2026-10-13/README.md)；[`2026-10-13 FAN-02B 低压动态波形`](../../evidence/hardware/H3/2026-10-13/README.md)；[`2026-10-14 Tach 电气表征与 PWM 耦合隔离`](../../evidence/hardware/H3/2026-10-14/README.md)；[`2026-10-19 Tach 捕获失败证据`](../../evidence/software/H3/2026-10-19/README.md)；[`2026-10-20 Tach/INA260 软件证据`](../../evidence/software/H3/2026-10-20/README.md)；[`2026-10-20 INA260 实物与无源准入`](../../evidence/hardware/H3/2026-10-20/README.md) |
 
 ## 2. Gate 目标与边界
 
@@ -1033,4 +1033,52 @@ age=9572 ms，edge/sample totals 始终冻结在 `6334/6333`，`rpm=INVALID,rpm_
 正常链路明确留给 H5；故障确认时间、去抖、锁存/恢复和 FA-01/02/03 明确留给 H6，
 均不反向阻塞 H3。H3 现只剩 INA260 独立验证；CAN RPM 字节本轮继续保持 `FF FF`。
 完整刷写边界、逐档范围、代表性原始字段和证据哈希见
+[`2026-10-20 软件证据`](../../evidence/software/H3/2026-10-20/README.md)。
+
+## 42. INA-00A/00B 实物身份与无源准入通过（2026-10-20）
+
+在 Node A、Node B、风扇 12 V 和适配器均断电、残压报告 `0.1 V`、INA260-01 完全
+孤立的条件下，现场补齐模块正反面原图。正面可见绿色功率端子、Vcc/GND/SCL/SDA/
+Alert/VBus/Vin+/Vin-、A0/A1 和 VB 区域；背面可读
+`INA260 Precision DC Current/Power Monitor / Bus Voltage: 0-36V / Max Current: 15A /
+VCC/Logic: 3-5V`。A0/A1 未见人为桥接，故 `0x40` 只作为待扫描的默认地址假设；芯片
+顶部字符不以照片强行判读，仍由寄存器身份关闭。
+
+孤立无源测量得到：表笔短接基线 `0.22 Ω`；Vcc-GND 不蜂鸣，两种表笔极性下电阻均从
+MΩ 级持续上升并最终超出 `200 MΩ` 量程；Vcc-SCL=`10.056 kΩ`、Vcc-SDA=
+`10.028 kΩ`；GND-SCL、GND-SDA、SCL-SDA、SDA-Alert、Alert-VBus 均不蜂鸣。
+VBus-Vin+ 蜂鸣/`0.043 Ω`，与板载 VB 桥的预期一致；Vin+-Vin- 蜂鸣/`0.044 Ω`，与
+INA260 内置毫欧级分流路径一致。
+
+后两项显示值低于 `0.22 Ω` 两线表笔基线，不能据此宣称测得精确分流值，也不能进行
+简单表笔扣除；本轮只确认设计上应导通的路径没有开路。其余结果没有显示会阻止 3.3 V
+I2C 接入的稳定低阻短路。`INA-00A/00B` 判定为 **PASS（身份/外观/孤立无源准入范围）**，
+同时关闭 H0 D-02 的 INA260 身份背面子项；该结论不授权 12 V、负载或功能通过。完整照片、
+哈希、原始读数和证据边界见
+[`2026-10-20 INA260 硬件证据`](../../evidence/hardware/H3/2026-10-20/README.md)。
+
+## 43. INA-01 只读扫描与采样镜像离线准备（2026-10-20）
+
+以 `e92ea2f` 为代码基线，在 Node A 既有 I2C1 `PB8/D15=SCL、PB9/D14=SDA、100 kHz`
+上增加 INA260 只读诊断路径。启动时扫描 7-bit `0x08～0x77` 并逐个记录 ACK；只在期望
+地址 `0x40` 应答后读取 Configuration `0x00`、Manufacturer ID `0xFE` 和 Die ID
+`0xFF`。身份门限冻结为 `mfg=0x5449`、die 高 12 bit=`0x227`；通过后约每秒读取
+Current/Bus Voltage/Power，并以 `1.25 mA / 1.25 mV / 10 mW per LSB` 输出原始值与
+整数工程量。ALERT 保持未接、未启用。
+
+源码静态检查只发现 `HAL_I2C_IsDeviceReady` 与 `HAL_I2C_Mem_Read`，没有任何 I2C
+写寄存器路径。使用 STM32CubeIDE 2.2.0 随附 GNU Tools for STM32 14.3.1 单线程 clean
+build 成功，无 warning/error；`text/data/bss/dec=41292/100/14044/55436`。最终 ELF
+大小 `1114492` bytes，SHA-256=
+`835C48D09500657D3FA38F623B631C04B98A37B0B7B84D8C5197C71602CA453B`；修改源码
+`freertos.c` 的 SHA-256=
+`ED835E9C631990A0F67FADAEBB2FAB4D58E3B2F5DE5A49B261CF6BE158DF34B5`。最坏新增静态
+栈为 `352` bytes，A_ControlTask 配置栈仍为 `2048` bytes；身份/采样最坏日志长度均
+低于各自缓冲区。
+
+`INA-01` 判定为 **PASS（离线实现与构建范围）**，尚未刷写、未接线、未形成任何实板
+I2C 或测量结论。下一步只能在 INA260 继续完全未接、Node B 与风扇 12 V 断电时，按冻结
+Node A ST-Link SN `066BFF575151676667043206` 定向刷写并回读镜像身份；随后必须再次
+断电，才允许只接 `Vcc/GND/SCL/SDA` 做无源复核和 3.3 V I2C 扫描。绿色端子、VBus、
+Vin+、Vin-、Alert、12 V、风扇和 Heater 继续断开。完整构建记录见
 [`2026-10-20 软件证据`](../../evidence/software/H3/2026-10-20/README.md)。

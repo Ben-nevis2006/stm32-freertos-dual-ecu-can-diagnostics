@@ -1,0 +1,130 @@
+H3 / INA-01 Node A INA260 只读扫描、身份与采样镜像构建记录
+=============================================================
+
+构建日期：2026-10-20（Asia/Shanghai）
+代码基线：e92ea2f docs: align H3 scope with gate baseline
+前序结论：INA-00A/INA-00B 已完成实物正反面、接口和孤立无源筛查；本轮开始时模块仍
+完全断电且未接线。该前序结论只允许准备 3.3 V 只读 I2C 镜像，不授权 12 V 或负载。
+
+1. 受控实现与边界
+-------------------
+
+Node A 使用既有 I2C1：
+
+  SCL = PB8 / D15 / CN10-3
+  SDA = PB9 / D14 / CN10-5
+  clock = 100 kHz
+  expected address = 0x40
+  ALERT = disconnected / disabled
+
+启动后执行：
+
+1. 输出 INA260_PROFILE，明确总线、引脚、时钟、期望地址和 read_only；
+2. 只读扫描 7-bit 地址 0x08～0x77，并逐个记录实际 ACK；
+3. 仅在 0x40 ACK 后读取 Configuration(0x00)、Manufacturer ID(0xFE) 和 Die ID(0xFF)；
+4. Manufacturer ID 必须为 0x5449，Die ID 的高 12 bit 必须为 0x227，才设置 valid=1；
+5. identity valid 后约每秒读取 Current(0x01)、Bus Voltage(0x02) 和 Power(0x03)，同时
+   输出原始寄存器与整数工程量；任一读取失败则输出 READ_ERROR 和 HAL 错误码。
+
+换算使用数据手册固定 LSB：
+
+  current_uA = signed_current_raw * 1250
+  bus_uV     = bus_raw * 1250
+  power_uW   = power_raw * 10000
+
+源码只调用 HAL_I2C_IsDeviceReady 和 HAL_I2C_Mem_Read；没有 HAL_I2C_Mem_Write、
+HAL_I2C_Master_Transmit 或其他写寄存器路径。因此不会改写 Configuration、Mask/Enable、
+Alert Limit 或地址状态。当前实现不把 Configuration 的默认值 0x6127作为芯片身份硬门限，
+而是完整记录，避免把合法但此前被配置过的器件误判为假芯片；首轮实板仍要求人工核对。
+
+寄存器、默认地址、LSB 和身份值依据：
+
+- Texas Instruments INA260 datasheet：
+  https://www.ti.com/lit/ds/symlink/ina260.pdf
+- Adafruit INA260 breakout pinouts：
+  https://learn.adafruit.com/adafruit-ina260-current-voltage-power-sensor-breakout/pinouts
+
+本轮保持不变：Fan PWM/Tach/PPR/RPM 新鲜度实现、TIM2/TIM3 配置、CAN H2 逻辑和
+CAN 0x180 RPM 占位。CAN RPM 正常链路继续留给 H5，Fault/Recovery 继续留给 H6。
+
+2. Clean build
+--------------
+
+工具链：
+
+  STM32CubeIDE 2.2.0 bundled GNU Tools for STM32 14.3.rel1
+  arm-none-eabi-gcc 14.3.1 20250623
+  GNU Make 4.4.1_st_20260330-0700
+
+构建方式：生成的 Debug Makefile，单线程 clean + all。
+结果：clean 退出码 0；build 退出码 0；全部源文件重新编译并链接成功；未观察到 compiler
+或 linker warning/error。
+
+arm-none-eabi-size：
+
+  text=41292
+  data=100
+  bss=14044
+  dec=55436
+
+相对前一 TACH-02B 镜像 text=36372、dec=50508，本轮 text 增加 4920 bytes、bss 增加
+8 bytes；主要变化是首次把 HAL I2C 路径和 INA260 日志链接进最终镜像。
+
+ELF：
+
+  path=firmware/node_a/Debug/node_a.elf
+  size=1114492 bytes
+  sha256=835C48D09500657D3FA38F623B631C04B98A37B0B7B84D8C5197C71602CA453B
+  mtime=2026-10-20 14:43:20 +08:00
+
+参与修改的源码哈希：
+
+  firmware/node_a/Src/freertos.c
+    ED835E9C631990A0F67FADAEBB2FAB4D58E3B2F5DE5A49B261CF6BE158DF34B5
+
+3. 构建后交叉核验
+-----------------
+
+静态搜索确认本轮 I2C API 只有：
+
+  HAL_I2C_IsDeviceReady
+  HAL_I2C_Mem_Read
+
+ELF strings 检出：
+
+  INA260_PROFILE ... expected_addr=0x40,mode=read_only,alert=disconnected
+  INA260_I2C_ACK,address=0x%02X
+  INA260_IDENTITY ... config/mfg/die/valid/hal_err
+  INA260_SAMPLE ... VALID ... current/bus/power raw 与工程量
+  INA260_SAMPLE ... READ_ERROR ... 三项状态与 hal_err
+
+按字段最大显示宽度计算：identity 最坏行长 168 bytes，缓冲区 224 bytes；VALID sample
+最坏行长 172 bytes，缓冲区 256 bytes，均有余量。
+
+静态栈记录：
+
+  H3_Ina260ReadRegister=40 bytes
+  H3_Ina260ScanAndIdentify=336 bytes
+  H3_LogIna260Sample=352 bytes
+  H3_LogTachRaw=528 bytes
+  StartAControlTask=32 bytes
+
+A_ControlTask 配置栈为 2048 bytes。构建与静态栈检查不能替代实板长时稳定性，后续仍须
+观察 COM7/USB、复位和读取错误。
+
+4. 实板门禁（尚未执行）
+-----------------------
+
+本文件形成时硬件仍全断电、INA260 孤立，镜像尚未刷写。本记录只关闭 INA-01 离线实现
+与构建门禁，不能提前判为设备识别或采样通过。实板必须按以下顺序推进：
+
+1. INA260 继续不接线，Node B 与风扇 12 V 断电，仅连接 Node A USB；按冻结的 Node A
+   ST-Link SN 066BFF575151676667043206 定向刷写本文件绑定的 ELF；
+2. 回读启动身份并确认镜像包含 INA260 read_only profile；断电后再接 Vcc/GND/SCL/SDA；
+3. 接线后断电复核四条端到端连续性，且 3V3-GND、SCL-SDA 不蜂鸣；
+4. 只给 Node A USB 上电，要求扫描只出现预期地址 0x40，mfg=0x5449、die 高 12 bit=0x227、
+   valid=1，连续空载样本无 READ_ERROR、USB 断连或复位；
+5. 上述 3.3 V I2C 阶段通过后，才可另设高边 12 V/风扇电流方向与读数门禁。Alert、Heater
+   和最终功率线束继续隔离。
+
+Gate H3 完成前只做本地提交，不推送远端。

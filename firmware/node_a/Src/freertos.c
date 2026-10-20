@@ -27,6 +27,7 @@
 /* USER CODE BEGIN Includes */
 #include "app_ipc.h"
 #include "can.h"
+#include "i2c.h"
 #include "tim.h"
 #include "usart.h"
 
@@ -71,6 +72,23 @@ typedef struct
 #define H2_CAN_RX_DLC            2U
 #define H2_CAN_RX_COUNTER_INDEX  1U
 
+#define H3_INA260_I2C_ADDRESS           0x40U
+#define H3_INA260_SCAN_FIRST_ADDRESS    0x08U
+#define H3_INA260_SCAN_LAST_ADDRESS     0x77U
+#define H3_INA260_REG_CONFIG            0x00U
+#define H3_INA260_REG_CURRENT           0x01U
+#define H3_INA260_REG_BUS_VOLTAGE       0x02U
+#define H3_INA260_REG_POWER             0x03U
+#define H3_INA260_REG_MANUFACTURER_ID   0xFEU
+#define H3_INA260_REG_DIE_ID            0xFFU
+#define H3_INA260_EXPECTED_MFG_ID       0x5449U
+#define H3_INA260_EXPECTED_DIE_ID       0x2270U
+#define H3_INA260_DIE_ID_MASK           0xFFF0U
+#define H3_INA260_CURRENT_LSB_UA        1250L
+#define H3_INA260_BUS_VOLTAGE_LSB_UV    1250UL
+#define H3_INA260_POWER_LSB_UW          10000UL
+#define H3_INA260_I2C_TIMEOUT_MS        20U
+
 /* USER CODE END PD */
 
 /* Private macro -------------------------------------------------------------*/
@@ -104,6 +122,8 @@ static volatile uint16_t g_h3_tach_last_period_ticks;
 static volatile uint16_t g_h3_tach_window_min_ticks = UINT16_MAX;
 static volatile uint16_t g_h3_tach_window_max_ticks;
 static volatile uint8_t g_h3_tach_capture_seen;
+static uint32_t g_h3_ina260_sample_count;
+static uint8_t g_h3_ina260_identity_valid;
 
 static const H3_FanPwmStep_t g_h3_fan_pwm_profile[] =
 {
@@ -164,6 +184,10 @@ static void H3_ApplyFanPwmStep(uint8_t profile_index);
 static void H3_LogFanPwmProfileDone(void);
 static void H3_LogTachCaptureProfile(void);
 static void H3_LogTachRaw(void);
+static HAL_StatusTypeDef H3_Ina260ReadRegister(uint8_t register_address,
+                                               uint16_t *value);
+static void H3_Ina260ScanAndIdentify(void);
+static void H3_LogIna260Sample(void);
 static void H2_SendFrame(uint8_t counter);
 static uint8_t H2_IsValidPeerFrame(const AppCanRxFrame_t *frame);
 static uint8_t H2_GetPeerCounter(const AppCanRxFrame_t *frame);
@@ -472,6 +496,178 @@ static void H3_LogTachRaw(void)
   }
 }
 
+static HAL_StatusTypeDef H3_Ina260ReadRegister(uint8_t register_address,
+                                               uint16_t *value)
+{
+  uint8_t data[2] = {0U, 0U};
+  HAL_StatusTypeDef status;
+
+  if (value == NULL)
+  {
+    return HAL_ERROR;
+  }
+
+  status = HAL_I2C_Mem_Read(&hi2c1,
+                            (uint16_t)(H3_INA260_I2C_ADDRESS << 1U),
+                            register_address,
+                            I2C_MEMADD_SIZE_8BIT,
+                            data,
+                            sizeof(data),
+                            H3_INA260_I2C_TIMEOUT_MS);
+  if (status == HAL_OK)
+  {
+    *value = (uint16_t)(((uint16_t)data[0] << 8U) | (uint16_t)data[1]);
+  }
+
+  return status;
+}
+
+static void H3_Ina260ScanAndIdentify(void)
+{
+  uint8_t address;
+  uint8_t ack_count = 0U;
+  uint8_t expected_ack = 0U;
+  uint16_t configuration = 0U;
+  uint16_t manufacturer_id = 0U;
+  uint16_t die_id = 0U;
+  HAL_StatusTypeDef configuration_status = HAL_ERROR;
+  HAL_StatusTypeDef manufacturer_status = HAL_ERROR;
+  HAL_StatusTypeDef die_status = HAL_ERROR;
+  char line[224];
+  int length;
+
+  H2_UartWrite("H3,A,INA260_PROFILE,bus=I2C1,scl=PB8_D15,sda=PB9_D14,clock_hz=100000,expected_addr=0x40,mode=read_only,alert=disconnected\r\n");
+
+  for (address = H3_INA260_SCAN_FIRST_ADDRESS;
+       address <= H3_INA260_SCAN_LAST_ADDRESS;
+       ++address)
+  {
+    if (HAL_I2C_IsDeviceReady(&hi2c1,
+                              (uint16_t)(address << 1U),
+                              2U,
+                              H3_INA260_I2C_TIMEOUT_MS) == HAL_OK)
+    {
+      ack_count++;
+      if (address == H3_INA260_I2C_ADDRESS)
+      {
+        expected_ack = 1U;
+      }
+
+      length = snprintf(line, sizeof(line),
+                        "H3,A,INA260_I2C_ACK,address=0x%02X\r\n",
+                        (unsigned int)address);
+      if (length > 0)
+      {
+        line[sizeof(line) - 1U] = '\0';
+        H2_UartWrite(line);
+      }
+    }
+  }
+
+  if (expected_ack != 0U)
+  {
+    configuration_status = H3_Ina260ReadRegister(H3_INA260_REG_CONFIG,
+                                                  &configuration);
+    manufacturer_status = H3_Ina260ReadRegister(
+        H3_INA260_REG_MANUFACTURER_ID,
+        &manufacturer_id);
+    die_status = H3_Ina260ReadRegister(H3_INA260_REG_DIE_ID, &die_id);
+  }
+
+  g_h3_ina260_identity_valid =
+      ((expected_ack != 0U) &&
+       (configuration_status == HAL_OK) &&
+       (manufacturer_status == HAL_OK) &&
+       (die_status == HAL_OK) &&
+       (manufacturer_id == H3_INA260_EXPECTED_MFG_ID) &&
+       ((die_id & H3_INA260_DIE_ID_MASK) == H3_INA260_EXPECTED_DIE_ID)) ?
+      1U : 0U;
+
+  length = snprintf(line, sizeof(line),
+                    "H3,A,INA260_IDENTITY,ack_count=%u,expected_ack=%u,addr=0x%02X,config_status=%u,config=0x%04X,mfg_status=%u,mfg=0x%04X,die_status=%u,die=0x%04X,valid=%u,hal_err=0x%08lX\r\n",
+                    (unsigned int)ack_count,
+                    (unsigned int)expected_ack,
+                    (unsigned int)H3_INA260_I2C_ADDRESS,
+                    (unsigned int)configuration_status,
+                    (unsigned int)configuration,
+                    (unsigned int)manufacturer_status,
+                    (unsigned int)manufacturer_id,
+                    (unsigned int)die_status,
+                    (unsigned int)die_id,
+                    (unsigned int)g_h3_ina260_identity_valid,
+                    (unsigned long)HAL_I2C_GetError(&hi2c1));
+  if (length > 0)
+  {
+    line[sizeof(line) - 1U] = '\0';
+    H2_UartWrite(line);
+  }
+}
+
+static void H3_LogIna260Sample(void)
+{
+  uint16_t current_register = 0U;
+  uint16_t bus_voltage_register = 0U;
+  uint16_t power_register = 0U;
+  HAL_StatusTypeDef current_status;
+  HAL_StatusTypeDef bus_voltage_status;
+  HAL_StatusTypeDef power_status;
+  int32_t current_ua;
+  uint32_t bus_voltage_uv;
+  uint32_t power_uw;
+  char line[256];
+  int length;
+
+  if (g_h3_ina260_identity_valid == 0U)
+  {
+    return;
+  }
+
+  current_status = H3_Ina260ReadRegister(H3_INA260_REG_CURRENT,
+                                          &current_register);
+  bus_voltage_status = H3_Ina260ReadRegister(H3_INA260_REG_BUS_VOLTAGE,
+                                              &bus_voltage_register);
+  power_status = H3_Ina260ReadRegister(H3_INA260_REG_POWER, &power_register);
+  g_h3_ina260_sample_count++;
+
+  if ((current_status == HAL_OK) &&
+      (bus_voltage_status == HAL_OK) &&
+      (power_status == HAL_OK))
+  {
+    current_ua = (int32_t)((int16_t)current_register) *
+                 H3_INA260_CURRENT_LSB_UA;
+    bus_voltage_uv = (uint32_t)bus_voltage_register *
+                     H3_INA260_BUS_VOLTAGE_LSB_UV;
+    power_uw = (uint32_t)power_register * H3_INA260_POWER_LSB_UW;
+    length = snprintf(line, sizeof(line),
+                      "H3,A,INA260_SAMPLE,tick=%lu,index=%lu,state=VALID,current_raw=%d,current_uA=%ld,bus_raw=%u,bus_uV=%lu,power_raw=%u,power_uW=%lu\r\n",
+                      (unsigned long)HAL_GetTick(),
+                      (unsigned long)g_h3_ina260_sample_count,
+                      (int)((int16_t)current_register),
+                      (long)current_ua,
+                      (unsigned int)bus_voltage_register,
+                      (unsigned long)bus_voltage_uv,
+                      (unsigned int)power_register,
+                      (unsigned long)power_uw);
+  }
+  else
+  {
+    length = snprintf(line, sizeof(line),
+                      "H3,A,INA260_SAMPLE,tick=%lu,index=%lu,state=READ_ERROR,current_status=%u,bus_status=%u,power_status=%u,hal_err=0x%08lX\r\n",
+                      (unsigned long)HAL_GetTick(),
+                      (unsigned long)g_h3_ina260_sample_count,
+                      (unsigned int)current_status,
+                      (unsigned int)bus_voltage_status,
+                      (unsigned int)power_status,
+                      (unsigned long)HAL_I2C_GetError(&hi2c1));
+  }
+
+  if (length > 0)
+  {
+    line[sizeof(line) - 1U] = '\0';
+    H2_UartWrite(line);
+  }
+}
+
 static void H2_SendFrame(uint8_t counter)
 {
   CAN_TxHeaderTypeDef header = {0};
@@ -720,6 +916,8 @@ void StartAControlTask(void *argument)
   H2_LogBoot(g_h2_can_start_result);
   H3_LogFanPwmProfile();
   H3_LogTachCaptureProfile();
+  osDelay(20U);
+  H3_Ina260ScanAndIdentify();
 
   if (g_h2_can_start_result != 0U)
   {
@@ -772,6 +970,7 @@ void StartAControlTask(void *argument)
     {
       H2_LogStatus();
       H3_LogTachRaw();
+      H3_LogIna260Sample();
     }
     osDelay(500U);
   }
