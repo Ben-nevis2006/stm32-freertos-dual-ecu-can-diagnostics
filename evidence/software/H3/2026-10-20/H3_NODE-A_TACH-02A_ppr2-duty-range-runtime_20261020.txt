@@ -1,0 +1,122 @@
+H3 / TACH-02A Node A PPR=2 与全 PWM 档位原始 Tach 量程记录
+================================================================
+
+执行日期：2026-10-20（Asia/Shanghai）
+对象：FAN-01 / ARCTIC P8 PWM PST non-CO / DC 12 V 0.09 A
+前序固件：TACH-01C，ELF SHA-256=
+  A0440CEECD3C0999210A3ABDF20B04D1315E3BA0E9A388BFCA44F9D5203E9DFE
+结论：PASS（PPR=2 证据闭环 + 100/50/25/0/100% 原始 Tach 量程）
+
+1. 边界与接法
+-------------
+
+- Node A USB、风扇 12 V、F4/PWM、F3/Tach、4.7 kOhm 上拉以及
+  `10 kOhm series + 10 nF to GND` RC/A0 全部保持 TACH-01C 已通过状态；
+- TIM2_CH1 保持 falling edge、100 kHz/10 us、ICFilter=15、CKD=DIV4；
+- B1 只触发既有 `100 -> 50 -> 25 -> 0 -> 100 -> final 50%` 序列，每档 10 s；
+- 本轮未刷写、未改线、未改变滤波参数；串口只读 COM7/115200；
+- Node B 未上电，所以 H2 CAN 无 ACK 仍是旁路现象，不计入 Tach 判定；
+- 前两次监听分别因没有收到 B1 触发而在约 180 s、120 s 后正常退出。两段期间
+  默认 50% Tach 持续 PERIOD_VALID、zero_delta=0；这属于额外稳定基线，不伪装成
+  动态测试。第三次改为跨回合常驻监听，收到用户 `B1已按` 后完整捕获序列。
+
+2. PPR 证据链
+-------------
+
+厂商与接口规范的一手来源：
+
+- ARCTIC P8 PWM PST 官方规格表给出转速范围 200--3000 RPM、12 V/0.09 A：
+  https://www.arctic.de/media/84/14/68/1697784882/Spec_Sheet_P8_PWM_PST_EN.pdf
+- Intel QST Programmer's Reference Manual 明确说明：符合规范的 4-wire fan 必须每转
+  返回 2 个 Tach 脉冲，不取决于电机极数：
+  https://www.intel.com/content/dam/develop/external/us/en/documents/intel-qst-programmers-reference-manual.pdf
+
+本实物在前序 TACH-00D 中断开 F4/PWM 后进入全速，实测 Tach=91.58 Hz。按 2 PPR
+换算为 2747.4 RPM，位于 ARCTIC 额定上限 3000 RPM 附近。本轮正常 100% PWM 的
+稳态约 91.5--92.4 Hz，对应 2745--2773 RPM；若误取 1 PPR，则得到约 5500 RPM，
+明显超过厂商额定上限。规范、型号规格和同一实物全速数据三者一致，因此本项目将
+FAN-01 的 `PPR` 从 TBD 冻结为 `2`。
+
+换算公式：
+
+  RPM = Tach_frequency_Hz * 60 / PPR
+      = Tach_frequency_Hz * 30      (PPR=2)
+
+3. 动态原始结果
+---------------
+
+触发边界由固件日志直接给出：
+
+  H3,A,FAN_PWM_STEP,index=1,total=5,duty_pct=100,...
+  H3,A,FAN_PWM_STEP,index=2,total=5,duty_pct=50,...
+  H3,A,FAN_PWM_STEP,index=3,total=5,duty_pct=25,...
+  H3,A,FAN_PWM_STEP,index=4,total=5,duty_pct=0,...
+  H3,A,FAN_PWM_STEP,index=5,total=5,duty_pct=100,...
+  H3,A,FAN_PWM_PROFILE_DONE,final_pct=50
+
+为避免把每档切换瞬态误当成稳态，表中使用每个非零档末段连续窗口；RPM 仅在本记录
+中按已确认 PPR=2 离线换算，TACH-01C 镜像本身仍诚实输出 ppr=TBD/rpm=INVALID。
+
+| 档位 | 稳态 Tach 范围 | 离线 RPM 范围 | 原始完整周期范围 | 判定 |
+|---|---:|---:|---:|---|
+| 第一次 100% | 91.743--92.250 Hz | 2752--2768 RPM | 10.80--11.01 ms | PASS |
+| 50% | 45.330--45.454 Hz | 1360--1364 RPM | 21.78--22.12 ms | PASS |
+| 25% | 19.436--19.661 Hz | 583--590 RPM | 49.88--51.51 ms | PASS |
+| 0% | 9 个连续窗口无新边沿 | 物理停转 | age 1.289--9.553 s | PASS |
+| 第二次 100% | 91.491--92.421 Hz | 2745--2773 RPM | 10.78--11.09 ms | PASS |
+| 最终 50% | 回落并收敛至约 45.5 Hz | 约 1365 RPM | 约 21.9--22.0 ms | PASS |
+
+代表性原始行：
+
+  # first 100% settled
+  tick=553642,window_samples=96,last_ticks=1085,freq_mHz=92165,
+  window_min_ticks=1081,window_max_ticks=1089,zero_delta=0
+
+  # 50% settled
+  tick=563988,window_samples=47,last_ticks=2206,freq_mHz=45330,
+  window_min_ticks=2198,window_max_ticks=2212,zero_delta=0
+
+  # 25% settled
+  tick=575368,window_samples=20,last_ticks=5145,freq_mHz=19436,
+  window_min_ticks=5131,window_max_ticks=5150,zero_delta=0
+
+  # 0% stopped; edge/sample totals remain frozen
+  tick=577442,edge_total=26124,sample_total=26123,window_samples=0,age_ms=1289
+  tick=585706,edge_total=26124,sample_total=26123,window_samples=0,age_ms=9553
+
+  # second 100% settled
+  tick=595017,window_samples=95,last_ticks=1085,freq_mHz=92165,
+  window_min_ticks=1081,window_max_ticks=1091,zero_delta=0
+
+  # automatic final 50% recovery
+  tick=609496,window_samples=48,last_ticks=2195,freq_mHz=45558,
+  window_min_ticks=2188,window_max_ticks=2199,zero_delta=0
+
+所有捕获窗口的 zero_delta 均保持 0；各非零稳态档没有约半周期或微秒级极短周期复发。
+100/50/25% 的频率与转速单调关系正确；0% 后计数冻结，再次 100% 能重新捕获并恢复
+额定附近转速，随后自动回到 50%。COM7 一直保持到 `TACH02A_CAPTURE_COMPLETE`。
+
+4. 发现的软件语义缺口
+---------------------
+
+0% 档停止产生新边沿后，TACH-01C 日志仍沿用最后一次 `last_ticks=5698`，继续输出
+`state=PERIOD_VALID,freq_mHz=17550`；与此同时 `window_samples=0` 且 age_ms 已增长到
+9553 ms。这不是风扇仍以 17.55 Hz 运行，而是原始采集镜像尚未实现数据新鲜度判定。
+
+因此 TACH-02A 关闭以下范围：
+
+- PPR=2；
+- 100/50/25% 的绝对转速量程；
+- 0% 物理停转、再次 100% 重启及最终 50% 恢复；
+- 全档位下的原始捕获完整性。
+
+但本轮不关闭固件 RPM 输出或 Tach 故障阈值。下一镜像 TACH-02B 将只增加：
+
+- PPR=2 的整数 RPM 换算；
+- 基于实测最慢稳态周期 51.51 ms 的 500 ms 数据新鲜度超时；
+- WAIT_FIRST_EDGE / WAIT_SECOND_EDGE / PERIOD_VALID / STALE 状态与 rpm_valid；
+- 继续保留 CAN Actuator_Status 中的 RPM=0xFFFF，直到 H3 单外设策略另行准入。
+
+500 ms 是测量值新鲜度门限，不是最终 Stall/断线故障确认时间；它约为本轮最慢正常
+周期的 9.7 倍，避免低速正常周期被误作过期，同时能停止沿用数秒前的历史 RPM。最终
+故障去抖、阈值和 CAN 故障位仍保持后续 TBD。
