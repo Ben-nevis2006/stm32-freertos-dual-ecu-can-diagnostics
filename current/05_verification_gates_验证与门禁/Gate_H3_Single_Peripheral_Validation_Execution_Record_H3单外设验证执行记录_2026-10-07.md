@@ -4,15 +4,15 @@
 
 | 项目 | 内容 |
 |---|---|
-| 版本 | v1.1（NTC、Fan PWM 已关闭；Tach/PPR 正在执行） |
-| 日期 | 2026-10-07～2026-10-14 |
-| 状态 | **IN PROGRESS；NTC 子项 H3-00～H3-05 PASS；Fan PWM 子项 FAN-00A～FAN-02B PASS；Tach 已完成隔离电气表征并定位 PWM 耦合，PA0 接入仍 HOLD；INA260 尚待独立验证** |
+| 版本 | v1.2（NTC、Fan PWM、Tach/PPR/RPM 已关闭；INA260 待执行） |
+| 日期 | 2026-10-07～2026-10-20 |
+| 状态 | **IN PROGRESS；NTC 子项 H3-00～H3-05 PASS；Fan PWM 子项 FAN-00A～FAN-02B PASS；Tach 子项 TACH-00B～TACH-02B PASS；H3 仅余 INA260 独立验证** |
 | 前序 Gate | Gate H0 CONDITIONAL PASS；Gate H1 PASS；Gate H2 PASS（2026-10-07） |
 | H3 开始时 Git HEAD | `b03c874 docs: organize active project records` |
 | 固件回退基线 | `bc19580 feat: close Gate H2 CAN bring-up` |
-| 当前准入范围 | Node B 3.3 V NTC 与 Fan PWM 子项均已完成。Tach 的 `10 kΩ + 10 nF` RC 已在 PA0 隔离和 PA0 接入两种状态下消除可见 25 kHz 额外阈值穿越，Tach 接入 MCU 前的低压电气门禁已关闭；最小 TIM2 原始捕获镜像已离线构建，下一步只放行定向刷写和无 12 V/默认 50% 两段实板日志，PPR 与 RPM 仍保持 TBD。Heater、INA260 继续隔离 |
+| 当前准入范围 | Node B NTC、Node A Fan PWM 与 Tach/PPR/RPM/新鲜度子项均已完成。下一步只进入 INA260 的实物身份、3.3 V I2C 准入、设备识别和 voltage/current 独立读取；Heater 继续隔离。CAN 0x180 正常链路属于 H5，FA-01/02/03 故障与恢复属于 H6，二者不作为 H3 关闭前置项 |
 | 远端策略 | H3 阶段内按真实日期在本地累计；Gate 完成后统一整合、提交并推送一次。统一推送不改变各动作的实际日期 |
-| 证据索引 | [`2026-10-07 搭建与照片`](../../evidence/hardware/H3/2026-10-07/README.md)；[`2026-10-08 硬件接线与电压预检`](../../evidence/hardware/H3/2026-10-08/README.md)；[`2026-10-08 H3-02、基线与 Run01`](../../evidence/software/H3/2026-10-08/README.md)；[`2026-10-09 Run02 与边界表征`](../../evidence/software/H3/2026-10-09/README.md)；[`2026-10-10 边界实现与验收`](../../evidence/software/H3/2026-10-10/README.md)；[`2026-10-10 FAN 身份/接口`](../../evidence/hardware/H3/2026-10-10/README.md)；[`2026-10-12 FAN 供电/接口实测`](../../evidence/hardware/H3/2026-10-12/README.md)；[`2026-10-12 FAN-01/FAN-02B 构建`](../../evidence/software/H3/2026-10-12/README.md)；[`2026-10-13 FAN-02B 刷写与运行身份`](../../evidence/software/H3/2026-10-13/README.md)；[`2026-10-13 FAN-02B 低压动态波形`](../../evidence/hardware/H3/2026-10-13/README.md)；[`2026-10-14 Tach 电气表征与 PWM 耦合隔离`](../../evidence/hardware/H3/2026-10-14/README.md) |
+| 证据索引 | [`2026-10-07 搭建与照片`](../../evidence/hardware/H3/2026-10-07/README.md)；[`2026-10-08 硬件接线与电压预检`](../../evidence/hardware/H3/2026-10-08/README.md)；[`2026-10-08 H3-02、基线与 Run01`](../../evidence/software/H3/2026-10-08/README.md)；[`2026-10-09 Run02 与边界表征`](../../evidence/software/H3/2026-10-09/README.md)；[`2026-10-10 边界实现与验收`](../../evidence/software/H3/2026-10-10/README.md)；[`2026-10-10 FAN 身份/接口`](../../evidence/hardware/H3/2026-10-10/README.md)；[`2026-10-12 FAN 供电/接口实测`](../../evidence/hardware/H3/2026-10-12/README.md)；[`2026-10-12 FAN-01/FAN-02B 构建`](../../evidence/software/H3/2026-10-12/README.md)；[`2026-10-13 FAN-02B 刷写与运行身份`](../../evidence/software/H3/2026-10-13/README.md)；[`2026-10-13 FAN-02B 低压动态波形`](../../evidence/hardware/H3/2026-10-13/README.md)；[`2026-10-14 Tach 电气表征与 PWM 耦合隔离`](../../evidence/hardware/H3/2026-10-14/README.md)；[`2026-10-19 Tach 捕获失败证据`](../../evidence/software/H3/2026-10-19/README.md)；[`2026-10-20 Tach 捕获/PPR/RPM/新鲜度关闭证据`](../../evidence/software/H3/2026-10-20/README.md) |
 
 ## 2. Gate 目标与边界
 
@@ -1029,7 +1029,8 @@ age=9572 ms，edge/sample totals 始终冻结在 `6334/6333`，`rpm=INVALID,rpm_
 未断开。
 
 `TACH-02B` 判定为 **PASS（当前台架 PPR=2 整数 RPM 与 500 ms 数据新鲜度语义）**。
-这关闭的是历史 RPM 失效与恢复，不等同于 Stall/断线 DTC 已完成；故障确认时间、去抖、
-锁存/恢复、CAN 0x180 的 RPM/故障位接入以及 INA260 仍须单独验证。CAN RPM 字节本轮
-继续保持 `FF FF`。完整刷写边界、逐档范围、代表性原始字段和证据哈希见
+这关闭的是历史 RPM 失效与恢复，不等同于 Stall/断线 DTC 已完成。CAN 0x180 的 RPM
+正常链路明确留给 H5；故障确认时间、去抖、锁存/恢复和 FA-01/02/03 明确留给 H6，
+均不反向阻塞 H3。H3 现只剩 INA260 独立验证；CAN RPM 字节本轮继续保持 `FF FF`。
+完整刷写边界、逐档范围、代表性原始字段和证据哈希见
 [`2026-10-20 软件证据`](../../evidence/software/H3/2026-10-20/README.md)。

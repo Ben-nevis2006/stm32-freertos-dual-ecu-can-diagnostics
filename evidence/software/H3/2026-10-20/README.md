@@ -36,4 +36,5 @@ RPM/新鲜度镜像。两天的记录按真实推进顺序分目录保留；不�
   100/50/25/0/100/final50 全序列完整，0% 后 9 个连续窗口为 STALE/rpm=INVALID，
   再次 100% 恢复 PERIOD_VALID，所有窗口 zero_delta=0；
 - `TACH-02B` 判定为 **PASS（PPR=2 整数 RPM + 500 ms 数据新鲜度实板语义）**；
-  Stall/断线故障阈值、CAN RPM/故障位接入与 INA260 仍待后续独立验证。
+  至此 Tach 子项关闭。CAN RPM/故障位正常链路留给 H5，Stall/断线等 Fault/Recovery
+  留给 H6，不作为 H3 阻塞项；H3 当前仅余 INA260 独立验证。

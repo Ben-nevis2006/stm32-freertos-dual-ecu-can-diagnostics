@@ -20,7 +20,7 @@
 | H0 硬件到货与身份 | CONDITIONAL PASS | CAN/H2 身份子项已关闭；其他外设随对应 Gate 继续验证 |
 | H1 NUCLEO USB Bring-up | PASS | 两板独立枚举、目标识别、Flash 访问与稳定性通过 |
 | H2 低压 CAN 物理链路 | **PASS（2026-10-07）** | 500 kbit/s；固定帧 3×80 s；正式 `0x100/0x180`；受控断线与恢复通过 |
-| H3 单外设验证 | **IN PROGRESS** | Node B NTC、Node A Fan PWM 与 Tach 原始捕获/PPR/RPM/新鲜度子项已通过；Tach Stall/断线故障语义、CAN RPM/故障位接入与 INA260 尚待验证 |
+| H3 单外设验证 | **IN PROGRESS** | Node B NTC、Node A Fan PWM 与 Tach 原始捕获/PPR/RPM/新鲜度子项已通过；H3 仅余 INA260 独立验证。CAN RPM 与 Fault/Recovery 分别属于 H5/H6 |
 
 H2 仅覆盖 USB/3.3 V 低压双节点链路。`12 V`、Fan、Heater、INA260、NTC、完整 timeout/fault 状态机、负载耐久与 EMC 尚未由 H2 证明。
 
@@ -49,8 +49,8 @@ H3 仍采用“阶段内本地累计、整个 Gate 完成后统一推送”策�
 - `2026-10-19`：保留 TACH-01A/01B 的重复触发与半周期失败，未用平均值掩盖坏周期；
 - `2026-10-20`：以 TACH-01C 关闭捕获完整性，以 TACH-02A/02B 关闭 PPR=2、全档位 RPM 与数据新鲜度。
 
-NTC、Fan PWM 和 Tach 测量链关闭仍不等于整个 H3 关闭；Tach 故障语义、CAN 接入与
-INA260 仍需分别准入与验证。
+NTC、Fan PWM 和 Tach 测量链关闭仍不等于整个 H3 关闭；INA260 尚需独立准入与验证。
+CAN RPM 正常链路和 Tach Fault/Recovery 分别留给 H5、H6，不反向阻塞 H3。
 
 ## 关键入口
 
