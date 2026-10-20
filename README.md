@@ -20,7 +20,7 @@
 | H0 硬件到货与身份 | CONDITIONAL PASS | CAN/H2 身份子项已关闭；其他外设随对应 Gate 继续验证 |
 | H1 NUCLEO USB Bring-up | PASS | 两板独立枚举、目标识别、Flash 访问与稳定性通过 |
 | H2 低压 CAN 物理链路 | **PASS（2026-10-07）** | 500 kbit/s；固定帧 3×80 s；正式 `0x100/0x180`；受控断线与恢复通过 |
-| H3 单外设验证 | **IN PROGRESS** | Node B NTC 子项 H3-00～H3-05 已于 2026-10-10 关闭；`FAN-00A`、`PSU-00B / D-04`、`FAN-00C` 已通过，当前仅执行 `FAN-00D` 接电前针脚/接法确认，尚未放行 12 V 接入风扇 |
+| H3 单外设验证 | **IN PROGRESS** | Node B NTC、Node A Fan PWM 与 Tach 原始捕获/PPR/RPM/新鲜度子项已通过；Tach Stall/断线故障语义、CAN RPM/故障位接入与 INA260 尚待验证 |
 
 H2 仅覆盖 USB/3.3 V 低压双节点链路。`12 V`、Fan、Heater、INA260、NTC、完整 timeout/fault 状态机、负载耐久与 EMC 尚未由 H2 证明。
 
@@ -36,7 +36,7 @@ H2 仅覆盖 USB/3.3 V 低压双节点链路。`12 V`、Fan、Heater、INA260、
 
 历史失败记录没有被最终 PASS 覆盖，也没有伪造或回填历史 Git 提交时间。
 
-## H3 NTC 推进时间线
+## H3 推进时间线
 
 H3 仍采用“阶段内本地累计、整个 Gate 完成后统一推送”策略；以下日期是实际动作日期，不等于未来统一推送时间：
 
@@ -44,8 +44,13 @@ H3 仍采用“阶段内本地累计、整个 Gate 完成后统一推送”策�
 - `2026-10-08`：关闭机械/线色风险，完成接板预检、ADC 实现、定向刷写、室温基线与 Run01；
 - `2026-10-09`：完成自行计时 Run02、恢复延长段、旧固件开/短路样本表征与在路阻值排查；
 - `2026-10-10`：实现 OPEN/NORMAL/SHORT 三态，完成构建、定向刷写、开路/旁路/最终恢复验收，关闭 NTC 子项。
+- `2026-10-10～10-13`：完成风扇/PST/12 V 身份、极性、独立起转、PWM 电气准入和全档位响应；
+- `2026-10-14`：完成 Tach RC/PA0 电气准入并构建首版捕获镜像；
+- `2026-10-19`：保留 TACH-01A/01B 的重复触发与半周期失败，未用平均值掩盖坏周期；
+- `2026-10-20`：以 TACH-01C 关闭捕获完整性，以 TACH-02A/02B 关闭 PPR=2、全档位 RPM 与数据新鲜度。
 
-NTC 关闭不等于整个 H3 关闭；Fan PWM、Tach/PPR 和 INA260 仍需分别准入与验证。
+NTC、Fan PWM 和 Tach 测量链关闭仍不等于整个 H3 关闭；Tach 故障语义、CAN 接入与
+INA260 仍需分别准入与验证。
 
 ## 关键入口
 
@@ -60,6 +65,7 @@ NTC 关闭不等于整个 H3 关闭；Fan PWM、Tach/PPR 和 INA260 仍需分别
 - [H3 2026-10-08 ADC 构建、刷写与运行证据索引](evidence/software/H3/2026-10-08/README.md)
 - [H3 2026-10-09 Run02 与边界表征证据](evidence/software/H3/2026-10-09/README.md)
 - [H3 2026-10-10 边界实现与 NTC 子项关闭证据](evidence/software/H3/2026-10-10/README.md)
+- [H3 2026-10-20 Tach 捕获、PPR、RPM 与新鲜度证据](evidence/software/H3/2026-10-20/README.md)
 - [H3 NTC 联调排障证据复盘](current/06_engineering_recaps_工程复盘/H3_NTC_Bringup_Troubleshooting_Evidence_Recap_H3_NTC联调排障证据复盘_2026-10-10.md)
 - [Node A 固件工程](firmware/node_a)
 - [Node B 固件工程](firmware/node_b)

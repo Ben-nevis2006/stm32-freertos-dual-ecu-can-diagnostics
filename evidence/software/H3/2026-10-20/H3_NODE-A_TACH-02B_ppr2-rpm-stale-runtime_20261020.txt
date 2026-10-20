@@ -1,0 +1,152 @@
+H3 / TACH-02B Node A PPR=2、整数 RPM 与新鲜度语义实板记录
+=============================================================
+
+执行日期：2026-10-20（Asia/Shanghai）
+对象：FAN-01 / ARCTIC P8 PWM PST non-CO / DC 12 V 0.09 A
+固件：TACH-02B，ELF SHA-256=
+  7A8B655F02A9F6F6EDA528C1C923BEC495516A09C36480AA775F427EFFA13F1E
+结论：PASS（PPR=2 整数 RPM + 500 ms 新鲜度 + STALE/恢复实板语义）
+
+记录边界：本文是定向刷写回读与 UART 实测字段的规范化证据记录，不是主机终端逐字节
+转储。长时监听使用 PTY 显示时产生的 ANSI 控制符和视觉换行没有写入目标数据字段；
+本文保留判定所需的原始 tick、计数器、周期、频率、RPM、age 和状态代表值。
+
+一、刷写前状态与身份门禁
+------------------------
+
+现场执行人原话：
+
+  TACH-02B刷写前已就绪：风扇12V断电，残压小于0.1V，仅Node A USB上电，RC/A0保持
+
+软件侧在写入前复核：
+
+- Git HEAD=267dffd，工作区为空；
+- ELF size=1102472 bytes；
+- ELF SHA-256=7A8B655F02A9F6F6EDA528C1C923BEC495516A09C36480AA775F427EFFA13F1E；
+- STM32CubeProgrammer v2.23.0 只发现一个 ST-Link Probe；
+- 冻结 Node A ST-Link SN=066BFF575151676667043206；
+- VCP=COM7，115200 8N1；
+- Node B 保持断电，因此 H2 CAN 无 ACK 是本轮已知旁路现象。
+
+按冻结序列号定向连接后，目标电压 3.24 V、Device ID=0x410、Rev X，目标识别为
+STM32F101/F102/F103 Medium-density / 128 KBytes / Cortex-M3。CubeProgrammer 报告
+File size=35.62 KB、File download complete、Download verified successfully，并完成
+software reset，退出码为 0。
+
+打开 COM7 后再次执行可观察复位，启动身份明确回读：
+
+  H3,A,TACH_CAPTURE_PROFILE,...,ic_filter=15,ckd_div=4,
+  rc=10k_series_10nF_gnd,ppr=2,rpm=enabled,stale_ms=500
+
+该身份将本次运行绑定到 TACH-02B，而不是此前 ppr=TBD/rpm=INVALID 的 TACH-01C。
+
+二、风扇 12 V 断开基线
+----------------------
+
+同一次启动在风扇 12 V 断开时取得 tick=553～15015 的 15 个连续窗口，跨度
+14.462 s。全部窗口同时满足：
+
+- state=WAIT_FIRST_EDGE；
+- edge_total=sample_total=window_samples=zero_delta=0；
+- rpm=INVALID，rpm_valid=0；
+- age_ms=4294967295，作为“从未收到边沿”的无符号哨兵值。
+
+无供电风扇没有伪造边沿或 RPM。约 10 s 后出现的 H2 tx_fail/ESR 来自 Node B 断电、
+CAN 无 ACK，不属于 Tach 失败。
+
+三、默认 50% 数值 RPM 基线
+--------------------------
+
+现场执行人随后报告：
+
+  TACH-02B风扇已上电并稳定，未按B1
+
+第一段连续 17 窗口为 tick=77016～93560，全部 PERIOD_VALID/rpm_valid=1，频率
+38.402～39.016 Hz、RPM=1152～1171、完整周期 25.51～26.06 ms。随后补采的
+tick=134920～146294 为 40.241～40.551 Hz、1207～1217 RPM、24.59～24.94 ms；
+长时监听触发前继续缓慢收敛至约 1222～1239 RPM。上述所有窗口均满足：
+
+- edge_total-sample_total=1；
+- window_samples 连续非零；
+- zero_delta=0；
+- age_ms 小于一个当前 Tach 周期；
+- 没有 STALE、半周期或微秒级伪周期。
+
+默认 50% 的冷态/随运行缓慢爬升被保留为 OBS-TACH-02B-01。它不影响本轮“周期到
+整数 RPM”和“新鲜度有效性”判定，但不能被包装成跨温度、跨启动的稳态转速公差。
+
+四、B1 全档位长时捕获
+----------------------
+
+为避免前序监听提前结束，COM7 监听先报告 `TACH02B_LISTENER_READY`，最长等待 300 s；
+收到 `FAN_PWM_PROFILE_DONE` 后自动再保留 12 s。用户在监听已就绪后只按一次 B1，固件
+完整输出 `100 -> 50 -> 25 -> 0 -> 100 -> final 50%`，每个受控档位保持 10 s；
+监听在 85.4 s 正常关闭，done_seen=True。
+
+为排除切档机械瞬态，非零档范围取各档末段连续窗口：
+
+| 档位 | 稳态 Tach | 固件 RPM | 完整周期带 | 状态/判定 |
+|---|---:|---:|---:|---|
+| 第一次 100% | 86.132～87.183 Hz | 2584～2616 | 11.46～11.69 ms | PERIOD_VALID / PASS |
+| 50% | 42.247～42.535 Hz | 1267～1276 | 23.48～23.70 ms | PERIOD_VALID / PASS |
+| 25% | 18.044～18.284 Hz | 541～549 | 54.17～55.51 ms | PERIOD_VALID / PASS |
+| 0% | 9 个连续窗口无新边沿 | INVALID | age 1.300～9.572 s | STALE / PASS |
+| 第二次 100% | 86.580～88.028 Hz | 2597～2641 | 11.36～11.67 ms | PERIOD_VALID / PASS |
+| 最终 50% | 42.955～43.159 Hz | 1289～1295 | 23.05～23.33 ms | PERIOD_VALID / PASS |
+
+代表性原始字段：
+
+  # first 100% settled
+  tick=184558,state=PERIOD_VALID,last_ticks=1147,freq_mHz=87183,
+  window_min_ticks=1147,window_max_ticks=1160,zero_delta=0,
+  age_ms=9,ppr=2,rpm=2616,rpm_valid=1
+
+  # 50% settled
+  tick=195938,state=PERIOD_VALID,last_ticks=2367,freq_mHz=42247,
+  window_min_ticks=2355,window_max_ticks=2370,zero_delta=0,
+  age_ms=18,ppr=2,rpm=1267,rpm_valid=1
+
+  # 25% settled
+  tick=206284,state=PERIOD_VALID,last_ticks=5542,freq_mHz=18044,
+  window_min_ticks=5520,window_max_ticks=5551,zero_delta=0,
+  age_ms=12,ppr=2,rpm=541,rpm_valid=1
+
+  # 0% coast-down still fresh, followed by first observed stale report
+  tick=207324,state=PERIOD_VALID,window_samples=14,last_ticks=6103,
+  age_ms=266,rpm=492,rpm_valid=1
+  tick=208358,state=STALE,edge_total=6334,sample_total=6333,
+  window_samples=0,age_ms=1300,rpm=INVALID,rpm_valid=0
+
+  # last observed stale report; counters remain frozen
+  tick=216630,state=STALE,edge_total=6334,sample_total=6333,
+  window_samples=0,age_ms=9572,rpm=INVALID,rpm_valid=0
+
+  # restart after stale; first complete fresh period restores validity
+  tick=217670,state=PERIOD_VALID,edge_total=6337,sample_total=6336,
+  window_samples=3,last_ticks=8715,age_ms=55,rpm=344,rpm_valid=1
+  tick=226976,state=PERIOD_VALID,last_ticks=1136,freq_mHz=88028,
+  window_min_ticks=1136,window_max_ticks=1147,age_ms=10,
+  rpm=2641,rpm_valid=1
+
+  # automatic final 50% settled
+  tick=239387,state=PERIOD_VALID,last_ticks=2318,freq_mHz=43140,
+  window_min_ticks=2314,window_max_ticks=2333,zero_delta=0,
+  age_ms=17,ppr=2,rpm=1294,rpm_valid=1
+
+五、语义核验与结论边界
+----------------------
+
+- 固件输出与 `RPM=round(6000000/(2*last_ticks))` 一致，例如 1147 ticks→2616 RPM、
+  2367 ticks→1267 RPM、5542 ticks→541 RPM；
+- 0% 切换后先保留真实惯性减速，在最后边沿仍新鲜的 age=266 ms 窗口继续有效；
+- 其后首个约 1 s 日志窗口已经超过 500 ms 门限，正确进入 STALE；9 个连续 STALE
+  窗口中 edge/sample totals 冻结、rpm=INVALID/rpm_valid=0，没有把历史周期伪装为当前转速；
+- 再次 100% 后，获得完整且新鲜的周期即恢复 PERIOD_VALID/rpm_valid=1，并逐步升至
+  额定范围；最终 50% 也重新收敛；
+- 全序列 zero_delta=0，未复发 TACH-01A/01B 的重复触发；COM7 长时监听未断开；
+- `FAN_PWM_PROFILE_DONE,final_pct=50` 和监听完成标志均收到。
+
+最终判定：TACH-02B = PASS（当前单风扇台架上的 PPR=2 整数 RPM 与 500 ms 数据新鲜度
+语义）。这关闭的是测量值有效性，不等于最终 Stall/断线 DTC 已完成。500 ms 仍只是
+历史 RPM 失效门限；故障确认时间、去抖/锁存/恢复策略、CAN 0x180 的 RPM/故障位接入
+以及 INA260 仍须在后续独立门禁验证。CAN 数据中的 RPM 字节本轮继续保持 FF FF。

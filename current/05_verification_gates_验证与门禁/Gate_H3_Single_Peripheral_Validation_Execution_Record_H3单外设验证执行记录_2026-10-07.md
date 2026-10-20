@@ -1001,3 +1001,35 @@ H3_LogTachRaw 静态栈为 528 bytes，任务配置栈仍为 2048 bytes。
 默认 50% 数值 RPM，以及 B1 五档中 0% 进入 STALE、再 100% 恢复 PERIOD_VALID 的动态
 验收。完整构建身份与通过条件见
 [`2026-10-20 软件证据`](../../evidence/software/H3/2026-10-20/README.md)。
+
+## 41. TACH-02B RPM 与数据新鲜度实板通过（2026-10-20）
+
+现场先确认风扇 12 V 断电、残压 `<0.1 V`、仅 Node A USB 上电且 RC/A0 保持。软件侧
+复核唯一 Probe 为冻结 Node A SN `066BFF575151676667043206`、COM7 和 TACH-02B ELF
+哈希 `7A8B655F02A9F6F6EDA528C1C923BEC495516A09C36480AA775F427EFFA13F1E`；定向下载、
+校验和软件复位均成功，目标电压 3.24 V、Device ID 0x410。启动身份回读包含
+`ppr=2,rpm=enabled,stale_ms=500`。
+
+同一次启动的无风扇段从 tick=553 到 15015，共 15 窗口/14.462 s，全部为
+WAIT_FIRST_EDGE，四项边沿/样本计数为 0，`rpm=INVALID,rpm_valid=0`。风扇上电但未按 B1
+时，默认 50% 所有窗口均为 PERIOD_VALID/rpm_valid=1；长时间冷态收敛过程中观测到
+1152～1239 RPM 的连续爬升，未出现 zero_delta、短周期或 STALE。该机械运行点变化保留为
+观察项，不被包装成跨启动稳态转速公差。
+
+随后先启动最长 300 s 的跨回合监听，用户只按一次 B1，完整捕获
+`100→50→25→0→100→final 50%`。各非零档末段分别为：第一次 100% `2584～2616 RPM`、
+50% `1267～1276 RPM`、25% `541～549 RPM`、第二次 100% `2597～2641 RPM`、最终 50%
+`1289～1295 RPM`，频率、周期与 `PPR=2` 换算一致，所有窗口 zero_delta=0。
+
+0% 切换后的惯性减速仍被诚实保留：age=266 ms 时最后新鲜周期仍为 PERIOD_VALID；随后
+首个可见的约 1 s 日志窗口 age=1300 ms 已进入 STALE。此后 9 个连续窗口直到
+age=9572 ms，edge/sample totals 始终冻结在 `6334/6333`，`rpm=INVALID,rpm_valid=0`。
+再次 100% 后第一个完整新周期即恢复 PERIOD_VALID，并在该档末段到达 2597～2641 RPM；
+监听收到 `FAN_PWM_PROFILE_DONE` 后额外保留 12 s，最终 50% 正常收敛，85.4 s 全程 COM7
+未断开。
+
+`TACH-02B` 判定为 **PASS（当前台架 PPR=2 整数 RPM 与 500 ms 数据新鲜度语义）**。
+这关闭的是历史 RPM 失效与恢复，不等同于 Stall/断线 DTC 已完成；故障确认时间、去抖、
+锁存/恢复、CAN 0x180 的 RPM/故障位接入以及 INA260 仍须单独验证。CAN RPM 字节本轮
+继续保持 `FF FF`。完整刷写边界、逐档范围、代表性原始字段和证据哈希见
+[`2026-10-20 软件证据`](../../evidence/software/H3/2026-10-20/README.md)。
