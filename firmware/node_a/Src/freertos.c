@@ -186,7 +186,10 @@ static void H3_LogTachCaptureProfile(void);
 static void H3_LogTachRaw(void);
 static HAL_StatusTypeDef H3_Ina260ReadRegister(uint8_t register_address,
                                                uint16_t *value);
+static void H3_LogIna260MasterState(const char *phase,
+                                    HAL_StatusTypeDef reinit_status);
 static void H3_Ina260ScanAndIdentify(void);
+static void H3_Ina260ScopeProbe(void);
 static void H3_LogIna260Sample(void);
 static void H2_SendFrame(uint8_t counter);
 static uint8_t H2_IsValidPeerFrame(const AppCanRxFrame_t *frame);
@@ -522,6 +525,30 @@ static HAL_StatusTypeDef H3_Ina260ReadRegister(uint8_t register_address,
   return status;
 }
 
+static void H3_LogIna260MasterState(const char *phase,
+                                    HAL_StatusTypeDef reinit_status)
+{
+  char line[224];
+  int length;
+
+  length = snprintf(line, sizeof(line),
+                    "H3,A,INA260_MASTER,phase=%s,reinit_status=%u,state=0x%02lX,hal_err=0x%08lX,cr1=0x%04lX,sr1=0x%04lX,sr2=0x%04lX,gpiob_idr=0x%04lX\r\n",
+                    phase,
+                    (unsigned int)reinit_status,
+                    (unsigned long)HAL_I2C_GetState(&hi2c1),
+                    (unsigned long)HAL_I2C_GetError(&hi2c1),
+                    (unsigned long)I2C1->CR1,
+                    (unsigned long)I2C1->SR1,
+                    (unsigned long)I2C1->SR2,
+                    (unsigned long)(GPIOB->IDR &
+                                    (INA260_SCL_Pin | INA260_SDA_Pin)));
+  if (length > 0)
+  {
+    line[sizeof(line) - 1U] = '\0';
+    H2_UartWrite(line);
+  }
+}
+
 static void H3_Ina260ScanAndIdentify(void)
 {
   uint8_t address;
@@ -530,38 +557,72 @@ static void H3_Ina260ScanAndIdentify(void)
   uint16_t configuration = 0U;
   uint16_t manufacturer_id = 0U;
   uint16_t die_id = 0U;
+  HAL_StatusTypeDef expected_probe_status;
   HAL_StatusTypeDef configuration_status = HAL_ERROR;
   HAL_StatusTypeDef manufacturer_status = HAL_ERROR;
   HAL_StatusTypeDef die_status = HAL_ERROR;
+  HAL_StatusTypeDef reinit_status = HAL_OK;
+  uint32_t expected_probe_error;
   char line[224];
   int length;
 
   H2_UartWrite("H3,A,INA260_PROFILE,bus=I2C1,scl=PB8_D15,sda=PB9_D14,clock_hz=100000,expected_addr=0x40,mode=read_only,alert=disconnected\r\n");
 
-  for (address = H3_INA260_SCAN_FIRST_ADDRESS;
-       address <= H3_INA260_SCAN_LAST_ADDRESS;
-       ++address)
+  H3_LogIna260MasterState("pre_probe", reinit_status);
+  if (((I2C1->SR2 & I2C_SR2_BUSY) != 0U) ||
+      (HAL_I2C_GetError(&hi2c1) != HAL_I2C_ERROR_NONE))
   {
-    if (HAL_I2C_IsDeviceReady(&hi2c1,
-                              (uint16_t)(address << 1U),
-                              2U,
-                              H3_INA260_I2C_TIMEOUT_MS) == HAL_OK)
-    {
-      ack_count++;
-      if (address == H3_INA260_I2C_ADDRESS)
-      {
-        expected_ack = 1U;
-      }
+    reinit_status = HAL_I2C_Init(&hi2c1);
+    osDelay(5U);
+    H3_LogIna260MasterState("after_pre_probe_reinit", reinit_status);
+  }
 
-      length = snprintf(line, sizeof(line),
-                        "H3,A,INA260_I2C_ACK,address=0x%02X\r\n",
-                        (unsigned int)address);
-      if (length > 0)
-      {
-        line[sizeof(line) - 1U] = '\0';
-        H2_UartWrite(line);
-      }
+  expected_probe_status = HAL_I2C_IsDeviceReady(
+      &hi2c1,
+      (uint16_t)(H3_INA260_I2C_ADDRESS << 1U),
+      2U,
+      H3_INA260_I2C_TIMEOUT_MS);
+  expected_probe_error = HAL_I2C_GetError(&hi2c1);
+  length = snprintf(line, sizeof(line),
+                    "H3,A,INA260_EXPECTED_PROBE,attempt=1,address=0x%02X,status=%u,hal_err=0x%08lX\r\n",
+                    (unsigned int)H3_INA260_I2C_ADDRESS,
+                    (unsigned int)expected_probe_status,
+                    (unsigned long)expected_probe_error);
+  if (length > 0)
+  {
+    line[sizeof(line) - 1U] = '\0';
+    H2_UartWrite(line);
+  }
+
+  if ((expected_probe_status != HAL_OK) &&
+      (expected_probe_error != HAL_I2C_ERROR_AF))
+  {
+    reinit_status = HAL_I2C_Init(&hi2c1);
+    osDelay(5U);
+    H3_LogIna260MasterState("after_probe_retry_reinit", reinit_status);
+    expected_probe_status = HAL_I2C_IsDeviceReady(
+        &hi2c1,
+        (uint16_t)(H3_INA260_I2C_ADDRESS << 1U),
+        2U,
+        H3_INA260_I2C_TIMEOUT_MS);
+    expected_probe_error = HAL_I2C_GetError(&hi2c1);
+    length = snprintf(line, sizeof(line),
+                      "H3,A,INA260_EXPECTED_PROBE,attempt=2,address=0x%02X,status=%u,hal_err=0x%08lX\r\n",
+                      (unsigned int)H3_INA260_I2C_ADDRESS,
+                      (unsigned int)expected_probe_status,
+                      (unsigned long)expected_probe_error);
+    if (length > 0)
+    {
+      line[sizeof(line) - 1U] = '\0';
+      H2_UartWrite(line);
     }
+  }
+
+  if (expected_probe_status == HAL_OK)
+  {
+    expected_ack = 1U;
+    ack_count = 1U;
+    H2_UartWrite("H3,A,INA260_I2C_ACK,address=0x40\r\n");
   }
 
   if (expected_ack != 0U)
@@ -572,6 +633,32 @@ static void H3_Ina260ScanAndIdentify(void)
         H3_INA260_REG_MANUFACTURER_ID,
         &manufacturer_id);
     die_status = H3_Ina260ReadRegister(H3_INA260_REG_DIE_ID, &die_id);
+  }
+
+  for (address = H3_INA260_SCAN_FIRST_ADDRESS;
+       address <= H3_INA260_SCAN_LAST_ADDRESS;
+       ++address)
+  {
+    if (address == H3_INA260_I2C_ADDRESS)
+    {
+      continue;
+    }
+
+    if (HAL_I2C_IsDeviceReady(&hi2c1,
+                              (uint16_t)(address << 1U),
+                              2U,
+                              H3_INA260_I2C_TIMEOUT_MS) == HAL_OK)
+    {
+      ack_count++;
+      length = snprintf(line, sizeof(line),
+                        "H3,A,INA260_I2C_ACK,address=0x%02X\r\n",
+                        (unsigned int)address);
+      if (length > 0)
+      {
+        line[sizeof(line) - 1U] = '\0';
+        H2_UartWrite(line);
+      }
+    }
   }
 
   g_h3_ina260_identity_valid =
@@ -596,6 +683,33 @@ static void H3_Ina260ScanAndIdentify(void)
                     (unsigned int)die_id,
                     (unsigned int)g_h3_ina260_identity_valid,
                     (unsigned long)HAL_I2C_GetError(&hi2c1));
+  if (length > 0)
+  {
+    line[sizeof(line) - 1U] = '\0';
+    H2_UartWrite(line);
+  }
+}
+
+static void H3_Ina260ScopeProbe(void)
+{
+  HAL_StatusTypeDef status;
+  uint32_t error;
+  char line[144];
+  int length;
+
+  /* Deliberately emit no UART traffic before this single address cycle. */
+  status = HAL_I2C_IsDeviceReady(
+      &hi2c1,
+      (uint16_t)(H3_INA260_I2C_ADDRESS << 1U),
+      1U,
+      H3_INA260_I2C_TIMEOUT_MS);
+  error = HAL_I2C_GetError(&hi2c1);
+
+  length = snprintf(line, sizeof(line),
+                    "H3,A,INA260_SCOPE_PROBE,address=0x%02X,status=%u,hal_err=0x%08lX\r\n",
+                    (unsigned int)H3_INA260_I2C_ADDRESS,
+                    (unsigned int)status,
+                    (unsigned long)error);
   if (length > 0)
   {
     line[sizeof(line) - 1U] = '\0';
@@ -918,6 +1032,8 @@ void StartAControlTask(void *argument)
   H3_LogTachCaptureProfile();
   osDelay(20U);
   H3_Ina260ScanAndIdentify();
+  /* Leave I2C1 clean and idle for the later B1-triggered scope probe. */
+  (void)HAL_I2C_Init(&hi2c1);
 
   if (g_h2_can_start_result != 0U)
   {
@@ -936,6 +1052,7 @@ void StartAControlTask(void *argument)
     if ((profile_active == 0U) && (g_h3_fan_profile_request != 0U))
     {
       g_h3_fan_profile_request = 0U;
+      H3_Ina260ScopeProbe();
       profile_active = 1U;
       profile_index = 0U;
       H3_ApplyFanPwmStep(profile_index);

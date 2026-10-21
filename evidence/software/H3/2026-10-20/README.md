@@ -18,6 +18,7 @@ TACH-02B RPM/新鲜度镜像，以及 Tach 子项关闭后准备的 INA-01 只�
 | [`H3_NODE-A_TACH-02B_ppr2-rpm-stale-build_20261020.txt`](H3_NODE-A_TACH-02B_ppr2-rpm-stale-build_20261020.txt) | `6251` bytes | `423DE7A2D22172763AD8BBBAE94D7456DFBFFFE2A96CDB7A00EFA1F040649A05` | PPR=2 整数 RPM、500 ms 新鲜度状态、clean build、ELF 身份、栈/长度/CAN 占位交叉核验与实板门禁 |
 | [`H3_NODE-A_TACH-02B_ppr2-rpm-stale-runtime_20261020.txt`](H3_NODE-A_TACH-02B_ppr2-rpm-stale-runtime_20261020.txt) | `7348` bytes | `EE90AE89A710FDEAD4A3540A7072479ADF853E76FB5711CB67EC34DE3E1BC82A` | 定向刷写、无风扇 INVALID 基线、默认 50% 数值 RPM、全档位 STALE/恢复语义及长时 COM7 证据 |
 | [`H3_NODE-A_INA-01_read-only-scan-build_20261020.txt`](H3_NODE-A_INA-01_read-only-scan-build_20261020.txt) | `5232` bytes | `026D656458F5E4736BEF462F2D9D8CC8D30B41072CAB395243575BFA7335BEA0` | INA260 全地址只读扫描、寄存器身份、整数工程量采样、clean build、ELF/源码哈希、只读 API/栈/长度交叉核验及实板门禁 |
+| [`H3_NODE-A_INA-02F_i2c-nack-isolation_20261020.txt`](H3_NODE-A_INA-02F_i2c-nack-isolation_20261020.txt) | `4598` bytes | `2A2D66A6957B39D90AC50C659300531B94303ECD1F957F819589A4D174E48EE8` | 四线静态值、主控状态、0x40/全地址无 ACK、两轮误触发、B1 静默事务、面包板/模块排针测点推进、A0/A1 复核和模块级硬件 HOLD |
 
 ## 3. 当前结论
 
@@ -44,6 +45,17 @@ TACH-02B RPM/新鲜度镜像，以及 Tach 子项关闭后准备的 INA-01 只�
 - INA-01 已在基线 `e92ea2f` 上完成只读实现和 clean build；最终 ELF SHA-256 为
   `835C48D09500657D3FA38F623B631C04B98A37B0B7B84D8C5197C71602CA453B`，只含设备就绪
   探测和寄存器读取，不含任何 I2C 写路径；
-- `INA-01` 当前判定为 **PASS（离线实现/构建范围）**，硬件形成该证据时仍全断电、模块
-  孤立且镜像尚未刷写。I2C 地址/身份、连续空载采样和 12 V 高边测量仍待分步实板验证，
-  因此 Gate H3 继续保持 **IN PROGRESS**。
+- `INA-01` 离线实现/构建结论仍为 PASS；随后该路径已定向刷写并用于低压实板隔离，不能
+  再把 10 月 20 日整体状态写成“镜像尚未刷写”；
+- 最终诊断镜像在任何 UART 输出前由 B1 触发单次 `0x40` 地址探测；当前
+  `freertos.c` SHA-256 为
+  `2E1ABED5122D3A70366ABA143BA6FD029B0EB0EFB8B2968F4DE225101E274B97`，最终诊断
+  ELF 为 `1115360` bytes，SHA-256=
+  `C77C8203619DAA7820375E1BA6C57016345D197AAB5E9ED7F957F44ED17B0888`；
+- 实板探测前 I2C1 状态、寄存器和 PB8/PB9 静态电平正常；两次 `0x40` 定向探测和完整
+  7-bit 扫描均无 ACK，`ack_count=0`，故无法读取 Manufacturer ID / Die ID；
+- 示波器先后在中间面包板节点和模块 SCL/SDA 焊接排针捕获到约 `100 kHz` 地址事务及
+  无 ACK；A0/A1 默认约 10 kΩ 下拉也已复核；
+- `INA260-01` 因此判定为 **FAIL / HARDWARE HOLD（模块级无应答）**。Gate H3 继续保持
+  **IN PROGRESS / HARDWARE HOLD**，等待替换或独立修复模块后重做四线准入、`0x40`
+  ACK 和寄存器身份；在此之前不授权 12 V 高边或负载测试。

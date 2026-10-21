@@ -1,0 +1,91 @@
+H3 Node A / INA260-01 I2C NACK isolation record
+Date: 2026-10-20 (Asia/Shanghai)
+Record type: normalized execution record; not a verbatim UART transcript
+
+1. Scope and safety boundary
+
+- Target: Node A, frozen ST-Link SN 066BFF575151676667043206, COM7.
+- I2C1: PB8/D15=SCL, PB9/D14=SDA, 100 kHz.
+- INA260-01 low-voltage connections only: Vcc=3V3, GND, SCL, SDA.
+- Node B and fan 12 V remained off during the identity diagnostics.
+- ALERT, VBus, Vin+, Vin-, the green power terminal, fan and heater were not
+  added to this test.
+- The diagnostic path used HAL_I2C_IsDeviceReady and HAL_I2C_Mem_Read only;
+  no INA260 register write path was introduced.
+
+2. Preceding passive and powered observations
+
+- Isolated passive check: Vcc-SCL=10.056 kOhm and Vcc-SDA=10.028 kOhm,
+  consistent with the two onboard approximately 10 kOhm pull-ups.
+- Powered static check at the module header: Vcc=3.230 V, SCL=3.223 V,
+  SDA=3.224 V; no USB disconnect/reconnect was reported.
+- The MCU-side four-wire continuity and short-circuit admission checks passed.
+
+3. Read-only scan and master-state result
+
+- Before the expected-address probe the recorded master state was clean:
+  state=0x20, hal_err=0x00000000, CR1=0x0001, SR1=0x0000,
+  SR2=0x0000, GPIOB IDR PB8/PB9=0x0300.
+- The directed 0x40 readiness probe returned status=1 (HAL_ERROR) with
+  hal_err=0x00000000. A controlled I2C reinitialization left the peripheral
+  clean, and the repeated 0x40 probe produced the same no-ACK result.
+- The subsequent 7-bit scan found ack_count=0; therefore no alternate address
+  responded and Manufacturer ID / Die ID could not be read.
+- The zero HAL error after a completed readiness attempt is retained as
+  observed HAL behavior; the bus waveform is used below to distinguish a
+  clean slave NACK from an absent master transaction.
+
+4. Scope-capture progression
+
+- Early single-shot captures at the instrument timestamps 19:48 and 20:01
+  captured reset/communication activity rather than a uniquely isolated
+  INA260 address probe. They are retained as negative evidence and are not
+  used to claim ACK or NACK.
+- The firmware was then changed so one B1 press issues one 0x40 readiness
+  address cycle before any UART message. The resulting diagnostic artifact was:
+    freertos.c SHA-256:
+      2E1ABED5122D3A70366ABA143BA6FD029B0EB0EFB8B2968F4DE225101E274B97
+    node_a.elf size:
+      1115360 bytes
+    node_a.elf SHA-256:
+      C77C8203619DAA7820375E1BA6C57016345D197AAB5E9ED7F957F44ED17B0888
+- At 20:05 instrument time, the B1 capture at the intermediate breadboard
+  node showed an approximately 100 kHz SCL address cycle and no slave ACK.
+- Because that point did not prove arrival at the module itself, the probes
+  were moved directly onto the soldered SCL/SDA header pins.
+- At 20:13 instrument time, the module-header capture reproduced the same
+  approximately 100 kHz address cycle and no slave ACK. This excludes the
+  Node-A-to-breadboard and breadboard-to-module signal path as the reason for
+  the missing acknowledgement within this test setup.
+
+5. Address-network closeout
+
+With all involved power removed, the two unbridged A0/A1 address jumpers were
+measured to the module GND header:
+
+- A0 small left pad to GND: 4.607 kOhm
+- A0 large right pad to GND: 9.988 kOhm
+- A1 small left pad to GND: 4.609 kOhm
+- A1 large right pad to GND: 10.044 kOhm
+
+The equal approximately 4.61 kOhm readings identify the common Vcc-side pads
+in this in-circuit resistance measurement. The large A0/A1 signal-side pads
+each retain the expected approximately 10 kOhm pull-down to GND, and neither
+jumper is visibly bridged. The default 0x40 address network is therefore
+present; the full no-ACK scan also rules out a simple alternate-address case.
+
+6. Decision
+
+- PASS: Node A identity, PB8/PB9 configuration, 100 kHz master timing,
+  low-voltage wiring continuity, waveform arrival at the module header, and
+  the A0/A1 default-address network.
+- FAIL/HARDWARE HOLD: INA260-01 produces no ACK at 0x40 or any other scanned
+  7-bit address, so register identity and measurement functions cannot start.
+- The evidence localizes the fault to the INA260-01 module level. It does not
+  non-destructively distinguish a factory IC solder/trace defect, missing IC
+  supply at the package, a damaged/counterfeit IC, or another internal module
+  assembly fault.
+- Do not authorize 12 V, Vin+/Vin-, VBus, load current, or high-side testing
+  with INA260-01. Replace or separately repair the module, then repeat the
+  same four-wire admission, powered-static, 0x40 ACK, Manufacturer ID and Die
+  ID sequence before proceeding.

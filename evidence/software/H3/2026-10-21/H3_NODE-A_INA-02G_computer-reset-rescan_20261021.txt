@@ -1,0 +1,48 @@
+H3 / INA-02G computer-only reset and I2C rescan evidence
+Date: 2026-10-21 (Asia/Shanghai)
+Archive timestamp: 2026-10-21T01:10:46.175+08:00
+
+Scope
+-----
+- User-confirmed physical state immediately before execution:
+  INA260 Vcc/GND/SCL/SDA connected; only Node A USB powered;
+  Node B, 12 V, green terminal, VBus, Vin+/Vin- and Alert disconnected.
+- No oscilloscope was used for this retest.
+- No firmware download or Flash write was performed.
+- Node A was reset from the computer through its frozen ST-Link identity.
+
+Computer-side target identity and reset
+---------------------------------------
+STM32CubeProgrammer: v2.19.0
+ST-LINK SN: 066BFF575151676667043206
+ST-LINK FW: V2J46M32
+Target voltage: 3.24 V
+Device ID: 0x410
+Device: STM32F101/F102/F103 Medium-density
+Flash size: 128 KBytes
+Operation: software reset only
+Result: "Software reset is performed"
+
+Exact INA260-related COM7 excerpt (115200 8N1)
+------------------------------------------------
+H3,A,INA260_PROFILE,bus=I2C1,scl=PB8_D15,sda=PB9_D14,clock_hz=100000,expected_addr=0x40,mode=read_only,alert=disconnected
+H3,A,INA260_MASTER,phase=pre_probe,reinit_status=0,state=0x20,hal_err=0x00000000,cr1=0x0001,sr1=0x0000,sr2=0x0000,gpiob_idr=0x0300
+H3,A,INA260_EXPECTED_PROBE,attempt=1,address=0x40,status=1,hal_err=0x00000000
+H3,A,INA260_MASTER,phase=after_probe_retry_reinit,reinit_status=0,state=0x20,hal_err=0x00000000,cr1=0x0001,sr1=0x0000,sr2=0x0000,gpiob_idr=0x0300
+H3,A,INA260_EXPECTED_PROBE,attempt=2,address=0x40,status=1,hal_err=0x00000000
+H3,A,INA260_IDENTITY,ack_count=0,expected_ack=0,addr=0x40,config_status=1,config=0x0000,mfg_status=1,mfg=0x0000,die_status=1,die=0x0000,valid=0,hal_err=0x00000000
+
+Interpretation
+--------------
+- state=0x20, CR1=0x0001, SR1=0 and SR2=0 show an enabled, ready and non-busy I2C1 master before probing.
+- GPIOB IDR 0x0300 shows PB8/SCL and PB9/SDA were both high before the transaction.
+- The expected 0x40 address returned status=1 twice, including after a controlled I2C reinitialization.
+- The complete 7-bit scan returned ack_count=0; therefore no alternative responding address was found.
+- Manufacturer ID and Die ID reads were not valid because no slave address acknowledged.
+- hal_err=0x00000000 on the INA path shows no persistent HAL/I2C controller error after the clean no-ACK result.
+
+Boundary and verdict
+--------------------
+This computer-only retest independently reproduces the 2026-10-20 result without relying on oscilloscope interpretation. Combined with the prior module-header waveform and passive address-network evidence, INA260-01 remains FAIL / HARDWARE HOLD for a module-level no-response condition. This evidence does not distinguish IC fine-pitch soldering, an internal PCB interconnect fault, or a defective/nonconforming IC. It does exclude treating the earlier visual waveform interpretation as the sole basis for the verdict.
+
+The later periodic CAN STAT lines may show CAN transmit errors because Node B/CAN participation was outside this isolated INA test. Those CAN fields are not INA260 I2C errors and are not used in this verdict.
